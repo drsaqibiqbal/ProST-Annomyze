@@ -1,0 +1,29 @@
+{
+  "title": "prostate-deid: A Python Library for De-identification and Anatomical Masking of Prostate MRI",
+  "description": "prostate-deid composes DICOM tag scrubbing, patient ID/date pseudonymization, burned-in pixel PHI redaction, and prostate zonal/lesion masking into a single Compose-style pipeline that produces one shared, structured audit trail suitable for compliance documentation.",
+  "upload_type": "software",
+  "license": "MIT",
+  "creators": [
+    {
+      "name": "Iqbal, Saqib",
+      "orcid": "0000-0003-0500-3676"
+    }
+  ],
+  "keywords": [
+    "medical imaging",
+    "de-identification",
+    "DICOM anonymization",
+    "pseudonymization",
+    "prostate MRI",
+    "privacy",
+    "Python"
+  ],
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/drsaqibiqbal/annolib",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

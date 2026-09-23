@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "prostate-deid: A Python Library for De-identification and Anatomical Masking of Prostate MRI"
+authors:
+  - family-names: Iqbal
+    given-names: Saqib
+    orcid: "https://orcid.org/0000-0003-0500-3676"
+version: 0.1.0
+date-released: 2026-09-20
+license: MIT
+repository-code: "https://github.com/drsaqibiqbal/annolib"
+keywords:
+  - medical imaging
+  - de-identification
+  - DICOM
+  - prostate MRI
+  - privacy
+  - pseudonymization

@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+.env
+
+# Never allow real DICOM data, mapping keys, or secrets into version control
+*.dcm
+!tests/fixtures/**/*.dcm
+mapping*.json
+!tests/fixtures/**/mapping*.json
+*.key
+.DS_Store
+
+# Docs build
+site/
+docs/_build/
