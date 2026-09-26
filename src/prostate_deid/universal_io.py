@@ -461,13 +461,17 @@ def _ocr_words_at_scale(
     return words
 
 
-def _ocr_boxes(pil_im: "Image.Image", gray_u8: np.ndarray) -> list[tuple[int, int, int, int, int]]:
+def _ocr_boxes(
+    pil_im: "Image.Image",
+    gray_u8: np.ndarray,
+    upscale_factors: tuple[int, ...] = _UPSCALE_FACTORS,
+) -> list[tuple[int, int, int, int, int]]:
     """Run Tesseract across several upscale factors; return merged row-band (x0,y0,x1,y1,conf) boxes.
 
-    Word boxes from every factor in :data:`_UPSCALE_FACTORS` are pooled
-    before clustering (not clustered separately per factor and unioned
-    after), since a single scale was found to unreliably drop a real text
-    line that another scale on the SAME image caught -- see
+    Word boxes from every factor in ``upscale_factors`` (:data:`_UPSCALE_FACTORS`
+    by default) are pooled before clustering (not clustered separately per
+    factor and unioned after), since a single scale was found to unreliably
+    drop a real text line that another scale on the SAME image caught -- see
     :data:`_UPSCALE_FACTORS`'s comment. Pooled words are merged into
     full-width row bands by :func:`_cluster_rows` (not Tesseract's own line
     grouping, which is unreliable on this kind of sparse small text -- see
@@ -476,9 +480,15 @@ def _ocr_boxes(pil_im: "Image.Image", gray_u8: np.ndarray) -> list[tuple[int, in
     leave legible PHI fragments. Confidence is the minimum word confidence
     within the row, so one badly-read word doesn't hide the row's low
     reliability.
+
+    Passing fewer ``upscale_factors`` (e.g. a single factor instead of all
+    three) trades detection recall for speed -- each factor is a full
+    Tesseract pass, so this is the main lever for running on CPU-constrained
+    or mobile hardware where the default 3-factors x 2-polarities-per-slice
+    cost (see :func:`redact_burned_in_text`) is too slow.
     """
     words: list[tuple[int, int, int, int, int]] = []
-    for scale in _UPSCALE_FACTORS:
+    for scale in upscale_factors:
         words.extend(_ocr_words_at_scale(pil_im, gray_u8, scale))
 
     boxes = []
@@ -496,6 +506,8 @@ def redact_burned_in_text(
     pixels: np.ndarray,
     padding: int = 4,
     flag_confidence: int = 40,
+    upscale_factors: tuple[int, ...] | None = None,
+    check_inverted: bool = True,
 ) -> tuple[np.ndarray, list[str]]:
     """Black out every OCR-detected text region in a ``(slices, H, W[, C])`` array.
 
@@ -508,13 +520,26 @@ def redact_burned_in_text(
     library's asymmetric-error policy (a missed detection is a privacy
     incident; an over-redaction is only a data-quality loss -- so
     ``flag_confidence`` only controls the audit note, never the redaction
-    itself). Detection runs twice per slice, on the plain grayscale and on
-    its contrast-inverted version, since scanner overlay text is sometimes
-    dark-on-light rather than light-on-dark; the image is also upscaled
-    before OCR because small corner-annotation glyphs (often <10px tall)
-    are below Tesseract's reliable detection size otherwise. Every detected
-    box is padded by ``padding`` pixels on each side to fully cover
-    anti-aliased glyph edges.
+    itself). Detection runs twice per slice by default, on the plain
+    grayscale and on its contrast-inverted version, since scanner overlay
+    text is sometimes dark-on-light rather than light-on-dark; the image is
+    also upscaled before OCR because small corner-annotation glyphs (often
+    <10px tall) are below Tesseract's reliable detection size otherwise.
+    Every detected box is padded by ``padding`` pixels on each side to
+    fully cover anti-aliased glyph edges.
+
+    Parameters
+    ----------
+    upscale_factors:
+        Which upscale factors to run Tesseract at (default
+        :data:`_UPSCALE_FACTORS`, three passes). Each factor is a full
+        Tesseract pass per polarity per slice, so this is the dominant cost
+        for multi-slice volumes -- pass a shorter tuple (e.g. ``(3,)``) to
+        run on CPU-constrained or mobile hardware at reduced recall.
+    check_inverted:
+        When ``False``, skip the contrast-inverted OCR pass, halving the
+        Tesseract calls at the cost of missing dark-on-light overlay text.
+        ``True`` (default) preserves the original, most-thorough behavior.
 
     Returns the redacted array (a copy; the input is not mutated) and a
     list of plain-string audit notes. If no OCR backend is available, the
@@ -530,6 +555,7 @@ def redact_burned_in_text(
 
     from PIL import Image, ImageOps
 
+    factors = tuple(upscale_factors) if upscale_factors else _UPSCALE_FACTORS
     out = pixels.copy()
     notes: list[str] = []
     n_slices = out.shape[0]
@@ -552,10 +578,12 @@ def redact_burned_in_text(
         # width already close to reference) this is a no-op and gray_u8 is used as-is; only a
         # genuinely different resolution is actually resized.
         norm_u8, scale_factor = _normalize_for_ocr(gray_u8)
-        norm_u8_inv = 255 - norm_u8
         pil_norm = Image.fromarray(norm_u8)
-        pil_norm_inv = ImageOps.invert(pil_norm)
-        norm_boxes = _ocr_boxes(pil_norm, norm_u8) + _ocr_boxes(pil_norm_inv, norm_u8_inv)
+        norm_boxes = _ocr_boxes(pil_norm, norm_u8, upscale_factors=factors)
+        if check_inverted:
+            norm_u8_inv = 255 - norm_u8
+            pil_norm_inv = ImageOps.invert(pil_norm)
+            norm_boxes += _ocr_boxes(pil_norm_inv, norm_u8_inv, upscale_factors=factors)
         boxes = [_denormalize_box(b, scale_factor) for b in norm_boxes]
 
         pad_native = max(int(round(padding / min(scale_factor, 1.0))), padding)
@@ -587,6 +615,13 @@ def redact_burned_in_text(
                 "(redacted anyway per asymmetric-error policy: missed PHI > over-redaction) -- recommend human review"
             )
 
+    if factors != _UPSCALE_FACTORS or not check_inverted:
+        notes.append(
+            f"reduced-thoroughness OCR pass (upscale_factors={factors}, "
+            f"check_inverted={check_inverted}) -- lower recall than the full "
+            f"{_UPSCALE_FACTORS} x both-polarities default; recommend human review"
+        )
+
     return out, notes
 
 
@@ -594,7 +629,13 @@ def redact_burned_in_text(
 # PNG / NIfTI -> fresh minimal DICOM
 # ---------------------------------------------------------------------------
 
-def array_to_dicom(pixels: np.ndarray, modality: str = "OT", redact_pixels: bool = True) -> tuple[Any, list[str]]:
+def array_to_dicom(
+    pixels: np.ndarray,
+    modality: str = "OT",
+    redact_pixels: bool = True,
+    ocr_upscale_factors: tuple[int, ...] | None = None,
+    ocr_check_inverted: bool = True,
+) -> tuple[Any, list[str]]:
     """Build a brand-new minimal DICOM ``Dataset`` around a pixel array.
 
     No patient/institution identifying field is ever set -- this is not a
@@ -618,6 +659,10 @@ def array_to_dicom(pixels: np.ndarray, modality: str = "OT", redact_pixels: bool
         detected text (e.g. a PNG screenshot of a viewer with a
         corner-annotated patient banner) before it is baked into the
         DICOM. See :func:`redact_burned_in_text`.
+    ocr_upscale_factors, ocr_check_inverted:
+        Passed straight through to :func:`redact_burned_in_text` to trade
+        OCR thoroughness for speed on CPU-constrained/mobile hardware. See
+        that function's docstring.
     """
     import pydicom
     from pydicom.dataset import FileDataset, FileMetaDataset
@@ -627,7 +672,11 @@ def array_to_dicom(pixels: np.ndarray, modality: str = "OT", redact_pixels: bool
 
     pixels = np.asarray(pixels)
     if redact_pixels:
-        pixels, ocr_notes = redact_burned_in_text(pixels.astype(np.float32))
+        pixels, ocr_notes = redact_burned_in_text(
+            pixels.astype(np.float32),
+            upscale_factors=ocr_upscale_factors,
+            check_inverted=ocr_check_inverted,
+        )
         notes.extend(ocr_notes)
 
     is_color = pixels.ndim == 4 and pixels.shape[-1] in (3, 4)
@@ -694,7 +743,12 @@ def _rescale_to(arr: np.ndarray, dtype: np.dtype) -> np.ndarray:
 # Real DICOM -> full-wipe DICOM (strip everything non-technical)
 # ---------------------------------------------------------------------------
 
-def full_wipe_dicom(ds: Any, redact_pixels: bool = True) -> tuple[Any, list[str]]:
+def full_wipe_dicom(
+    ds: Any,
+    redact_pixels: bool = True,
+    ocr_upscale_factors: tuple[int, ...] | None = None,
+    ocr_check_inverted: bool = True,
+) -> tuple[Any, list[str]]:
     """Strip every tag from ``ds`` except the minimal technical set.
 
     Stricter than :func:`prostate_deid.pipeline.default_pipeline`: no named
@@ -709,6 +763,10 @@ def full_wipe_dicom(ds: Any, redact_pixels: bool = True) -> tuple[Any, list[str]
     does not touch PHI burned directly into the image (scanner corner
     annotations, fusion-biopsy overlay labels), which is a separate attack
     surface from the header. See :func:`redact_burned_in_text`.
+
+    ``ocr_upscale_factors``/``ocr_check_inverted`` are passed straight
+    through to :func:`redact_burned_in_text` to trade OCR thoroughness for
+    speed on CPU-constrained/mobile hardware.
     """
     import pydicom
     from pydicom.dataset import FileDataset, FileMetaDataset
@@ -734,7 +792,11 @@ def full_wipe_dicom(ds: Any, redact_pixels: bool = True) -> tuple[Any, list[str]
             stack = pixels[np.newaxis, ...]
         else:
             stack = pixels
-        redacted, ocr_notes = redact_burned_in_text(stack.astype(np.float32))
+        redacted, ocr_notes = redact_burned_in_text(
+            stack.astype(np.float32),
+            upscale_factors=ocr_upscale_factors,
+            check_inverted=ocr_check_inverted,
+        )
         notes.extend(ocr_notes)
         redacted = redacted.astype(orig_dtype).reshape(pixels.shape)
         ds.PixelData = redacted.tobytes()
