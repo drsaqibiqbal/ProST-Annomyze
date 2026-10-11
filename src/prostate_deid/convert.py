@@ -47,6 +47,7 @@ from typing import Any
 
 import numpy as np
 
+from ._version import __version__
 from .core import AuditEntry
 from .mr_tags import (
     FUNCTIONAL_GROUP_KEEP,
@@ -71,7 +72,7 @@ __all__ = [
     "SOFTWARE_NAME",
 ]
 
-SOFTWARE_NAME = "ProST-Annomyze 0.2.0"
+SOFTWARE_NAME = f"ProST-Annomyze {__version__}"
 
 _MR_IMAGE_STORAGE = "1.2.840.10008.5.1.4.1.1.4"
 _SC_IMAGE_STORAGE = "1.2.840.10008.5.1.4.1.1.7"

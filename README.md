@@ -18,7 +18,7 @@ established by volumetric augmentation libraries (Albumentations,
 Bio-Volumentations), so every step — deterministic or probabilistic — logs
 into the same audit trail.
 
-## ProST-Annomyze v2 (0.2.0)
+## ProST-Annomyze v2 (0.2.1)
 
 ProST-Annomyze is the no-code converter built on this library: DICOM (single
 files, whole series or a ZIP), NIfTI (`.nii` / `.nii.gz`) and PNG / JPEG / BMP
@@ -61,6 +61,22 @@ What changed from v1:
 
 Each briefing recommendation is mapped to code and tests in
 [`docs/v2_changes.md`](docs/v2_changes.md).
+
+* **0.2.1:** thin bright tissue (the fat rim, fat septa) is no longer mistaken for text, and JPEG
+  screenshots are restored instead of blacked out. See [`CHANGELOG.md`](CHANGELOG.md).
+
+### Documentation
+
+| File | What it covers |
+|---|---|
+| [`docs/v2_analysis.md`](docs/v2_analysis.md) | Burned-in text: v1 analysis, benchmark design and results, method choice, limitations, tissue false-positive fixes (§7) |
+| [`docs/v2_changes.md`](docs/v2_changes.md) | Every briefing recommendation → code → test, with status |
+| [`benchmarks/`](benchmarks/) | Reproducible text-removal benchmark (`python benchmarks/text_removal_benchmark.py`) and saved results |
+| [`CHANGELOG.md`](CHANGELOG.md) | Release history |
+| [`docs/normalization_math.md`](docs/normalization_math.md) | RARN intensity normalization derivation |
+| [`docs/technical_details.md`](docs/technical_details.md) | 0.1.0 manuscript technical notes (historical) |
+
+The version is defined once, in `src/prostate_deid/_version.py`.
 
 ```bash
 pip install prostate-deid[dashboard]      # + [vit] for the ViT-MAE option

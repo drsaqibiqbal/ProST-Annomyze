@@ -16,6 +16,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - dciodvfy / highdicom validation in CI; FSL bvec export; tests on real
   enhanced multi-frame MR.
 
+## [0.2.1] - 2026-10-11
+
+Fixes found while testing v2 on real pelvic MRI screenshots. Benchmark details are in
+`docs/v2_analysis.md` §7.
+
+### Fixed
+- **Thin bright tissue was treated as text.**
+  - Cause: fat rims and fat septa inside v1 detector boxes were inpainted, or blacked out by the
+    fallback.
+  - Fix: stroke components must reach the display extreme (or sit on a confirmed text line) and
+    match the line's glyph height.
+  - Each glyph cluster is restored only with positive text evidence: stroke-crossing density
+    ≥ 0.10, or OCR ≥ 3 characters at confidence 60.
+  - Boxes that mix text and anatomy are split into text-line bands.
+  - Result on pelvis phantoms: tissue pixels changed fell from about 80k to 1,977 (in total over
+    9 variants).
+- **JPEG screenshots fell back to whole-box blackout.**
+  - Cause: the faint ringing halo around glyphs, plus slice-sized "detections" in the verification
+    pass.
+  - Fix: region growing now covers the halo, and verification only looks where pixels were
+    replaced.
+  - When a fallback is needed, only the text line's rectangle is blacked out, not the whole
+    detector box.
+- **Wrong polarity guesses could leave text behind.** Both polarities are now tried before a box
+  is given up.
+- **The text-evidence test mis-measured dark text.** It is now polarity-aware.
+- **Detector boxes with no glyph strokes and no legible OCR were blacked out.** They are now left
+  untouched and flagged (`skipped_region_not_text`).
+
+### Changed
+- Dashboard: the third panel shows the de-identified image with a thin outline around changed
+  pixels; "Fill changed pixels" is optional. The banner shows the package version.
+- Version is single-sourced in `src/prostate_deid/_version.py` (`pyproject.toml` reads it through
+  hatch; the DeidentificationMethod tag, the NIfTI sidecar and the dashboard use it).
+- `CITATION.cff` and `.zenodo.json` updated to 0.2.1 and to the ProST-Annomyze repository.
+  `tests/test_version.py` keeps them in sync.
+
+### Benchmark (24 cases, Telea default)
+
+| Metric | 0.2.0 | 0.2.1 |
+|---|---|---|
+| Text still readable | 5.0% | 4.3% |
+| Box pixels kept untouched | 55.7% | 57.3% |
+| SSIM vs clean image | 0.77 | 0.79 |
+| Fallbacks to blackout | 5 | 1 |
+
 ## [0.2.0] - 2026-10-11 — ProST-Annomyze v2
 
 ### Added

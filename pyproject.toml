@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "prostate-deid"
-version = "0.2.0"
+dynamic = ["version"]
 description = "De-identification and anatomical masking for prostate MRI, behind one auditable Compose-style pipeline"
 readme = "README.md"
 license = {text = "MIT"}
@@ -58,6 +58,9 @@ Documentation = "https://drsaqibiqbal.github.io/annolib/"
 Repository = "https://github.com/drsaqibiqbal/ProST-Annomyze"
 "Bug Tracker" = "https://github.com/drsaqibiqbal/ProST-Annomyze/issues"
 Changelog = "https://github.com/drsaqibiqbal/ProST-Annomyze/blob/master/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/prostate_deid/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/prostate_deid"]

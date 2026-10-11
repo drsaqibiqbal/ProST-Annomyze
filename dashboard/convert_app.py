@@ -45,6 +45,7 @@ from prostate_deid.convert import (
     raster_to_dicom,
     series_to_nifti,
 )
+from prostate_deid._version import __version__
 from prostate_deid.mr_tags import read_bvalue
 from prostate_deid.universal_io import _ocr_available
 
@@ -194,13 +195,13 @@ st.markdown(
     .prost-bad { background: rgba(208,59,59,0.15); color: var(--status-critical); }
     </style>
     <div class="prost-hero">
-        <h1>🩺 ProST-Annomyze <span style="font-weight:600;opacity:.85">v2</span></h1>
+        <h1>🩺 ProST-Annomyze <span style="font-weight:600;opacity:.85">v{__version__}</span></h1>
         <p>DICOM (files, series or ZIP), NIfTI (.nii / .nii.gz), PNG, JPEG, BMP or TIFF in →
         de-identified, conformance-checked DICOM out, with burned-in text removed <b>while keeping
         the image</b>, and an optional geometry-correct .nii.gz. Running this tool does not by
         itself constitute HIPAA or GDPR compliance.</p>
     </div>
-    """,
+    """.replace("{__version__}", __version__),
     unsafe_allow_html=True,
 )
 
