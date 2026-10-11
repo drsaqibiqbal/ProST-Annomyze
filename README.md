@@ -18,7 +18,7 @@ established by volumetric augmentation libraries (Albumentations,
 Bio-Volumentations), so every step — deterministic or probabilistic — logs
 into the same audit trail.
 
-## ProST-Annomyze v2 (0.2.2)
+## ProST-Annomyze v2 (0.2.3)
 
 ProST-Annomyze is the no-code converter built on this library: DICOM (single
 files, whole series or a ZIP), NIfTI (`.nii` / `.nii.gz`) and PNG / JPEG / BMP
@@ -62,6 +62,7 @@ What changed from v1:
 Each briefing recommendation is mapped to code and tests in
 [`docs/v2_changes.md`](docs/v2_changes.md).
 
+* **0.2.3:** cleaner dashboard banner: the compliance note and the version moved to small text.
 * **0.2.2:** the dashboard's changed-pixel view draws boxes only, so it can no longer redraw
   the removed text.
 * **0.2.1:** thin bright tissue (the fat rim, fat septa) is no longer mistaken for text, and JPEG

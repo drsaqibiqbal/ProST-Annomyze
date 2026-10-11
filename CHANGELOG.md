@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - dciodvfy / highdicom validation in CI; FSL bvec export; tests on real
   enhanced multi-frame MR.
 
+## [0.2.3] - 2026-10-11
+
 ### Changed
 - Dashboard: the compliance caveat moved from the hero banner to a short note below it, reworded
   ("built to support HIPAA- and GDPR-aligned workflows; compliance also depends on institutional

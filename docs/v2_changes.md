@@ -1,6 +1,6 @@
 # v2 change map: briefing items → code → tests
 
-Applies to version 0.2.2 (see CHANGELOG.md).
+Applies to version 0.2.3 (see CHANGELOG.md).
 
 This maps each recommendation in the two October 2026 briefings to what v2
 does about it.
