@@ -1,6 +1,6 @@
 # v2 change map: briefing items → code → tests
 
-Applies to version 0.2.1 (see CHANGELOG.md).
+Applies to version 0.2.2 (see CHANGELOG.md).
 
 This maps each recommendation in the two October 2026 briefings to what v2
 does about it.
@@ -24,6 +24,7 @@ Status key:
 | Do not miss text on anatomy | ✔ | `detect_overlay_text_boxes` (OCR-confirmed stroke lines) on top of v1's detector | `test_overlay_text_on_anatomy_found_where_v1_misses` |
 | Never change tissue that only looks like text (fat rim / septa) | ✔ | glyph-component test, per-cluster text evidence, band splitting (0.2.1) | `test_bright_fat_rim_and_septa_are_not_treated_as_text` |
 | JPEG screenshots restored, not blacked out | ✔ | halo-aware growth, mask-local verification (0.2.1) | `test_jpeg_screenshot_text_restored_not_blacked_out` |
+| Review views never redraw removed text | ✔ | `changed_region_boxes`: the dashboard shows rectangles, not glyph-shaped masks (0.2.2) | `test_changed_region_boxes_hide_glyph_shapes` |
 | Never ship leftover text | ✔ | re-OCR + ghost-ratio check → fallback to blackout, flagged | `test_failed_restoration_falls_back_to_blackout`, `test_ghost_ratio_flags_offset_fill` |
 | v1 behaviour available unchanged | ✔ | `method="blackout"`; `redact_burned_in_text` gives identical output | `test_blackout_matches_v1_redaction_exactly`, benchmark `identical_to_v1` |
 | Library `BurnedInTextRedact` works (was `NotImplementedError`) | ✔ | `burned_in_text.py` delegates to `text_restore`; spaCy no longer needed | `test_detection_redacts_real_burned_in_text` |
@@ -45,7 +46,7 @@ Status key:
 | Converter emits AuditEntry | ✔ | every step in `convert.py`; dashboard table + `audit_trail.json` in the ZIP | throughout |
 | Palette PNG, grey+alpha PNG, EXIF orientation | ✔ | `convert._raster_to_array` | `test_palette_png_becomes_colours`, `test_gray_alpha_png_matches_rows_columns`, `test_jpeg_exif_not_carried_over` |
 | nibabel / Pillow declared; README / CHANGELOG; banner text; `.nii.gz`-only gz | ✔ | `pyproject.toml`, `README.md`, `CHANGELOG.md`, `dashboard/convert_app.py` | – |
-| Tests for the converter | ✔ | `tests/test_convert.py`, `test_universal_io.py`, `test_mr_tags.py`, `test_text_restore.py` | 89 passed (with `test_version.py`) |
+| Tests for the converter | ✔ | `tests/test_convert.py`, `test_universal_io.py`, `test_mr_tags.py`, `test_text_restore.py` | 90 passed |
 
 ## DICOM → NIfTI (briefing 1 §B7)
 

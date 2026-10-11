@@ -55,6 +55,7 @@ __all__ = [
     "detect_overlay_text_boxes",
     "read_crop_text",
     "ghost_ratio",
+    "changed_region_boxes",
     "RegionResult",
     "RestoreResult",
     "segment_text_pixels",
@@ -971,6 +972,24 @@ def _boxes_still_text(
                                  min_conf=_VERIFY_MIN_CONF)[0] >= _CROP_MIN_CHARS
         flags.append(hit)
     return flags
+
+
+def changed_region_boxes(mask: np.ndarray) -> list[tuple[int, int, int, int]]:
+    """``(x0, y0, x1, y1)`` rectangles around changed areas of a 2D inpaint mask, merged per text line.
+
+    For displaying *where* pixels changed. Never draw the mask itself (outline or fill): it is the
+    exact glyph shape, so it would re-display the removed PHI.
+    """
+    from scipy import ndimage as ndi
+
+    mask = np.asarray(mask, dtype=bool)
+    if not mask.any():
+        return []
+    h, w = mask.shape
+    gap = max(3, w // 60)  # joins the letters and words of one line
+    merged = ndi.binary_dilation(mask, structure=np.ones((max(1, gap // 2), gap), dtype=bool))
+    lab, _ = ndi.label(merged)
+    return [(sl[1].start, sl[0].start, min(w, sl[1].stop), min(h, sl[0].stop)) for sl in ndi.find_objects(lab)]
 
 
 # ---------------------------------------------------------------------------

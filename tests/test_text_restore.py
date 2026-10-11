@@ -208,3 +208,21 @@ def test_bright_fat_rim_and_septa_are_not_treated_as_text(rim):
     assert not (changed & ~text_zone & (clean > 0)).any()
     glyph = alpha > 0.5
     assert (res.pixels[0][glyph] != burned[glyph]).mean() > 0.95
+
+
+def test_changed_region_boxes_hide_glyph_shapes():
+    # The review view must show only rectangles: drawing the inpaint mask itself redraws the letters.
+    from prostate_deid.text_restore import changed_region_boxes
+
+    clean, burned, alpha = burned_slice("corner")
+    mask = alpha > 0.02
+    boxes = changed_region_boxes(mask)
+    from scipy import ndimage as ndi
+
+    n_letters = ndi.label(mask)[1]
+    assert 1 <= len(boxes) <= n_letters // 4  # per word / line, never per letter
+    covered = np.zeros_like(mask)
+    for x0, y0, x1, y1 in boxes:
+        covered[y0:y1, x0:x1] = True
+    assert covered[mask].all()
+    assert changed_region_boxes(np.zeros((8, 8), bool)) == []

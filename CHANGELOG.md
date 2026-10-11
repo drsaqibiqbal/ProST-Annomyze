@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - dciodvfy / highdicom validation in CI; FSL bvec export; tests on real
   enhanced multi-frame MR.
 
+## [0.2.2] - 2026-10-11
+
+### Fixed (privacy)
+- **The "Where pixels changed" panel could redraw the removed text.** Its outline (and the
+  optional red fill) traced the exact glyph shapes, so the removed text was readable again in red.
+  The panel now draws only rectangles around changed areas, merged per text line
+  (`text_restore.changed_region_boxes`), and the fill option is gone. Exported files were never
+  affected.
+
 ## [0.2.1] - 2026-10-11
 
 Fixes found while testing v2 on real pelvic MRI screenshots. Benchmark details are in

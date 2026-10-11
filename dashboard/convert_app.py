@@ -47,6 +47,7 @@ from prostate_deid.convert import (
 )
 from prostate_deid._version import __version__
 from prostate_deid.mr_tags import read_bvalue
+from prostate_deid.text_restore import changed_region_boxes
 from prostate_deid.universal_io import _ocr_available
 
 st.set_page_config(page_title="ProST-Annomyze v2", layout="wide", page_icon="🩺")
@@ -394,21 +395,21 @@ def _to_display(a):
     return (np.clip((a - lo) / (hi - lo), 0, 1) * 255).astype(np.uint8)
 
 
-def _overlay(display_u8, mask, fill=False):
-    """The de-identified image as-is, with only a thin red outline around changed pixels (or a fill)."""
-    from scipy import ndimage as ndi
-
+def _overlay(display_u8, mask):
+    """The de-identified image as-is, with a red rectangle around every changed area."""
     rgb = np.repeat(display_u8[..., None], 3, axis=2) if display_u8.ndim == 2 else display_u8.copy()
     if mask is None or not mask.any():
         return rgb
-    red = np.array([235, 60, 52], np.float32)
-    rgb = rgb.astype(np.float32)
-    if fill:
-        rgb[mask] = 0.45 * rgb[mask] + 0.55 * red
-    else:
-        edge = ndi.binary_dilation(mask, iterations=1) & ~ndi.binary_erosion(mask, iterations=1)
-        rgb[edge] = red
-    return rgb.astype(np.uint8)
+    h, w = mask.shape
+    t = max(1, round(min(h, w) / 256))
+    red = np.array([235, 60, 52], np.uint8)
+    for x0, y0, x1, y1 in changed_region_boxes(mask):
+        x1, y1 = min(w, x1), min(h, y1)
+        rgb[y0:min(h, y0 + t), x0:x1] = red
+        rgb[max(0, y1 - t):y1, x0:x1] = red
+        rgb[y0:y1, x0:min(w, x0 + t)] = red
+        rgb[y0:y1, max(0, x1 - t):x1] = red
+    return rgb
 
 
 if uploads:
@@ -515,14 +516,12 @@ if uploads:
         st.image(_to_display(out), width="stretch")
     with cols[2]:
         st.markdown('<span class="prost-pill prost-pill-original">Where pixels changed</span>', unsafe_allow_html=True)
-        fill = st.checkbox("Fill changed pixels", value=False,
-                           help="Off: the de-identified image with a thin red outline around every changed area. "
-                                "On: changed pixels tinted red.")
-        st.image(_overlay(_to_display(out), mask if mask is not None and mask.shape == out.shape[:2] else None,
-                          fill=fill), width="stretch")
+        st.image(_overlay(_to_display(out), mask if mask is not None and mask.shape == out.shape[:2] else None),
+                 width="stretch")
         if mask is not None and mask.size:
-            st.caption(f"{int(mask.sum())} pixel(s) altered ({mask.mean():.2%} of the image); "
-                       "every other pixel is bit-identical to the input.")
+            st.caption(f"{int(mask.sum())} pixel(s) altered ({mask.mean():.2%} of the image) inside the red "
+                       "boxes; every other pixel is bit-identical to the input. Boxes, not outlines, so the "
+                       "removed text is never redrawn.")
 
     with st.expander(f"🏷️ Tags kept in this file ({sum(1 for e in o['ds'] if e.tag != 0x7FE00010)})"):
         st.dataframe([{"tag": e.keyword or str(e.tag), "value": str(e.value)[:80]} for e in o["ds"]
