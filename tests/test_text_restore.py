@@ -176,3 +176,35 @@ def test_jpeg_screenshot_text_restored_not_blacked_out():
     assert res.regions and all(r.action == "restored" for r in res.regions if r.action != "skipped_not_text")
     assert not (res.inpaint_mask[0] & (clean > 20)).any()  # anatomy untouched
     assert tr.read_crop_text(_norm(res.pixels[0]), _box_of(alpha), min_conf=40)[0] < 3
+
+
+@needs_ocr
+@pytest.mark.parametrize("rim", [0.8, 0.88])
+def test_bright_fat_rim_and_septa_are_not_treated_as_text(rim):
+    # Thin bright tissue (subcutaneous fat rim, fat septa) passes a top-hat test like a letter stroke.
+    # v2 must remove the burned-in text and leave every tissue pixel away from the text unchanged.
+    from scipy import ndimage as ndi
+    from _text_fixtures import burn
+
+    rng = np.random.default_rng(3)
+    h, w = 300, 360
+    yy, xx = np.mgrid[0:h, 0:w]
+    r = ((xx - w / 2) / 160) ** 2 + ((yy - h / 2) / 100) ** 2
+    img = np.zeros((h, w))
+    img[r <= 1] = 90 + 30 * np.sin(xx[r <= 1] / 7) * np.cos(yy[r <= 1] / 11) + rng.normal(0, 12, (r <= 1).sum())
+    rim_px = (r > 0.90) & (r <= 0.97)
+    img[rim_px] = 255 * rim
+    t = np.linspace(0, np.pi, 400)
+    for k in range(5):
+        px = (w / 2 + 60 * np.cos(k) + 70 * np.cos(t + k)).astype(int)
+        py = (h / 2 + 30 * np.sin(2 * k) + 25 * np.sin(3 * t + k)).astype(int)
+        img[np.clip(py, 0, h - 1), np.clip(px, 0, w - 1)] = 255 * rim
+    clean = np.clip(img, 0, 255).astype(np.uint8)
+    items = [("DOE^JANE 67Y", (3, 3)), ("ID SYN-0012345", (3, 18)), ("Images: 9/30", (3, h - 30))]
+    burned, alpha = burn(clean, items, 12, level=255)
+    res = restore_burned_in_text(burned[None], method="telea")
+    text_zone = ndi.binary_dilation(alpha > 0.02, iterations=4)
+    changed = res.pixels[0] != burned
+    assert not (changed & ~text_zone & (clean > 0)).any()
+    glyph = alpha > 0.5
+    assert (res.pixels[0][glyph] != burned[glyph]).mean() > 0.95

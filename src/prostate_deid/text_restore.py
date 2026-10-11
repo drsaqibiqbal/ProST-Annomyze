@@ -76,6 +76,8 @@ _GROW_CONTRAST = 0.10  # growth pixel: top-hat response >= this fraction (picks 
 _SAFETY_DILATE = 1  # px of extra dilation after growing (JPEG ringing, sub-pixel edges)
 _MIN_ABS_CONTRAST = 0.15  # below this the box has no clear text strokes
 _MAX_MASK_FRAC = 0.85  # a glyph mask covering more of the box than this is not plausible text -> fall back
+_TEXT_CROSSING_DENSITY = 0.10  # stroke crossings per px of row length; text lines exceed it, tissue does not
+_GLYPH_CORE = 0.06  # a glyph component's core must reach within this of the slice max (bright) / min (dark)
 
 
 @dataclass
@@ -130,6 +132,212 @@ def _stroke_width(binary: np.ndarray) -> float:
     return float(2.0 * np.percentile(dt[binary], 90))
 
 
+def _keep_glyph_components(crop: np.ndarray, mask: np.ndarray, polarity: str) -> tuple[np.ndarray, int]:
+    """Drop stroke components that are anatomy, not glyphs. Returns (mask, number rejected).
+
+    Thin bright (or dark) anatomy -- the subcutaneous fat rim, fat septa, vessel walls -- passes the
+    top-hat test exactly like a letter stroke. Two properties separate burned-in glyphs from it:
+
+    * Saturation: overlay text is rendered at the display extreme, so every glyph has a core at
+      (almost) the slice maximum / minimum; tissue rarely reaches it.
+    * Shape: glyphs on one text line share a height. A component much taller than the line's
+      glyph height, or a long thin line (wide and much flatter than a glyph), is anatomy.
+
+    The glyph height is the median height of the saturated components, so the rule adapts to font
+    size and resolution.
+    """
+    from scipy import ndimage as ndi
+
+    lab, n = ndi.label(mask, structure=np.ones((3, 3), dtype=bool))
+    if n == 0:
+        return mask, 0
+    objs = ndi.find_objects(lab)
+    if polarity == "bright":
+        core = np.asarray(ndi.maximum(crop, lab, index=np.arange(1, n + 1)))
+        saturated = core >= 1.0 - _GLYPH_CORE
+    else:
+        core = np.asarray(ndi.minimum(crop, lab, index=np.arange(1, n + 1)))
+        saturated = core <= _GLYPH_CORE
+    heights = np.array([sl[0].stop - sl[0].start for sl in objs])
+    widths = np.array([sl[1].stop - sl[1].start for sl in objs])
+    ref = heights[saturated & (heights >= 3)]
+    if ref.size == 0:
+        return np.zeros_like(mask), n
+    hg = float(np.median(ref))
+    shape_ok = (heights <= 1.8 * hg) & ~((widths > 3 * hg) & (heights < 0.5 * hg))
+    keep = saturated & shape_ok
+    # Small anti-aliased glyphs (thin letters, punctuation, JPEG-softened strokes) may not reach the
+    # extreme. Accept such a component when it sits on the same text line as an accepted glyph:
+    # vertically overlapping it by half its height and within ~3 glyph heights horizontally,
+    # chaining along the line. Tissue off the text rows never qualifies.
+    y0s = np.array([sl[0].start for sl in objs]); y1s = np.array([sl[0].stop for sl in objs])
+    x0s = np.array([sl[1].start for sl in objs]); x1s = np.array([sl[1].stop for sl in objs])
+    cand = shape_ok & ~keep
+    changed = True
+    while changed and cand.any():
+        changed = False
+        for c in np.nonzero(cand)[0]:
+            anchors = np.nonzero(keep)[0]
+            vov = np.minimum(y1s[anchors], y1s[c]) - np.maximum(y0s[anchors], y0s[c])
+            hgap = np.maximum(np.maximum(x0s[anchors] - x1s[c], x0s[c] - x1s[anchors]), 0)
+            if np.any((vov >= 0.5 * heights[c]) & (hgap <= 3 * hg)):
+                keep[c], cand[c], changed = True, False, True
+    keep_ids = np.nonzero(keep)[0] + 1
+    return np.isin(lab, keep_ids), int(n - keep.sum())
+
+
+def _text_evidence(gray01: np.ndarray, box: tuple[int, int, int, int], mask: np.ndarray) -> tuple[bool, str]:
+    """Positive evidence that a segmented region is a text line, not tissue.
+
+    Measured on synthetic pelvis phantoms with bright fat rims / septa (docs/v2_analysis.md §7):
+    text zones have >= 0.10 light/dark stroke crossings per pixel of row length (tissue <= 0.098),
+    or OCR reads >= 3 characters at confidence >= 60 (never seen on tissue).
+    """
+    zb = _glyph_zone_bbox(mask[box[1]:box[3], box[0]:box[2]])
+    if zb is None:
+        return False, "empty glyph mask"
+    x0, y0 = box[0] + zb[0], box[1] + zb[1]
+    x1, y1 = box[0] + zb[2], box[1] + zb[3]
+    from scipy import ndimage as ndi
+
+    region = gray01[y0:y1, x0:x1]
+    sel = mask[y0:y1, x0:x1]
+    ring = ndi.binary_dilation(sel, iterations=2) & ~sel
+    if not sel.any() or not ring.any():
+        return False, "empty glyph mask"
+    # Binarize halfway between the glyphs and their immediate surroundings, toward the glyph polarity,
+    # so dark text on dark-ish tissue (or bright text on bright tissue) is measured correctly.
+    g_in, g_out = float(np.median(region[sel])), float(np.median(region[ring]))
+    thr = (g_in + g_out) / 2
+    # Bright text keeps the absolute 0.6 floor (bright fat on darker tissue must not look like text).
+    z = region >= max(thr, 0.6) if g_in >= g_out else region <= min(thr, 0.4)
+    rows = int(z.any(axis=1).sum())
+    density = float(np.abs(np.diff(z.astype(np.int8), axis=1)).sum()) / max(1, rows * (x1 - x0))
+    if density >= _TEXT_CROSSING_DENSITY:
+        return True, f"stroke density {density:.2f}"
+    n = read_crop_text(gray01, (x0, y0, x1, y1), min_conf=_CROP_MIN_CONF)[0]
+    if n >= _CROP_MIN_CHARS:
+        return True, f"OCR read {n} char(s)"
+    return False, f"stroke density {density:.2f} and only {n} OCR char(s)"
+
+
+def _glyph_groups(mask: np.ndarray, box: tuple[int, int, int, int]) -> list[np.ndarray]:
+    """Split a glyph mask into clusters of neighbouring components (words / text lines).
+
+    Components are linked across horizontal gaps up to ~1.5 glyph heights (letter and word spacing)
+    and small vertical offsets; tissue that is not adjacent to text ends up in its own cluster.
+    """
+    from scipy import ndimage as ndi
+
+    x0, y0, x1, y1 = box
+    local = mask[y0:y1, x0:x1]
+    lab, n = ndi.label(local, structure=np.ones((3, 3), dtype=bool))
+    if n <= 1:
+        return [mask] if n == 1 else []
+    hs = np.array([sl[0].stop - sl[0].start for sl in ndi.find_objects(lab)])
+    hg = max(3, int(np.median(hs)))
+    linked = ndi.binary_dilation(local, structure=np.ones((max(1, hg // 3), max(3, int(1.5 * hg)))))
+    glab, gn = ndi.label(linked)
+    out = []
+    for k in range(1, gn + 1):
+        g = np.zeros(mask.shape, dtype=bool)
+        g[y0:y1, x0:x1] = local & (glab == k)
+        if g.any():
+            out.append(g)
+    return out
+
+
+def _resolve_box(gray01: np.ndarray, box: tuple[int, int, int, int]):
+    """Decide what to do with one detector box. Yields ``(kind, box, payload)`` with kind in
+    {"glyphs", "blackout", "skip"}.
+
+    * Plausible glyph mask with text evidence -> restore those glyphs.
+    * Otherwise (mask implausible, or no text evidence -- typically a v1 box that also spans
+      anatomy) split it into text-line bands of saturated strokes and resolve each band the same way.
+    * A band (or box) with no plausible mask but legible OCR text -> black it out (v1 policy).
+    * Nothing text-like -> leave untouched, flagged ("skip").
+    """
+    def single(b, allow_split):
+        m, info = segment_text_pixels(gray01, b)
+        if m is not None:
+            # Judge each cluster of neighbouring glyphs (a word / text line) on its own, so a bright
+            # tissue line running through the same rows neither hides the text nor gets restored.
+            accepted = np.zeros_like(m)
+            whys, rejected = [], 0
+            for gm in _glyph_groups(m, b):
+                ok, why = _text_evidence(gray01, b, gm)
+                if ok:
+                    accepted |= gm
+                    whys.append(why)
+                else:
+                    rejected += 1
+            if accepted.any():
+                note = f"segmented ({whys[0]}" + (f"; {rejected} non-text cluster(s) left untouched)" if rejected else ")")
+                return [("glyphs", b, (accepted, {**info, "reason": note}))]
+            reason = f"no text evidence: {why}"
+        else:
+            reason = info["reason"]
+        if allow_split:
+            bands = [bb for bb in _text_line_bands(gray01, b) if bb != b]
+            if bands:
+                out = []
+                for bb in bands:
+                    out += single(bb, False)
+                if any(k != "skip" for k, _, _ in out):
+                    return [o for o in out if o[0] != "skip"] + [o for o in out if o[0] == "skip"]
+        if m is None and read_crop_text(gray01, b, min_conf=_VERIFY_MIN_CONF)[0] >= _CROP_MIN_CHARS:
+            return [("blackout", b, {**info, "reason": reason + "; legible text -> blacked out"})]
+        if m is None and "implausible" in reason and _has_saturated_strokes(gray01, b) and not allow_split:
+            return [("blackout", b, {**info, "reason": reason + " (text-line band) -> blacked out"})]
+        return [("skip", b, {**info, "reason": reason + "; not text -> left untouched"})]
+
+    yield from single(box, True)
+
+
+def _saturated_strokes(gray01: np.ndarray, box: tuple[int, int, int, int]) -> np.ndarray:
+    """Box-local map of saturated thin strokes (either polarity): candidate glyph cores."""
+    from scipy import ndimage as ndi
+
+    x0, y0, x1, y1 = box
+    crop = gray01[y0:y1, x0:x1].astype(np.float32)
+    fp = _disk(2)
+    bright = (crop >= 1.0 - _GLYPH_CORE) & ((crop - ndi.grey_opening(crop, footprint=fp)) >= 0.25)
+    dark = (crop <= _GLYPH_CORE) & ((ndi.grey_closing(crop, footprint=fp) - crop) >= 0.25)
+    return bright | dark
+
+
+def _has_saturated_strokes(gray01: np.ndarray, box: tuple[int, int, int, int]) -> bool:
+    return bool(_saturated_strokes(gray01, box).sum() >= 8)
+
+
+def _text_line_bands(gray01: np.ndarray, box: tuple[int, int, int, int]) -> list[tuple[int, int, int, int]]:
+    """Split a mixed box into bands of rows that contain saturated thin strokes (text lines).
+
+    Each band is cropped horizontally to the columns holding those strokes (plus padding). Bands
+    that are taller than ~3x their stroke content would suggest are not split further.
+    """
+    from scipy import ndimage as ndi
+
+    x0, y0, x1, y1 = box
+    strokes = _saturated_strokes(gray01, box)
+    if strokes.sum() < 8:
+        return []
+    rows = ndi.binary_dilation(strokes.any(axis=1), iterations=2)
+    lab, n = ndi.label(rows)
+    bands = []
+    h, w = gray01.shape
+    for k in range(1, n + 1):
+        ys = np.nonzero(lab == k)[0]
+        by0, by1 = int(ys.min()), int(ys.max()) + 1
+        cols = np.nonzero(strokes[by0:by1].any(axis=0))[0]
+        if cols.size == 0 or strokes[by0:by1].sum() < 8:
+            continue
+        pad = max(3, (by1 - by0) // 3)
+        bands.append((max(0, x0 + int(cols.min()) - pad), max(0, y0 + by0 - 1),
+                      min(w, x0 + int(cols.max()) + 1 + pad), min(h, y0 + by1 + 1)))
+    return bands
+
+
 def segment_text_pixels(
     gray01: np.ndarray,
     box: tuple[int, int, int, int],
@@ -179,25 +387,25 @@ def segment_text_pixels(
         # Both extremes occur (white text on a black corner, or white text next to dark anatomy).
         # The text is the class made of thin strokes: most of it disappears under a morphological
         # opening a little wider than its own stroke width, unlike a flat background or a broad
-        # anatomical structure. Ties go to the minority class.
+        # anatomical structure. Ties go to the minority class. This only sets the ORDER: the other
+        # polarity is still tried if the preferred one yields no plausible glyphs.
         def thin_fraction(cls):
             r = int(np.ceil(_stroke_width(cls) / 2)) + 1
             return float((cls & ~ndi.binary_opening(cls, structure=_disk(r))).sum() / max(1, cls.sum()))
 
         tb_, td_ = thin_fraction(bright_c), thin_fraction(dark_c)
         if abs(tb_ - td_) > 0.1:
-            candidates = ["bright"] if tb_ > td_ else ["dark"]
+            candidates = ["bright", "dark"] if tb_ > td_ else ["dark", "bright"]
         else:
-            candidates = ["bright"] if fb <= fd else ["dark"]
+            candidates = ["bright", "dark"] if fb <= fd else ["dark", "bright"]
     elif fb >= _MIN_EXTREME_FRAC:
         candidates = ["bright"]
     elif fd >= _MIN_EXTREME_FRAC:
         candidates = ["dark"]
     else:
-        candidates = ["bright", "dark"]  # unsaturated text: decide by thin-structure energy below
+        candidates = ["bright", "dark"]  # unsaturated text: ordered by thin-structure energy below
 
-    best = None
-    for polarity in candidates:
+    def stroke_response(polarity):
         cls = bright_c if polarity == "bright" else dark_c
         saturated = bool(cls.sum() >= _MIN_EXTREME_FRAC * n_box)
         if not saturated:  # unsaturated text: use the Otsu side of this polarity as the stroke layer
@@ -214,44 +422,50 @@ def segment_text_pixels(
         resp = np.where(in_box, resp, 0.0)
         contrast = float(np.percentile(resp[in_box], 99.5))
         if contrast < _MIN_ABS_CONTRAST:
-            continue
-        seeds = (resp >= _SEED_CONTRAST * contrast)
+            return None
+        seeds = resp >= _SEED_CONTRAST * contrast
         if saturated:  # seeds must be extreme-valued (or very strongly thin) pixels
             seeds &= cls | (resp >= 0.6 * contrast)
-        energy = float(resp[seeds].sum())
-        if best is None or energy > best[0]:
-            best = (energy, polarity, resp, contrast, seeds, sw)
+        return float(resp[seeds].sum()), resp, contrast, seeds, sw
 
-    if best is None:
+    responses = [(pol, stroke_response(pol)) for pol in candidates]
+    responses = [(pol, r) for pol, r in responses if r is not None]
+    if not fb >= _MIN_EXTREME_FRAC and not fd >= _MIN_EXTREME_FRAC:
+        responses.sort(key=lambda pr: -pr[1][0])
+    if not responses:
         return None, {"polarity": "n/a", "stroke_px": 0.0, "reason": "no thin-stroke contrast inside box"}
 
-    _, polarity, resp, contrast, seeds, sw = best
-    grow_ok = resp >= _GROW_CONTRAST * contrast
-    # Growth may reach ~half a stroke plus 2 px: enough to take in anti-aliasing and the JPEG ringing
-    # halo around glyphs (8x8-block codecs smear 2-4 px), which would otherwise survive as a faint
-    # letter outline. grow_ok (a thin-structure response) keeps growth off flat background and anatomy.
-    steps = max(2, int(np.ceil(sw / 2)) + 2)
-    mask = seeds & grow_ok
     struct8 = np.ones((3, 3), dtype=bool)
-    for _ in range(steps):  # bounded region growing (geodesic dilation inside grow_ok)
-        grown = ndi.binary_dilation(mask, structure=struct8) & grow_ok
-        if np.array_equal(grown, mask):
-            break
-        mask = grown
-    if safety_dilate > 0:
-        mask = ndi.binary_dilation(mask, structure=struct8, iterations=safety_dilate)
-    mask &= in_box
+    failure = None
+    for polarity, (_, resp, contrast, seeds, sw) in responses:
+        grow_ok = resp >= _GROW_CONTRAST * contrast
+        # Growth may reach ~half a stroke plus 2 px: enough to take in anti-aliasing and the JPEG
+        # ringing halo around glyphs (8x8-block codecs smear 2-4 px), which would otherwise survive as a
+        # faint letter outline. grow_ok (a thin-structure response) keeps growth off flat background.
+        steps = max(2, int(np.ceil(sw / 2)) + 2)
+        mask = seeds & grow_ok
+        for _ in range(steps):  # bounded region growing (geodesic dilation inside grow_ok)
+            grown = ndi.binary_dilation(mask, structure=struct8) & grow_ok
+            if np.array_equal(grown, mask):
+                break
+            mask = grown
+        mask, n_rejected = _keep_glyph_components(crop, mask & in_box, polarity)
+        if safety_dilate > 0:
+            mask = ndi.binary_dilation(mask, structure=struct8, iterations=safety_dilate)
+        mask &= in_box
 
-    n_mask = int(mask.sum())
-    info = {"polarity": polarity, "stroke_px": round(sw, 2)}
-    if n_mask == 0:
-        return None, {**info, "reason": "empty glyph mask"}
-    if n_mask > _MAX_MASK_FRAC * n_box:
-        return None, {**info, "reason": f"glyph mask covers {n_mask / n_box:.0%} of box (implausible)"}
-
-    full = np.zeros(gray01.shape, dtype=bool)
-    full[cy0:cy1, cx0:cx1] = mask
-    return full, {**info, "reason": "segmented"}
+        n_mask = int(mask.sum())
+        info = {"polarity": polarity, "stroke_px": round(sw, 2), "rejected_components": n_rejected}
+        if n_mask == 0:
+            failure = failure or (None, {**info, "reason": "empty glyph mask"})
+            continue
+        if n_mask > _MAX_MASK_FRAC * n_box:
+            failure = (None, {**info, "reason": f"glyph mask covers {n_mask / n_box:.0%} of box (implausible)"})
+            continue
+        full = np.zeros(gray01.shape, dtype=bool)
+        full[cy0:cy1, cx0:cx1] = mask
+        return full, {**info, "reason": "segmented"}
+    return failure
 
 
 # ---------------------------------------------------------------------------
@@ -699,38 +913,62 @@ def ghost_ratio(restored01: np.ndarray, mask: np.ndarray) -> float:
     return across_m / (natural_m + 1e-3)
 
 
+def _glyph_zone_bbox(glyph: np.ndarray, pad: int = 3) -> tuple[int, int, int, int] | None:
+    """Tight (x0, y0, x1, y1) around a box-local glyph mask, padded; None if the mask is empty."""
+    ys, xs = np.nonzero(glyph)
+    if ys.size == 0:
+        return None
+    h, w = glyph.shape
+    return (max(0, int(xs.min()) - pad), max(0, int(ys.min()) - pad),
+            min(w, int(xs.max()) + 1 + pad), min(h, int(ys.max()) + 1 + pad))
+
+
 def _boxes_still_text(
     restored01: np.ndarray,
     boxes: list[tuple[int, int, int, int]],
+    glyph_masks: list[np.ndarray],
     upscale_factors,
     check_inverted,
 ) -> list[bool]:
-    """Two independent checks per restored box; either one finding text means "still text".
+    """Two independent checks per restored region; either one finding text means "still text".
 
-    1. v1's detector on the whole restored slice (run on the full slice, not a crop, because its
-       tuned size constants assume the slice's own resolution normalization).
-    2. A native-resolution OCR read of the box crop (both polarities); at least _CROP_MIN_CHARS
+    Both look only where pixels were replaced (the glyph mask and a few pixels around it), not the
+    whole detector box: a v1 box often also covers anatomy that Tesseract "reads" as text both
+    before and after restoration, which says nothing about whether the removed text is gone.
+
+    1. v1's detector on the whole restored slice (run on the full slice, because its tuned size
+       constants assume the slice's own resolution normalization); a detection counts if it overlaps
+       the glyph zone and is not much larger than the region (slice-sized junk rows are ignored).
+    2. A native-resolution OCR read of the glyph zone (both polarities); at least _CROP_MIN_CHARS
        characters read with confidence >= _VERIFY_MIN_CONF means legible text survived.
-    The pixel-level silhouette check (:func:`ghost_ratio`) is applied by the caller, per box mask.
+    The pixel-level silhouette check (:func:`ghost_ratio`) is applied by the caller.
     """
+    from scipy import ndimage as ndi
+
     from .universal_io import detect_text_boxes
 
     found = detect_text_boxes(restored01, upscale_factors=upscale_factors, check_inverted=check_inverted, padding=0)
     flags = []
-    for x0, y0, x1, y1 in boxes:
+    for (x0, y0, x1, y1), glyph in zip(boxes, glyph_masks):
+        zb = _glyph_zone_bbox(glyph)
+        if zb is None:
+            flags.append(False)
+            continue
+        zone = np.zeros(restored01.shape, dtype=bool)
+        zone[y0:y1, x0:x1] = ndi.binary_dilation(glyph, iterations=3)
         area = max(1, (x1 - x0) * (y1 - y0))
         hit = False
         for fx0, fy0, fx1, fy1, _ in found:
             f_area = max(1, (fx1 - fx0) * (fy1 - fy0))
-            inter = max(0, min(x1, fx1) - max(x0, fx0)) * max(0, min(y1, fy1) - max(y0, fy0))
-            # Only a detection that lies mostly inside this region and is not much larger than it counts:
-            # on noisy screenshots Tesseract's whole-slice layout pass can return slice-sized junk rows
-            # after the text is gone, which overlap every region without meaning anything is left.
-            if inter >= 0.5 * f_area and f_area <= 2 * area:
+            if f_area > 2 * area:
+                continue
+            if zone[fy0:fy1, fx0:fx1].sum() >= max(4, 0.05 * f_area):
                 hit = True
                 break
         if not hit:
-            hit = read_crop_text(restored01, (x0, y0, x1, y1), min_conf=_VERIFY_MIN_CONF)[0] >= _CROP_MIN_CHARS
+            zx0, zy0, zx1, zy1 = zb
+            hit = read_crop_text(restored01, (x0 + zx0, y0 + zy0, x0 + zx1, y0 + zy1),
+                                 min_conf=_VERIFY_MIN_CONF)[0] >= _CROP_MIN_CHARS
         flags.append(hit)
     return flags
 
@@ -843,36 +1081,39 @@ def restore_burned_in_text(
                 black_mask[y0:y1, x0:x1] = True
                 regions.append(RegionResult(i, box, conf, "blackout", "method=blackout", "n/a", n_box, n_box))
                 continue
-            m, info = segment_text_pixels(gray01, box)
-            if m is None and read_crop_text(gray01, box, min_conf=_VERIFY_MIN_CONF)[0] < _CROP_MIN_CHARS:
-                # Two independent checks say this detector box is not text: no plausible glyph strokes,
-                # and a native-resolution OCR read finds no legible characters (typical of v1's
-                # whole-slice pass "reading" noisy tissue). Blacking it out would destroy anatomy, so
-                # leave it untouched and flag it for human review instead.
-                regions.append(RegionResult(i, box, conf, "skipped_not_text",
-                                            info["reason"] + "; crop OCR found no legible text",
-                                            info["polarity"], 0, n_box))
-                continue
-            if m is None:
-                black_mask[y0:y1, x0:x1] = True
-                regions.append(RegionResult(i, box, conf, "fallback_blackout", info["reason"],
-                                            info["polarity"], n_box, n_box))
-                continue
-            slice_mask |= m
-            pending.append((box, conf, info, n_box))
+            for kind, rbox, payload in _resolve_box(gray01, box):
+                bx0, by0, bx1, by1 = rbox
+                nb = (bx1 - bx0) * (by1 - by0)
+                if kind == "glyphs":
+                    mb, ib = payload
+                    slice_mask |= mb
+                    pending.append((rbox, conf, ib, nb))
+                elif kind == "blackout":
+                    black_mask[by0:by1, bx0:bx1] = True
+                    regions.append(RegionResult(i, rbox, conf, "fallback_blackout", payload["reason"],
+                                                payload.get("polarity", "n/a"), nb, nb))
+                else:  # "skip"
+                    regions.append(RegionResult(i, rbox, conf, "skipped_not_text", payload["reason"],
+                                                payload.get("polarity", "n/a"), 0, nb))
 
         restored01 = inpaint_mask(gray01, slice_mask, method) if slice_mask.any() else gray01
 
-        still = (_boxes_still_text(restored01, [p[0] for p in pending], factors, check_inverted)
+        glyphs = [slice_mask[b[1]:b[3], b[0]:b[2]] for b, *_ in pending]
+        still = (_boxes_still_text(restored01, [p[0] for p in pending], glyphs, factors, check_inverted)
                  if verify and pending else [False] * len(pending))
-        for (box, conf, info, n_box), leaked in zip(pending, still):
+        for (box, conf, info, n_box), leaked, box_mask in zip(pending, still, glyphs):
             x0, y0, x1, y1 = box
-            box_mask = slice_mask[y0:y1, x0:x1]
             ghost = ghost_ratio(restored01[y0:y1, x0:x1], box_mask) if verify else 0.0
             if leaked or ghost > _GHOST_RATIO:
-                black_mask[y0:y1, x0:x1] = True
+                # Black out the rectangle around the replaced glyphs (the text line itself), not the
+                # whole detector box, which may extend over anatomy. A rectangle -- never the glyph
+                # shape -- so no letter silhouette is left behind.
+                zx0, zy0, zx1, zy1 = _glyph_zone_bbox(box_mask) or (0, 0, x1 - x0, y1 - y0)
+                black_mask[y0 + zy0:y0 + zy1, x0 + zx0:x0 + zx1] = True
+                n_black_px = (zx1 - zx0) * (zy1 - zy0)
                 why = "text still detected after restoration" if leaked else f"glyph silhouette visible (ghost ratio {ghost:.2f})"
-                regions.append(RegionResult(i, box, conf, "fallback_blackout", why, info["polarity"], n_box, n_box))
+                regions.append(RegionResult(i, box, conf, "fallback_blackout", why + "; blacked out the text line only",
+                                            info["polarity"], n_black_px, n_box))
             else:
                 regions.append(RegionResult(i, box, conf, "restored", info["reason"], info["polarity"],
                                             int(box_mask.sum()), n_box))

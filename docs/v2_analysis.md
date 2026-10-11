@@ -59,19 +59,22 @@ every pixel in each padded row box to 0**. Two problems follow:
 |---|---|---|---|---|---|
 | v1 (black box, v1 detector) | 33.6% / 95.2% | 9.8% | 0.188 | 0.51 | – |
 | v2 detector + black box | 6.1% / 28.6% | 11.0% | 0.171 | 0.40 | 0 |
-| **v2 Telea (default)** | **5.0% / 28.6%** | **55.7%** | **0.041** | **0.77** | **5** |
-| v2 Navier–Stokes | 5.6% / 28.6% | 52.5% | 0.037 | 0.79 | 10 |
-| v2 biharmonic | 3.6% / 28.6% | 47.9% | 0.054 | 0.71 | 11 |
-| v2 ViT-MAE + Poisson | 4.4% / 28.6% | 39.9% | 0.075 | 0.65 | 15 |
-| v2 plain ViT-MAE | 5.5% / 28.6% | 20.8% | 0.104 | 0.53 | 49 |
+| **v2 Telea (default)** | **4.3% / 28.6%** | **57.3%** | **0.037** | **0.79** | **1** |
+| v2 Navier–Stokes | 4.6% / 33.3% | 59.0% | 0.036 | 0.79 | 1 |
+| v2 biharmonic | 4.4% / 28.6% | 57.8% | 0.040 | 0.77 | 2 |
+| v2 ViT-MAE + Poisson | 4.9% / 33.3% | 54.1% | 0.052 | 0.76 | 8 |
+| v2 plain ViT-MAE | 5.2% / 28.6% | 32.5% | 0.118 | 0.51 | 48 |
+
+(Numbers after the anatomy-safety changes in §7; the first v2 run had Telea at 5.0% / 55.7% / 0.77 /
+5 fallbacks.)
 
 Text left readable, by layout (mean / worst case):
 
 | Layout | v1 | v2 Telea |
 |---|---|---|
 | Corner annotations | 3.3% / 5.3% | 4.9% / 6.3% (OCR noise floor) |
-| Bright label over anatomy | **71.4% / 95.2%** | 4.8% / 23.8% |
-| Dark label over anatomy | 26.2% / 81.0% | 5.4% / 28.6% |
+| Bright label over anatomy | **71.4% / 95.2%** | 4.2% |
+| Dark label over anatomy | 26.2% / 81.0% | 4.8% |
 
 With the oracle (true glyph) mask, i.e. inpainting quality alone, PSNR over the text footprint:
 
@@ -158,3 +161,36 @@ method): `benchmarks/results/panel_*.png`.
    Poisson.
 4. **Verify:** v1 detector on the full restored slice, crop OCR (confidence
    ≥ 40) and the ghost ratio (≤ 1.5). Any failure → black box + review flag.
+
+## 7. Tissue mistaken for text (found on real screenshots)
+
+Real pelvic MRI screenshots showed changed pixels where there was no text. The cause was v1's
+whole-slice Tesseract pass returning boxes over anatomy. Inside those boxes, thin bright tissue (the
+subcutaneous fat rim, fat septa) passes a top-hat test exactly like a letter stroke, so it was
+inpainted, or blacked out by the safety fallback. This was reproduced on pelvis phantoms with fat
+rims at 80/88/95% of the text brightness (3 seeds, plus a JPEG screenshot case), and fixed as
+follows:
+
+* **Per-component glyph test.** A stroke component is kept only if its core reaches the display
+  extreme, or it sits on the same text line next to such a component. Its height must also match the
+  line's glyph height; long flat lines and tall blobs are dropped.
+* **Positive text evidence per glyph cluster.** At least 0.10 stroke crossings per pixel of row
+  length, or OCR reading ≥ 3 characters at confidence ≥ 60. On the phantoms, tissue never exceeded
+  0.098, and OCR at 60 never read 3 characters on tissue. Clusters without evidence are left
+  untouched.
+* **Mixed boxes are split** into text-line bands of saturated strokes, and each band is judged
+  separately. Rows without text strokes are never touched.
+* **Both polarities are tried** before giving up on a box, so a wrong first polarity guess cannot
+  leave text behind.
+* **Verification only looks where pixels were replaced**, and a failed check blacks out only the
+  text line's rectangle, not the whole detector box.
+* **JPEG halos.** Region growing reaches 2–3 px further, into the ringing halo around glyphs.
+* **Boxes with no strokes and no legible OCR** are left untouched and flagged
+  (`skipped_region_not_text`) instead of being blacked out.
+
+Phantom result (9 variants): text pixels left unmasked went from 589–1145 to 105 of 36,468 in total,
+with no legible residue. Tissue pixels changed went from up to 53,651 per image to 1,977 in total;
+6 of 9 variants changed none. The residue is in the hardest variant, fat at 95% of the text
+brightness. Both behaviours are covered by `test_bright_fat_rim_and_septa_are_not_treated_as_text`
+and `test_jpeg_screenshot_text_restored_not_blacked_out`.
+

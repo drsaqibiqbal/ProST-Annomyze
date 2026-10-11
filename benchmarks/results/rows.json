@@ -14,7 +14,7 @@
   "psnr_text_footprint": 78.0087093261266,
   "ssim_text_bbox": 0.9994866438186585,
   "ghost_ratio": 1.88929750478819,
-  "seconds": 1.0363354000728577,
+  "seconds": 1.0872853000182658,
   "identical_to_v1": true
  },
  {
@@ -33,7 +33,7 @@
   "psnr_text_footprint": 78.0087093261266,
   "ssim_text_bbox": 0.9994866438186585,
   "ghost_ratio": 1.88929750478819,
-  "seconds": 1.08091100002639
+  "seconds": 1.1709167000371963
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -43,15 +43,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.05263157894736842,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7267729521715228,
-  "non_text_px_altered": 1316,
-  "mae_text_footprint": 0.011497712441995059,
-  "psnr_text_footprint": 25.13780775316331,
-  "ssim_text_bbox": 0.9408986882199809,
-  "ghost_ratio": 0.7580436641761369,
-  "seconds": 2.60161880007945
+  "residual_chars": 0.031578947368421054,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.7281473336998351,
+  "non_text_px_altered": 1285,
+  "mae_text_footprint": 0.0021554906029219493,
+  "psnr_text_footprint": 32.10858966352086,
+  "ssim_text_bbox": 0.9885360166066458,
+  "ghost_ratio": 0.31738220529135486,
+  "seconds": 2.7797761999536306
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -60,16 +60,16 @@
   "text_lines": 6,
   "method": "ns",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.042105263157894736,
+  "fallbacks": 0,
+  "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.45354590434304565,
-  "non_text_px_altered": 4280,
-  "mae_text_footprint": 0.0038872193941443573,
-  "psnr_text_footprint": 30.611504255439975,
-  "ssim_text_bbox": 0.9837285410095329,
-  "ghost_ratio": 0.6253556328232971,
-  "seconds": 2.565381299937144
+  "box_px_retained": 0.780831958951805,
+  "non_text_px_altered": 710,
+  "mae_text_footprint": 0.0025693691607652975,
+  "psnr_text_footprint": 31.158865978865997,
+  "ssim_text_bbox": 0.9877854491735415,
+  "ghost_ratio": 0.7173319960122326,
+  "seconds": 2.787027300102636
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -79,15 +79,15 @@
   "method": "biharmonic",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.021052631578947368,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7588418544988089,
-  "non_text_px_altered": 966,
-  "mae_text_footprint": 0.014002134505991092,
-  "psnr_text_footprint": 23.709878395807458,
-  "ssim_text_bbox": 0.9429542224453556,
-  "ghost_ratio": 0.7749224222817269,
-  "seconds": 2.574785599950701
+  "residual_chars": 0.031578947368421054,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.7844053509254169,
+  "non_text_px_altered": 671,
+  "mae_text_footprint": 0.0030501327082908905,
+  "psnr_text_footprint": 31.19085031923031,
+  "ssim_text_bbox": 0.9868396068295934,
+  "ghost_ratio": 0.45537005348085946,
+  "seconds": 2.879684700164944
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -99,13 +99,13 @@
   "fallbacks": 4,
   "residual_chars": 0.042105263157894736,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.015026571376214036,
-  "non_text_px_altered": 9064,
+  "box_px_retained": 0.3202308960967565,
+  "non_text_px_altered": 5733,
   "mae_text_footprint": 0.00010601658443218091,
   "psnr_text_footprint": 78.0087093261266,
-  "ssim_text_bbox": 0.9994866438186585,
-  "ghost_ratio": 1.88929750478819,
-  "seconds": 2.884243000065908
+  "ssim_text_bbox": 0.999874437352758,
+  "ghost_ratio": 1.532914012592394,
+  "seconds": 3.119472300168127
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -114,16 +114,16 @@
   "text_lines": 6,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 0,
-  "residual_chars": 0.021052631578947368,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7017592083562397,
-  "non_text_px_altered": 1589,
-  "mae_text_footprint": 0.01089282685339317,
-  "psnr_text_footprint": 25.693949260065953,
-  "ssim_text_bbox": 0.9397113431680713,
-  "ghost_ratio": 1.2165535444867268,
-  "seconds": 2.8719104998745024
+  "fallbacks": 2,
+  "residual_chars": 0.06315789473684211,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.516034451163643,
+  "non_text_px_altered": 3596,
+  "mae_text_footprint": 0.000304595239643575,
+  "psnr_text_footprint": 63.307121432673526,
+  "ssim_text_bbox": 0.9993603959832402,
+  "ghost_ratio": 0.23401283460001215,
+  "seconds": 3.0591230001300573
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -140,7 +140,7 @@
   "psnr_text_footprint": 79.61603874615618,
   "ssim_text_bbox": 0.9999901747550859,
   "ghost_ratio": 0.034446707686209194,
-  "seconds": 0.002051800023764372
+  "seconds": 0.002189499791711569
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -157,7 +157,7 @@
   "psnr_text_footprint": 85.93716996056031,
   "ssim_text_bbox": 0.9999984474550453,
   "ghost_ratio": 0.01829233045413559,
-  "seconds": 0.0017897000070661306
+  "seconds": 0.0017211001832038164
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -174,7 +174,7 @@
   "psnr_text_footprint": 84.73329943580184,
   "ssim_text_bbox": 0.9999972789075459,
   "ghost_ratio": 0.01455341214004865,
-  "seconds": 0.007580399978905916
+  "seconds": 0.008913200115785003
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -191,7 +191,7 @@
   "psnr_text_footprint": 33.1613663243999,
   "ssim_text_bbox": 0.7093614746405902,
   "ghost_ratio": 18.461022996310124,
-  "seconds": 0.22028780006803572
+  "seconds": 0.23002150002866983
  },
  {
   "case": "skimage_brain_s3|lucida_console|corner_annotations",
@@ -208,7 +208,7 @@
   "psnr_text_footprint": 62.99780081445891,
   "ssim_text_bbox": 0.9994723222781204,
   "ghost_ratio": 0.27561302999730397,
-  "seconds": 0.22530020005069673
+  "seconds": 0.24313580011948943
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -225,7 +225,7 @@
   "psnr_text_footprint": 5.734207036363,
   "ssim_text_bbox": 0.11462644563509648,
   "ghost_ratio": 0.0,
-  "seconds": 0.7110095000825822,
+  "seconds": 0.7351585000287741,
   "identical_to_v1": true
  },
  {
@@ -244,7 +244,7 @@
   "psnr_text_footprint": 12.81537378284453,
   "ssim_text_bbox": 0.0057296822127631914,
   "ghost_ratio": 15.010613544951184,
-  "seconds": 1.0483813998289406
+  "seconds": 1.1001405001152307
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -255,14 +255,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.01092896174863388,
-  "box_px_retained": 0.56951871657754,
-  "non_text_px_altered": 313,
-  "mae_text_footprint": 0.023365006515417033,
-  "psnr_text_footprint": 22.99652381426558,
-  "ssim_text_bbox": 0.888320054029332,
-  "ghost_ratio": 0.8483207948653979,
-  "seconds": 2.1349842997733504
+  "glyph_px_unmodified": 0.0546448087431694,
+  "box_px_retained": 0.6056149732620321,
+  "non_text_px_altered": 273,
+  "mae_text_footprint": 0.015301146023714657,
+  "psnr_text_footprint": 24.102812103090688,
+  "ssim_text_bbox": 0.9190037259025797,
+  "ghost_ratio": 0.7916434873183693,
+  "seconds": 2.229808800155297
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -273,14 +273,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.01092896174863388,
-  "box_px_retained": 0.5688502673796791,
-  "non_text_px_altered": 314,
-  "mae_text_footprint": 0.022712385004892227,
-  "psnr_text_footprint": 23.262676847851573,
-  "ssim_text_bbox": 0.8937051472034977,
-  "ghost_ratio": 0.9401470138999454,
-  "seconds": 2.1255607998464257
+  "glyph_px_unmodified": 0.0546448087431694,
+  "box_px_retained": 0.6049465240641712,
+  "non_text_px_altered": 274,
+  "mae_text_footprint": 0.015358967955155263,
+  "psnr_text_footprint": 24.15335377961219,
+  "ssim_text_bbox": 0.9157348516408299,
+  "ghost_ratio": 0.9609885300128849,
+  "seconds": 2.192767499946058
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -289,16 +289,16 @@
   "text_lines": 1,
   "method": "biharmonic",
   "mask": "detector",
-  "fallbacks": 1,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.008021390374331552,
-  "non_text_px_altered": 1149,
-  "mae_text_footprint": 0.19136676764605176,
-  "psnr_text_footprint": 12.81537378284453,
-  "ssim_text_bbox": 0.006313871440988712,
-  "ghost_ratio": 15.009340087385118,
-  "seconds": 2.1256112998817116
+  "fallbacks": 0,
+  "residual_chars": 0.047619047619047616,
+  "glyph_px_unmodified": 0.0546448087431694,
+  "box_px_retained": 0.6062834224598931,
+  "non_text_px_altered": 272,
+  "mae_text_footprint": 0.021460505356714295,
+  "psnr_text_footprint": 22.95915936650625,
+  "ssim_text_bbox": 0.8919865357279341,
+  "ghost_ratio": 0.8882766103510026,
+  "seconds": 2.2742609998676926
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -309,14 +309,14 @@
   "mask": "detector",
   "fallbacks": 2,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.0,
-  "non_text_px_altered": 1161,
-  "mae_text_footprint": 0.19136676764605176,
-  "psnr_text_footprint": 12.81537378284453,
-  "ssim_text_bbox": 0.0057296822127631914,
-  "ghost_ratio": 15.010613544951184,
-  "seconds": 2.310702499933541
+  "glyph_px_unmodified": 0.04918032786885246,
+  "box_px_retained": 0.12299465240641712,
+  "non_text_px_altered": 993,
+  "mae_text_footprint": 0.1643515949622468,
+  "psnr_text_footprint": 15.514392248391154,
+  "ssim_text_bbox": 0.06593728936743493,
+  "ghost_ratio": 16.12515507219765,
+  "seconds": 2.304763400228694
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -325,16 +325,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 1,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.008021390374331552,
-  "non_text_px_altered": 1149,
-  "mae_text_footprint": 0.19136676764605176,
-  "psnr_text_footprint": 12.81537378284453,
-  "ssim_text_bbox": 0.006313871440988712,
-  "ghost_ratio": 15.009340087385118,
-  "seconds": 2.314766899915412
+  "fallbacks": 0,
+  "residual_chars": 0.047619047619047616,
+  "glyph_px_unmodified": 0.0546448087431694,
+  "box_px_retained": 0.6056149732620321,
+  "non_text_px_altered": 273,
+  "mae_text_footprint": 0.01620950766715328,
+  "psnr_text_footprint": 24.355270576459333,
+  "ssim_text_bbox": 0.9237955708120206,
+  "ghost_ratio": 1.1027097946565116,
+  "seconds": 2.2779639998916537
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -351,7 +351,7 @@
   "psnr_text_footprint": 23.702167236418042,
   "ssim_text_bbox": 0.9813315766483209,
   "ghost_ratio": 0.9308345253423861,
-  "seconds": 0.0008260998874902725
+  "seconds": 0.0007627001032233238
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -368,7 +368,7 @@
   "psnr_text_footprint": 24.602274510012506,
   "ssim_text_bbox": 0.9847561000366238,
   "ghost_ratio": 0.8141834651784942,
-  "seconds": 0.0006231998559087515
+  "seconds": 0.0006096998695284128
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -385,7 +385,7 @@
   "psnr_text_footprint": 33.426971990471344,
   "ssim_text_bbox": 0.9936227571187873,
   "ghost_ratio": 0.8597048738973435,
-  "seconds": 0.003111399943009019
+  "seconds": 0.002928899833932519
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -402,7 +402,7 @@
   "psnr_text_footprint": 31.95613782460893,
   "ssim_text_bbox": 0.9364985637133579,
   "ghost_ratio": 2.879055273273772,
-  "seconds": 0.12231250014156103
+  "seconds": 0.11427360004745424
  },
  {
   "case": "skimage_brain_s3|lucida_console|overlay_on_anatomy",
@@ -419,7 +419,7 @@
   "psnr_text_footprint": 33.678978630196575,
   "ssim_text_bbox": 0.9944898066982591,
   "ghost_ratio": 1.1048735411090072,
-  "seconds": 0.12479439983144403
+  "seconds": 0.092549400171265
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -436,7 +436,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.7516384997870773,
+  "seconds": 0.7151150999125093,
   "identical_to_v1": true
  },
  {
@@ -455,7 +455,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8592627998441458
+  "seconds": 0.7483771999832243
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -473,7 +473,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8593398998491466
+  "seconds": 0.7485292998608202
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -491,7 +491,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8594206999987364
+  "seconds": 0.7484062998555601
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -509,7 +509,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8594279999379069
+  "seconds": 0.7484063999727368
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -527,7 +527,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8593037000391632
+  "seconds": 0.7484083997551352
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -545,7 +545,7 @@
   "psnr_text_footprint": 16.60815745316569,
   "ssim_text_bbox": 0.3323376452665507,
   "ghost_ratio": 0.0,
-  "seconds": 0.8592999000102282
+  "seconds": 0.7484002998098731
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -562,7 +562,7 @@
   "psnr_text_footprint": 23.702167236418042,
   "ssim_text_bbox": 0.9813315766483209,
   "ghost_ratio": 0.9308345253423861,
-  "seconds": 0.0007788999937474728
+  "seconds": 0.0008026000577956438
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -579,7 +579,7 @@
   "psnr_text_footprint": 24.602274510012506,
   "ssim_text_bbox": 0.9847561000366238,
   "ghost_ratio": 0.8141834651784942,
-  "seconds": 0.0007786001078784466
+  "seconds": 0.0005764998495578766
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -596,7 +596,7 @@
   "psnr_text_footprint": 33.426971990471344,
   "ssim_text_bbox": 0.9936227571187873,
   "ghost_ratio": 0.8597048738973435,
-  "seconds": 0.002893500030040741
+  "seconds": 0.0031672001350671053
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -613,7 +613,7 @@
   "psnr_text_footprint": 31.95613782460893,
   "ssim_text_bbox": 0.9364985637133579,
   "ghost_ratio": 2.879055273273772,
-  "seconds": 0.11848980002105236
+  "seconds": 0.11808490008115768
  },
  {
   "case": "skimage_brain_s3|lucida_console|dark_overlay_on_anatomy",
@@ -630,7 +630,7 @@
   "psnr_text_footprint": 33.678978630196575,
   "ssim_text_bbox": 0.9944898066982591,
   "ghost_ratio": 1.1048735411090072,
-  "seconds": 0.11946609988808632
+  "seconds": 0.11722039990127087
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -647,7 +647,7 @@
   "psnr_text_footprint": 77.59275482256362,
   "ssim_text_bbox": 0.9796598591841423,
   "ghost_ratio": 2.0578486504969464,
-  "seconds": 1.0305520000401884,
+  "seconds": 1.0236003999598324,
   "identical_to_v1": true
  },
  {
@@ -666,7 +666,7 @@
   "psnr_text_footprint": 77.59275482256362,
   "ssim_text_bbox": 0.9796598591841423,
   "ghost_ratio": 2.0578486504969464,
-  "seconds": 1.1433391000609845
+  "seconds": 1.0701301000081003
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -675,16 +675,16 @@
   "text_lines": 6,
   "method": "telea",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.06315789473684211,
-  "glyph_px_unmodified": 0.006659267480577136,
-  "box_px_retained": 0.6745945411392406,
-  "non_text_px_altered": 4761,
-  "mae_text_footprint": 0.02649332789184361,
-  "psnr_text_footprint": 21.47396990983053,
-  "ssim_text_bbox": 0.8716055468827981,
-  "ghost_ratio": 0.7948999690233701,
-  "seconds": 2.9188959000166506
+  "fallbacks": 0,
+  "residual_chars": 0.031578947368421054,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.8410304588607594,
+  "non_text_px_altered": 1357,
+  "mae_text_footprint": 0.008556109278996627,
+  "psnr_text_footprint": 27.175858681228394,
+  "ssim_text_bbox": 0.9426625993785916,
+  "ghost_ratio": 0.7154045341832493,
+  "seconds": 4.406478499993682
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -693,16 +693,16 @@
   "text_lines": 6,
   "method": "ns",
   "mask": "detector",
-  "fallbacks": 4,
+  "fallbacks": 0,
   "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.02165743670886076,
-  "non_text_px_altered": 17914,
-  "mae_text_footprint": 0.00010902178251474618,
-  "psnr_text_footprint": 77.59275482256362,
-  "ssim_text_bbox": 0.9796598591841423,
-  "ghost_ratio": 2.0578486504969464,
-  "seconds": 2.9253970999270678
+  "box_px_retained": 0.8722310126582279,
+  "non_text_px_altered": 726,
+  "mae_text_footprint": 0.011075902498397773,
+  "psnr_text_footprint": 26.519298798832118,
+  "ssim_text_bbox": 0.9296062393667033,
+  "ghost_ratio": 1.168652907952786,
+  "seconds": 4.323937699897215
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -711,16 +711,16 @@
   "text_lines": 6,
   "method": "biharmonic",
   "mask": "detector",
-  "fallbacks": 4,
-  "residual_chars": 0.031578947368421054,
+  "fallbacks": 0,
+  "residual_chars": 0.021052631578947368,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.02165743670886076,
-  "non_text_px_altered": 17914,
-  "mae_text_footprint": 0.00010902178251474618,
-  "psnr_text_footprint": 77.59275482256362,
-  "ssim_text_bbox": 0.9796598591841423,
-  "ghost_ratio": 2.0578486504969464,
-  "seconds": 2.5859288000501692
+  "box_px_retained": 0.8677808544303798,
+  "non_text_px_altered": 816,
+  "mae_text_footprint": 0.021389737126977205,
+  "psnr_text_footprint": 22.90562320627915,
+  "ssim_text_bbox": 0.9083919033007628,
+  "ghost_ratio": 1.1500000216710367,
+  "seconds": 4.400158199947327
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -732,13 +732,13 @@
   "fallbacks": 4,
   "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.02165743670886076,
-  "non_text_px_altered": 17914,
+  "box_px_retained": 0.43824169303797467,
+  "non_text_px_altered": 9489,
   "mae_text_footprint": 0.00010902178251474618,
   "psnr_text_footprint": 77.59275482256362,
   "ssim_text_bbox": 0.9796598591841423,
-  "ghost_ratio": 2.0578486504969464,
-  "seconds": 3.045828200178221
+  "ghost_ratio": 1.6340112084964167,
+  "seconds": 4.679358899826184
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -747,16 +747,16 @@
   "text_lines": 6,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 4,
-  "residual_chars": 0.031578947368421054,
+  "fallbacks": 2,
+  "residual_chars": 0.05263157894736842,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.02165743670886076,
-  "non_text_px_altered": 17914,
-  "mae_text_footprint": 0.00010902178251474618,
-  "psnr_text_footprint": 77.59275482256362,
-  "ssim_text_bbox": 0.9796598591841423,
-  "ghost_ratio": 2.0578486504969464,
-  "seconds": 3.235613299999386
+  "box_px_retained": 0.7354133702531646,
+  "non_text_px_altered": 3491,
+  "mae_text_footprint": 0.008455552423906412,
+  "psnr_text_footprint": 28.1241267353929,
+  "ssim_text_bbox": 0.9372707947887914,
+  "ghost_ratio": 1.263653165647473,
+  "seconds": 4.675590900005773
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -773,7 +773,7 @@
   "psnr_text_footprint": 85.37056684942387,
   "ssim_text_bbox": 0.9999974682462304,
   "ghost_ratio": 0.02893033579613786,
-  "seconds": 0.00205029989592731
+  "seconds": 0.0023652000818401575
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -790,7 +790,7 @@
   "psnr_text_footprint": 85.71503411253717,
   "ssim_text_bbox": 0.999997890526768,
   "ghost_ratio": 0.015784386313481596,
-  "seconds": 0.0019938999321311712
+  "seconds": 0.001938000088557601
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -807,7 +807,7 @@
   "psnr_text_footprint": 85.45803967323523,
   "ssim_text_bbox": 0.999997786064257,
   "ghost_ratio": 0.012905278714395063,
-  "seconds": 0.009833100019022822
+  "seconds": 0.008530299877747893
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -824,7 +824,7 @@
   "psnr_text_footprint": 32.722954599869226,
   "ssim_text_bbox": 0.676669599748717,
   "ghost_ratio": 21.506520914808647,
-  "seconds": 0.23313549999147654
+  "seconds": 0.23376570013351738
  },
  {
   "case": "skimage_brain_s3|arial|corner_annotations",
@@ -841,7 +841,7 @@
   "psnr_text_footprint": 62.518241799166475,
   "ssim_text_bbox": 0.9993409821397441,
   "ghost_ratio": 0.29054137722374784,
-  "seconds": 0.22710529994219542
+  "seconds": 0.23689409997314215
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -858,7 +858,7 @@
   "psnr_text_footprint": 13.076092530207447,
   "ssim_text_bbox": 0.003429097845461336,
   "ghost_ratio": 17.280152165603244,
-  "seconds": 0.7459543000441045,
+  "seconds": 0.7966471000108868,
   "identical_to_v1": true
  },
  {
@@ -877,7 +877,7 @@
   "psnr_text_footprint": 13.076092530207447,
   "ssim_text_bbox": 0.003429097845461336,
   "ghost_ratio": 17.280152165603244,
-  "seconds": 0.7745130001567304
+  "seconds": 0.8144833999685943
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -887,15 +887,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.23809523809523808,
-  "glyph_px_unmodified": 0.03260869565217391,
-  "box_px_retained": 0.6900826446280992,
-  "non_text_px_altered": 396,
-  "mae_text_footprint": 0.07384519153625996,
-  "psnr_text_footprint": 16.477646394136084,
-  "ssim_text_bbox": 0.5003834395951451,
-  "ghost_ratio": 1.2495997355048303,
-  "seconds": 1.9110747000668198
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.059782608695652176,
+  "box_px_retained": 0.7148760330578512,
+  "non_text_px_altered": 337,
+  "mae_text_footprint": 0.02500066041571646,
+  "psnr_text_footprint": 22.34610614980298,
+  "ssim_text_bbox": 0.8108771513220849,
+  "ghost_ratio": 0.8296781834398195,
+  "seconds": 1.922848799964413
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -905,15 +905,15 @@
   "method": "ns",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.2857142857142857,
-  "glyph_px_unmodified": 0.03260869565217391,
-  "box_px_retained": 0.6888429752066115,
-  "non_text_px_altered": 399,
-  "mae_text_footprint": 0.07273994196100425,
-  "psnr_text_footprint": 16.673218178517523,
-  "ssim_text_bbox": 0.49846595491701284,
-  "ghost_ratio": 1.3394673540432762,
-  "seconds": 2.0147510999813676
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.059782608695652176,
+  "box_px_retained": 0.7136363636363636,
+  "non_text_px_altered": 340,
+  "mae_text_footprint": 0.02706460577553711,
+  "psnr_text_footprint": 22.089984531613027,
+  "ssim_text_bbox": 0.7949188864380664,
+  "ghost_ratio": 0.979211748380355,
+  "seconds": 2.0023468998260796
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -922,16 +922,16 @@
   "text_lines": 1,
   "method": "biharmonic",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.002066115702479339,
-  "non_text_px_altered": 2036,
-  "mae_text_footprint": 0.1885364023913884,
-  "psnr_text_footprint": 13.076092530207447,
-  "ssim_text_bbox": 0.003429097845461336,
-  "ghost_ratio": 17.280152165603244,
-  "seconds": 1.9937376000452787
+  "fallbacks": 0,
+  "residual_chars": 0.14285714285714285,
+  "glyph_px_unmodified": 0.059782608695652176,
+  "box_px_retained": 0.7144628099173553,
+  "non_text_px_altered": 338,
+  "mae_text_footprint": 0.04088271934376415,
+  "psnr_text_footprint": 20.646705145304608,
+  "ssim_text_bbox": 0.7420511010039365,
+  "ghost_ratio": 0.9068868370336088,
+  "seconds": 2.217972599901259
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -941,15 +941,15 @@
   "method": "vit_mae",
   "mask": "detector",
   "fallbacks": 2,
-  "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.002066115702479339,
-  "non_text_px_altered": 2036,
-  "mae_text_footprint": 0.1885364023913884,
-  "psnr_text_footprint": 13.076092530207447,
-  "ssim_text_bbox": 0.003429097845461336,
-  "ghost_ratio": 17.280152165603244,
-  "seconds": 2.0199637000914663
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.043478260869565216,
+  "box_px_retained": 0.34917355371900827,
+  "non_text_px_altered": 1212,
+  "mae_text_footprint": 0.16295808604690298,
+  "psnr_text_footprint": 15.613933070848214,
+  "ssim_text_bbox": 0.04988703842593652,
+  "ghost_ratio": 15.83468261498081,
+  "seconds": 2.218715799972415
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -958,16 +958,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.002066115702479339,
-  "non_text_px_altered": 2036,
-  "mae_text_footprint": 0.1885364023913884,
-  "psnr_text_footprint": 13.076092530207447,
-  "ssim_text_bbox": 0.003429097845461336,
-  "ghost_ratio": 17.280152165603244,
-  "seconds": 1.993146600201726
+  "fallbacks": 0,
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.059782608695652176,
+  "box_px_retained": 0.7128099173553719,
+  "non_text_px_altered": 342,
+  "mae_text_footprint": 0.026577037323986898,
+  "psnr_text_footprint": 22.543189012211453,
+  "ssim_text_bbox": 0.8274962867588728,
+  "ghost_ratio": 1.087879486041524,
+  "seconds": 2.280130699975416
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -984,7 +984,7 @@
   "psnr_text_footprint": 25.430220675449622,
   "ssim_text_bbox": 0.9860716923621131,
   "ghost_ratio": 0.459738830669186,
-  "seconds": 0.0010508999694138765
+  "seconds": 0.000937500037252903
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -1001,7 +1001,7 @@
   "psnr_text_footprint": 26.44248686456255,
   "ssim_text_bbox": 0.9884933639925679,
   "ghost_ratio": 0.5125719477783106,
-  "seconds": 0.000645000021904707
+  "seconds": 0.0007908998522907495
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -1018,7 +1018,7 @@
   "psnr_text_footprint": 34.77254908374885,
   "ssim_text_bbox": 0.9936335205125006,
   "ghost_ratio": 0.5774489819397765,
-  "seconds": 0.003140399930998683
+  "seconds": 0.0036530999932438135
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -1035,7 +1035,7 @@
   "psnr_text_footprint": 31.584983840423845,
   "ssim_text_bbox": 0.9318750527941654,
   "ghost_ratio": 2.281015241237228,
-  "seconds": 0.11768019990995526
+  "seconds": 0.12738479999825358
  },
  {
   "case": "skimage_brain_s3|arial|overlay_on_anatomy",
@@ -1052,7 +1052,7 @@
   "psnr_text_footprint": 33.92350533806079,
   "ssim_text_bbox": 0.9935244367041166,
   "ghost_ratio": 0.65556176093683,
-  "seconds": 0.11888470011763275
+  "seconds": 0.13184239994734526
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1069,7 +1069,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7614216001238674,
+  "seconds": 0.9199216000270098,
   "identical_to_v1": true
  },
  {
@@ -1088,7 +1088,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7630856998730451
+  "seconds": 1.4029725999571383
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1106,7 +1106,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7631379999220371
+  "seconds": 1.402918699895963
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1124,7 +1124,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7631304000969976
+  "seconds": 1.4028886000160128
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1142,7 +1142,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7632032998371869
+  "seconds": 1.4029939998872578
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1160,7 +1160,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7631391000468284
+  "seconds": 1.4030517998617142
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1178,7 +1178,7 @@
   "psnr_text_footprint": 17.553218584738136,
   "ssim_text_bbox": 0.31968213157363756,
   "ghost_ratio": 0.0,
-  "seconds": 0.7631362001411617
+  "seconds": 1.402896200073883
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1195,7 +1195,7 @@
   "psnr_text_footprint": 25.430220675449622,
   "ssim_text_bbox": 0.9860716923621131,
   "ghost_ratio": 0.459738830669186,
-  "seconds": 0.000800000037997961
+  "seconds": 0.0009139999747276306
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1212,7 +1212,7 @@
   "psnr_text_footprint": 26.44248686456255,
   "ssim_text_bbox": 0.9884933639925679,
   "ghost_ratio": 0.5125719477783106,
-  "seconds": 0.0006400998681783676
+  "seconds": 0.0006866001058369875
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1229,7 +1229,7 @@
   "psnr_text_footprint": 34.77254908374885,
   "ssim_text_bbox": 0.9936335205125006,
   "ghost_ratio": 0.5774489819397765,
-  "seconds": 0.0035216999240219593
+  "seconds": 0.005409799981862307
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1246,7 +1246,7 @@
   "psnr_text_footprint": 31.584983840423845,
   "ssim_text_bbox": 0.9318750527941654,
   "ghost_ratio": 2.281015241237228,
-  "seconds": 0.11613270011730492
+  "seconds": 0.1191155998967588
  },
  {
   "case": "skimage_brain_s3|arial|dark_overlay_on_anatomy",
@@ -1263,7 +1263,7 @@
   "psnr_text_footprint": 33.92350533806079,
   "ssim_text_bbox": 0.9935244367041166,
   "ghost_ratio": 0.65556176093683,
-  "seconds": 0.12178720021620393
+  "seconds": 0.12338819983415306
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1280,7 +1280,7 @@
   "psnr_text_footprint": 78.2257535678648,
   "ssim_text_bbox": 0.9997306624668396,
   "ghost_ratio": 1.7440242596227256,
-  "seconds": 1.0199414999224246,
+  "seconds": 1.1301656998693943,
   "identical_to_v1": true
  },
  {
@@ -1299,7 +1299,7 @@
   "psnr_text_footprint": 78.2257535678648,
   "ssim_text_bbox": 0.9997306624668396,
   "ghost_ratio": 1.7440242596227256,
-  "seconds": 1.0639274001587182
+  "seconds": 1.1460469998419285
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1309,15 +1309,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.010526315789473684,
-  "glyph_px_unmodified": 0.0012195121951219512,
-  "box_px_retained": 0.7422020051986632,
-  "non_text_px_altered": 1203,
-  "mae_text_footprint": 0.001826709366049894,
-  "psnr_text_footprint": 34.04649915765836,
-  "ssim_text_bbox": 0.9896148467181757,
-  "ghost_ratio": 0.44340406327814713,
-  "seconds": 2.516256100265309
+  "residual_chars": 0.021052631578947368,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.7387671741552172,
+  "non_text_px_altered": 1237,
+  "mae_text_footprint": 2.8443366615476003e-05,
+  "psnr_text_footprint": 85.73870810049216,
+  "ssim_text_bbox": 0.9999983127404702,
+  "ghost_ratio": 0.026268414029485675,
+  "seconds": 2.5377284998539835
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1327,15 +1327,15 @@
   "method": "ns",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.010526315789473684,
-  "glyph_px_unmodified": 0.0012195121951219512,
-  "box_px_retained": 0.7926104715930189,
-  "non_text_px_altered": 660,
-  "mae_text_footprint": 0.0028710041676043583,
-  "psnr_text_footprint": 32.67107688609162,
-  "ssim_text_bbox": 0.985414446520283,
-  "ghost_ratio": 0.5561550698005264,
-  "seconds": 2.512027299962938
+  "residual_chars": 0.021052631578947368,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.7955811362792424,
+  "non_text_px_altered": 625,
+  "mae_text_footprint": 2.243503839181146e-05,
+  "psnr_text_footprint": 86.64861326106687,
+  "ssim_text_bbox": 0.9999988118024009,
+  "ghost_ratio": 0.013859671859060953,
+  "seconds": 2.4181542000733316
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1345,15 +1345,15 @@
   "method": "biharmonic",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.010526315789473684,
-  "glyph_px_unmodified": 0.0012195121951219512,
-  "box_px_retained": 0.8000371333085778,
-  "non_text_px_altered": 580,
-  "mae_text_footprint": 0.0047374040171416125,
-  "psnr_text_footprint": 29.434700055002132,
-  "ssim_text_bbox": 0.9857202670132045,
-  "ghost_ratio": 0.5949970536018163,
-  "seconds": 2.537558500189334
+  "residual_chars": 0.021052631578947368,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.8051429632380245,
+  "non_text_px_altered": 522,
+  "mae_text_footprint": 2.043719526325305e-05,
+  "psnr_text_footprint": 86.6423778761924,
+  "ssim_text_bbox": 0.999998869652429,
+  "ghost_ratio": 0.011031124636394258,
+  "seconds": 2.4047964999917895
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1365,13 +1365,13 @@
   "fallbacks": 4,
   "residual_chars": 0.021052631578947368,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.015224656516895656,
-  "non_text_px_altered": 9031,
+  "box_px_retained": 0.3350352766431489,
+  "non_text_px_altered": 5586,
   "mae_text_footprint": 0.00010520493926608686,
   "psnr_text_footprint": 78.2257535678648,
-  "ssim_text_bbox": 0.9997306624668396,
-  "ghost_ratio": 1.7440242596227256,
-  "seconds": 2.7703638998791575
+  "ssim_text_bbox": 0.9999054654827325,
+  "ghost_ratio": 0.5957908402284622,
+  "seconds": 2.658854099921882
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1380,16 +1380,16 @@
   "text_lines": 6,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 2,
+  "fallbacks": 0,
   "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.40419606386929074,
-  "non_text_px_altered": 4841,
-  "mae_text_footprint": 0.00026259058128252146,
-  "psnr_text_footprint": 65.08222062436032,
-  "ssim_text_bbox": 0.99964212612497,
-  "ghost_ratio": 0.6482878902902612,
-  "seconds": 2.7711968002840877
+  "box_px_retained": 0.7129595246936502,
+  "non_text_px_altered": 1515,
+  "mae_text_footprint": 0.00040692364819237446,
+  "psnr_text_footprint": 62.171042355449956,
+  "ssim_text_bbox": 0.999271598592506,
+  "ghost_ratio": 0.3587020939335388,
+  "seconds": 2.660332600120455
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1406,7 +1406,7 @@
   "psnr_text_footprint": 86.1611898199655,
   "ssim_text_bbox": 0.9999986500891127,
   "ghost_ratio": 0.028252823017185888,
-  "seconds": 0.0019278000108897686
+  "seconds": 0.0033536001574248075
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1423,7 +1423,7 @@
   "psnr_text_footprint": 86.97163356092106,
   "ssim_text_bbox": 0.9999990620993832,
   "ghost_ratio": 0.016526704235860168,
-  "seconds": 0.0017115999944508076
+  "seconds": 0.0015885999891906977
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1440,7 +1440,7 @@
   "psnr_text_footprint": 85.87463252378171,
   "ssim_text_bbox": 0.9999983193056508,
   "ghost_ratio": 0.012975143433105607,
-  "seconds": 0.009611800080165267
+  "seconds": 0.010727900080382824
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1457,7 +1457,7 @@
   "psnr_text_footprint": 33.06945614804335,
   "ssim_text_bbox": 0.7174046767000613,
   "ghost_ratio": 20.76376581845581,
-  "seconds": 0.2384470000397414
+  "seconds": 0.22595439990982413
  },
  {
   "case": "skimage_brain_s3|consolas|corner_annotations",
@@ -1474,7 +1474,7 @@
   "psnr_text_footprint": 63.32841638700324,
   "ssim_text_bbox": 0.999625924707564,
   "ghost_ratio": 0.3064351347386056,
-  "seconds": 0.22757779993116856
+  "seconds": 0.2297779000364244
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1491,7 +1491,7 @@
   "psnr_text_footprint": 13.332542662307514,
   "ssim_text_bbox": 0.0034227794393033614,
   "ghost_ratio": 17.490524435735207,
-  "seconds": 0.7709592001046985,
+  "seconds": 0.7507745998445898,
   "identical_to_v1": true
  },
  {
@@ -1510,7 +1510,7 @@
   "psnr_text_footprint": 13.332542662307514,
   "ssim_text_bbox": 0.0034227794393033614,
   "ghost_ratio": 17.490524435735207,
-  "seconds": 0.7537209000438452
+  "seconds": 0.7951883999630809
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1520,15 +1520,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7236842105263158,
-  "non_text_px_altered": 351,
-  "mae_text_footprint": 0.019724769928508638,
-  "psnr_text_footprint": 20.191974409022468,
-  "ssim_text_bbox": 0.9513851173152602,
-  "ghost_ratio": 0.8395289182420144,
-  "seconds": 1.8840790002141148
+  "residual_chars": 0.047619047619047616,
+  "glyph_px_unmodified": 0.05625,
+  "box_px_retained": 0.7601867572156197,
+  "non_text_px_altered": 278,
+  "mae_text_footprint": 0.010860152317829278,
+  "psnr_text_footprint": 25.2494856641932,
+  "ssim_text_bbox": 0.9891521073505302,
+  "ghost_ratio": 0.411149143535147,
+  "seconds": 1.9062807001173496
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1538,15 +1538,15 @@
   "method": "ns",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7236842105263158,
-  "non_text_px_altered": 351,
-  "mae_text_footprint": 0.018964269877943474,
-  "psnr_text_footprint": 20.437453690269717,
-  "ssim_text_bbox": 0.9537039186875591,
-  "ghost_ratio": 0.708118630949654,
-  "seconds": 1.8504720001947135
+  "residual_chars": 0.047619047619047616,
+  "glyph_px_unmodified": 0.05625,
+  "box_px_retained": 0.7597623089983022,
+  "non_text_px_altered": 279,
+  "mae_text_footprint": 0.010827479443316456,
+  "psnr_text_footprint": 25.250102818541635,
+  "ssim_text_bbox": 0.9892329815605244,
+  "ghost_ratio": 0.4635145634399014,
+  "seconds": 1.9288021000102162
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1557,14 +1557,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7245331069609507,
-  "non_text_px_altered": 349,
-  "mae_text_footprint": 0.016533563599306092,
-  "psnr_text_footprint": 21.942301388777416,
-  "ssim_text_bbox": 0.9661732231293223,
-  "ghost_ratio": 1.0164572300986812,
-  "seconds": 1.8767055000644177
+  "glyph_px_unmodified": 0.05625,
+  "box_px_retained": 0.7597623089983022,
+  "non_text_px_altered": 279,
+  "mae_text_footprint": 0.011285988782313086,
+  "psnr_text_footprint": 25.245448386401925,
+  "ssim_text_bbox": 0.9881899074002215,
+  "ghost_ratio": 0.3413076723910911,
+  "seconds": 1.8819023000542074
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1574,15 +1574,15 @@
   "method": "vit_mae",
   "mask": "detector",
   "fallbacks": 2,
-  "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.0021222410865874364,
-  "non_text_px_altered": 2051,
-  "mae_text_footprint": 0.1860128980061767,
-  "psnr_text_footprint": 13.332542662307514,
-  "ssim_text_bbox": 0.0034227794393033614,
-  "ghost_ratio": 17.490524435735207,
-  "seconds": 1.9769352001603693
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.05625,
+  "box_px_retained": 0.3938879456706282,
+  "non_text_px_altered": 1141,
+  "mae_text_footprint": 0.16683034220946424,
+  "psnr_text_footprint": 15.38006813358958,
+  "ssim_text_bbox": 0.056963224104534055,
+  "ghost_ratio": 14.655337728427611,
+  "seconds": 2.0352370999753475
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1591,16 +1591,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 2,
+  "fallbacks": 0,
   "residual_chars": 0.047619047619047616,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.0021222410865874364,
-  "non_text_px_altered": 2051,
-  "mae_text_footprint": 0.1860128980061767,
-  "psnr_text_footprint": 13.332542662307514,
-  "ssim_text_bbox": 0.0034227794393033614,
-  "ghost_ratio": 17.490524435735207,
-  "seconds": 1.9842843003571033
+  "glyph_px_unmodified": 0.05625,
+  "box_px_retained": 0.7593378607809848,
+  "non_text_px_altered": 280,
+  "mae_text_footprint": 0.012951838627116933,
+  "psnr_text_footprint": 25.222026803098444,
+  "ssim_text_bbox": 0.9839892674059014,
+  "ghost_ratio": 1.0944964721839687,
+  "seconds": 2.050124399829656
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1617,7 +1617,7 @@
   "psnr_text_footprint": 27.102565488184926,
   "ssim_text_bbox": 0.987958969300064,
   "ghost_ratio": 0.8006249762861367,
-  "seconds": 0.0007585000712424517
+  "seconds": 0.0010287000332027674
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1634,7 +1634,7 @@
   "psnr_text_footprint": 28.12306366680904,
   "ssim_text_bbox": 0.9904938379229572,
   "ghost_ratio": 0.6125367147347829,
-  "seconds": 0.0006216000765562057
+  "seconds": 0.0005807999987155199
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1651,7 +1651,7 @@
   "psnr_text_footprint": 39.93318450631736,
   "ssim_text_bbox": 0.9944656302289078,
   "ghost_ratio": 0.6852909073918506,
-  "seconds": 0.0029395001474767923
+  "seconds": 0.0034441000316292048
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1668,7 +1668,7 @@
   "psnr_text_footprint": 33.18526504491964,
   "ssim_text_bbox": 0.9386756432480156,
   "ghost_ratio": 2.219966598237001,
-  "seconds": 0.11571269994601607
+  "seconds": 0.12305140006355941
  },
  {
   "case": "skimage_brain_s3|consolas|overlay_on_anatomy",
@@ -1685,7 +1685,7 @@
   "psnr_text_footprint": 36.31698612032589,
   "ssim_text_bbox": 0.9918099470416447,
   "ghost_ratio": 0.7670917405124217,
-  "seconds": 0.12020429992116988
+  "seconds": 0.1234396998770535
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1702,7 +1702,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7253459000494331,
+  "seconds": 0.7553992997854948,
   "identical_to_v1": true
  },
  {
@@ -1721,7 +1721,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.748279299819842
+  "seconds": 0.7869884001556784
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1739,7 +1739,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7485225999262184
+  "seconds": 0.7869667001068592
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1757,7 +1757,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7483731999527663
+  "seconds": 0.7869777001906186
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1775,7 +1775,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7483347000088543
+  "seconds": 0.7869609000626951
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1793,7 +1793,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7483627998735756
+  "seconds": 0.7869724000338465
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1811,7 +1811,7 @@
   "psnr_text_footprint": 16.66425466669722,
   "ssim_text_bbox": 0.3463043356247707,
   "ghost_ratio": 0.0,
-  "seconds": 0.7483341998886317
+  "seconds": 0.7869689001236111
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1828,7 +1828,7 @@
   "psnr_text_footprint": 27.102565488184926,
   "ssim_text_bbox": 0.987958969300064,
   "ghost_ratio": 0.8006249762861367,
-  "seconds": 0.0007269000634551048
+  "seconds": 0.0007975001353770494
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1845,7 +1845,7 @@
   "psnr_text_footprint": 28.12306366680904,
   "ssim_text_bbox": 0.9904938379229572,
   "ghost_ratio": 0.6125367147347829,
-  "seconds": 0.0005691999103873968
+  "seconds": 0.0008488998282700777
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1862,7 +1862,7 @@
   "psnr_text_footprint": 39.93318450631736,
   "ssim_text_bbox": 0.9944656302289078,
   "ghost_ratio": 0.6852909073918506,
-  "seconds": 0.0042906999588012695
+  "seconds": 0.0031389999203383923
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1879,7 +1879,7 @@
   "psnr_text_footprint": 33.18526504491964,
   "ssim_text_bbox": 0.9386756432480156,
   "ghost_ratio": 2.219966598237001,
-  "seconds": 0.11499919998459518
+  "seconds": 0.1269843999762088
  },
  {
   "case": "skimage_brain_s3|consolas|dark_overlay_on_anatomy",
@@ -1896,7 +1896,7 @@
   "psnr_text_footprint": 36.31698612032589,
   "ssim_text_bbox": 0.9918099470416447,
   "ghost_ratio": 0.7670917405124217,
-  "seconds": 0.11789260013028979
+  "seconds": 0.12249969993717968
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -1913,7 +1913,7 @@
   "psnr_text_footprint": 79.23512714964771,
   "ssim_text_bbox": 0.9982798163104414,
   "ghost_ratio": 1.7061239097643883,
-  "seconds": 1.1580420001409948,
+  "seconds": 1.1538224997930229,
   "identical_to_v1": true
  },
  {
@@ -1932,7 +1932,7 @@
   "psnr_text_footprint": 79.23512714964771,
   "ssim_text_bbox": 0.9982798163104414,
   "ghost_ratio": 1.7061239097643883,
-  "seconds": 1.1639345998410136
+  "seconds": 1.203274100087583
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -1942,15 +1942,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.05263157894736842,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7297965915338098,
-  "non_text_px_altered": 1283,
-  "mae_text_footprint": 0.011575219195138878,
-  "psnr_text_footprint": 25.136095051568713,
-  "ssim_text_bbox": 0.940197602587013,
-  "ghost_ratio": 0.8560703066016314,
-  "seconds": 2.7625436999369413
+  "residual_chars": 0.031578947368421054,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.7294300897929266,
+  "non_text_px_altered": 1271,
+  "mae_text_footprint": 0.0022311087229627434,
+  "psnr_text_footprint": 32.09960893897443,
+  "ssim_text_bbox": 0.987856528728895,
+  "ghost_ratio": 0.31246030712741,
+  "seconds": 2.9559867999050766
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -1959,16 +1959,16 @@
   "text_lines": 6,
   "method": "ns",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.042105263157894736,
+  "fallbacks": 0,
+  "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.4518050210738501,
-  "non_text_px_altered": 4299,
-  "mae_text_footprint": 0.003921144839681141,
-  "psnr_text_footprint": 30.609827684572846,
-  "ssim_text_bbox": 0.9835203886395215,
-  "ghost_ratio": 0.928686427450119,
-  "seconds": 2.7811537999659777
+  "box_px_retained": 0.780373831775701,
+  "non_text_px_altered": 715,
+  "mae_text_footprint": 0.0026099663822905916,
+  "psnr_text_footprint": 31.156857609689187,
+  "ssim_text_bbox": 0.9875595206184782,
+  "ghost_ratio": 0.6967217970244746,
+  "seconds": 2.975865500047803
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -1978,15 +1978,15 @@
   "method": "biharmonic",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.021052631578947368,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7595748579805754,
-  "non_text_px_altered": 958,
-  "mae_text_footprint": 0.01399409035468927,
-  "psnr_text_footprint": 23.709843098595233,
-  "ssim_text_bbox": 0.9429365064271016,
-  "ghost_ratio": 0.8313945839357944,
-  "seconds": 2.7469442000146955
+  "residual_chars": 0.031578947368421054,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.782389591350559,
+  "non_text_px_altered": 693,
+  "mae_text_footprint": 0.003046224605911392,
+  "psnr_text_footprint": 31.19084585340473,
+  "ssim_text_bbox": 0.9868370791565408,
+  "ghost_ratio": 0.43471766176433096,
+  "seconds": 3.010008200071752
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -1998,13 +1998,13 @@
   "fallbacks": 4,
   "residual_chars": 0.042105263157894736,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.00916254352208173,
-  "non_text_px_altered": 9128,
+  "box_px_retained": 0.3163826278174821,
+  "non_text_px_altered": 5775,
   "mae_text_footprint": 9.255158758139316e-05,
   "psnr_text_footprint": 79.23512714964771,
-  "ssim_text_bbox": 0.9982798163104414,
-  "ghost_ratio": 1.7061239097643883,
-  "seconds": 2.95597350015305
+  "ssim_text_bbox": 0.9993058277933369,
+  "ghost_ratio": 1.479761445139531,
+  "seconds": 3.2373274001292884
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2013,16 +2013,16 @@
   "text_lines": 6,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 0,
-  "residual_chars": 0.031578947368421054,
-  "glyph_px_unmodified": 0.005952380952380952,
-  "box_px_retained": 0.7029503390141103,
-  "non_text_px_altered": 1576,
-  "mae_text_footprint": 0.010940387301801413,
-  "psnr_text_footprint": 25.691970677310046,
-  "ssim_text_bbox": 0.9394861608596606,
-  "ghost_ratio": 1.2975015284108646,
-  "seconds": 3.0221915000583977
+  "fallbacks": 2,
+  "residual_chars": 0.06315789473684211,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.5133773135422394,
+  "non_text_px_altered": 3625,
+  "mae_text_footprint": 0.0002968734424740673,
+  "psnr_text_footprint": 63.35090079818255,
+  "ssim_text_bbox": 0.9993491860597832,
+  "ghost_ratio": 0.23941904453654175,
+  "seconds": 3.280393100110814
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2039,7 +2039,7 @@
   "psnr_text_footprint": 61.95077847543998,
   "ssim_text_bbox": 0.999629292874913,
   "ghost_ratio": 0.05776596830861555,
-  "seconds": 0.001997399842366576
+  "seconds": 0.002448899904266
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2056,7 +2056,7 @@
   "psnr_text_footprint": 66.87229561464125,
   "ssim_text_bbox": 0.9998636219533992,
   "ghost_ratio": 0.025995474104321112,
-  "seconds": 0.0015990999527275562
+  "seconds": 0.0017766000237315893
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2073,7 +2073,7 @@
   "psnr_text_footprint": 86.72386828724542,
   "ssim_text_bbox": 0.999998039065951,
   "ghost_ratio": 0.03102026669815398,
-  "seconds": 0.007492400007322431
+  "seconds": 0.009891200112178922
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2090,7 +2090,7 @@
   "psnr_text_footprint": 32.988800018392666,
   "ssim_text_bbox": 0.7036286941496779,
   "ghost_ratio": 17.38620064531019,
-  "seconds": 0.22434620000422
+  "seconds": 0.23229840002022684
  },
  {
   "case": "skimage_brain_s6|lucida_console|corner_annotations",
@@ -2107,7 +2107,7 @@
   "psnr_text_footprint": 63.2499796028921,
   "ssim_text_bbox": 0.9994937569747225,
   "ghost_ratio": 0.2666286371320454,
-  "seconds": 0.23682090011425316
+  "seconds": 0.2370488999877125
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2124,7 +2124,7 @@
   "psnr_text_footprint": 5.29010571856451,
   "ssim_text_bbox": 0.07012559339343992,
   "ghost_ratio": 0.0,
-  "seconds": 0.802119700005278,
+  "seconds": 0.8333474001847208,
   "identical_to_v1": true
  },
  {
@@ -2143,7 +2143,7 @@
   "psnr_text_footprint": 13.337392290616307,
   "ssim_text_bbox": 0.0681696687273935,
   "ghost_ratio": 10.293465475741087,
-  "seconds": 1.0941865001805127
+  "seconds": 1.124772199895233
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2153,15 +2153,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.14207650273224043,
-  "box_px_retained": 0.40143737166324434,
-  "non_text_px_altered": 287,
-  "mae_text_footprint": 0.07142882190192432,
-  "psnr_text_footprint": 15.10091390532003,
-  "ssim_text_bbox": 0.7478179363539637,
-  "ghost_ratio": 0.7166445545971224,
-  "seconds": 2.3401403999887407
+  "residual_chars": 0.14285714285714285,
+  "glyph_px_unmodified": 0.1366120218579235,
+  "box_px_retained": 0.4004106776180698,
+  "non_text_px_altered": 286,
+  "mae_text_footprint": 0.06589402038285352,
+  "psnr_text_footprint": 15.248817947570043,
+  "ssim_text_bbox": 0.7741527203660513,
+  "ghost_ratio": 0.6731621693047487,
+  "seconds": 2.474603699753061
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2170,16 +2170,16 @@
   "text_lines": 1,
   "method": "ns",
   "mask": "detector",
-  "fallbacks": 0,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.14207650273224043,
-  "box_px_retained": 0.3973305954825462,
-  "non_text_px_altered": 291,
-  "mae_text_footprint": 0.07066092904574162,
-  "psnr_text_footprint": 15.11751846287607,
-  "ssim_text_bbox": 0.750498805421594,
-  "ghost_ratio": 0.7804909913800913,
-  "seconds": 2.3502623999956995
+  "fallbacks": 1,
+  "residual_chars": 0.09523809523809523,
+  "glyph_px_unmodified": 0.1366120218579235,
+  "box_px_retained": 0.3141683778234086,
+  "non_text_px_altered": 370,
+  "mae_text_footprint": 0.10482260558745937,
+  "psnr_text_footprint": 14.247527545696547,
+  "ssim_text_bbox": 0.5255314169436607,
+  "ghost_ratio": 3.880957612103896,
+  "seconds": 2.638421299867332
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2189,15 +2189,15 @@
   "method": "biharmonic",
   "mask": "detector",
   "fallbacks": 1,
-  "residual_chars": 0.09523809523809523,
-  "glyph_px_unmodified": 0.14207650273224043,
-  "box_px_retained": 0.3131416837782341,
-  "non_text_px_altered": 373,
-  "mae_text_footprint": 0.11535996109981848,
-  "psnr_text_footprint": 14.159755938568338,
-  "ssim_text_bbox": 0.4739158233313314,
-  "ghost_ratio": 4.019223916242232,
-  "seconds": 2.358035100158304
+  "residual_chars": 0.14285714285714285,
+  "glyph_px_unmodified": 0.1366120218579235,
+  "box_px_retained": 0.31519507186858314,
+  "non_text_px_altered": 369,
+  "mae_text_footprint": 0.11142646077311776,
+  "psnr_text_footprint": 14.161813601214854,
+  "ssim_text_bbox": 0.48936454348825525,
+  "ghost_ratio": 3.9553239378441147,
+  "seconds": 2.7531193997710943
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2215,7 +2215,7 @@
   "psnr_text_footprint": 13.337392290616307,
   "ssim_text_bbox": 0.0681696687273935,
   "ghost_ratio": 10.293465475741087,
-  "seconds": 2.432148199994117
+  "seconds": 2.7078462997451425
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2224,16 +2224,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 0,
-  "residual_chars": 0.14285714285714285,
-  "glyph_px_unmodified": 0.14207650273224043,
-  "box_px_retained": 0.3973305954825462,
-  "non_text_px_altered": 291,
-  "mae_text_footprint": 0.06620862326319689,
-  "psnr_text_footprint": 15.37421019521286,
-  "ssim_text_bbox": 0.7769424549782411,
-  "ghost_ratio": 0.9268585774803958,
-  "seconds": 2.450832200003788
+  "fallbacks": 1,
+  "residual_chars": 0.19047619047619047,
+  "glyph_px_unmodified": 0.1366120218579235,
+  "box_px_retained": 0.3131416837782341,
+  "non_text_px_altered": 371,
+  "mae_text_footprint": 0.10361217641138812,
+  "psnr_text_footprint": 14.366552458690673,
+  "ssim_text_bbox": 0.5385907663725766,
+  "ghost_ratio": 3.912352269720109,
+  "seconds": 2.9937967997975647
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2250,7 +2250,7 @@
   "psnr_text_footprint": 35.38126045264784,
   "ssim_text_bbox": 0.9914796382108914,
   "ghost_ratio": 0.7203422593795827,
-  "seconds": 0.0007663001306355
+  "seconds": 0.001173200085759163
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2267,7 +2267,7 @@
   "psnr_text_footprint": 36.702455535175595,
   "ssim_text_bbox": 0.9931133314785238,
   "ghost_ratio": 0.6354282435901922,
-  "seconds": 0.0005844999104738235
+  "seconds": 0.0010214000940322876
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2284,7 +2284,7 @@
   "psnr_text_footprint": 34.50437260510649,
   "ssim_text_bbox": 0.9901659971297723,
   "ghost_ratio": 0.6828147284979924,
-  "seconds": 0.0028994001913815737
+  "seconds": 0.004536499967798591
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2301,7 +2301,7 @@
   "psnr_text_footprint": 34.136841220942266,
   "ssim_text_bbox": 0.927290611229951,
   "ghost_ratio": 2.953342771990272,
-  "seconds": 0.11797040002420545
+  "seconds": 0.13596929982304573
  },
  {
   "case": "skimage_brain_s6|lucida_console|overlay_on_anatomy",
@@ -2318,7 +2318,7 @@
   "psnr_text_footprint": 44.0977913207383,
   "ssim_text_bbox": 0.9964768994082972,
   "ghost_ratio": 0.6978184140760343,
-  "seconds": 0.11773220007307827
+  "seconds": 0.14179150015115738
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2335,7 +2335,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.8985472000204027,
+  "seconds": 1.1180067998357117,
   "identical_to_v1": true
  },
  {
@@ -2354,7 +2354,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.8853108000475913
+  "seconds": 1.092281399993226
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2372,7 +2372,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.8853693001437932
+  "seconds": 1.0923607998993248
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2390,7 +2390,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.885365900117904
+  "seconds": 1.0923275998793542
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2408,7 +2408,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.8853673001285642
+  "seconds": 1.0922766998410225
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2426,7 +2426,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.885366200003773
+  "seconds": 1.092371999984607
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2444,7 +2444,7 @@
   "psnr_text_footprint": 20.864247511314815,
   "ssim_text_bbox": 0.3971170542169525,
   "ghost_ratio": 0.0,
-  "seconds": 0.8853640002198517
+  "seconds": 1.092441099928692
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2461,7 +2461,7 @@
   "psnr_text_footprint": 35.38126045264784,
   "ssim_text_bbox": 0.9914796382108914,
   "ghost_ratio": 0.7203422593795827,
-  "seconds": 0.0007963001262396574
+  "seconds": 0.0007855999283492565
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2478,7 +2478,7 @@
   "psnr_text_footprint": 36.702455535175595,
   "ssim_text_bbox": 0.9931133314785238,
   "ghost_ratio": 0.6354282435901922,
-  "seconds": 0.0006111001130193472
+  "seconds": 0.0006322001572698355
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2495,7 +2495,7 @@
   "psnr_text_footprint": 34.50437260510649,
   "ssim_text_bbox": 0.9901659971297723,
   "ghost_ratio": 0.6828147284979924,
-  "seconds": 0.0029594998341053724
+  "seconds": 0.0032603999134153128
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2512,7 +2512,7 @@
   "psnr_text_footprint": 34.136841220942266,
   "ssim_text_bbox": 0.927290611229951,
   "ghost_ratio": 2.953342771990272,
-  "seconds": 0.11740810004994273
+  "seconds": 0.12159619992598891
  },
  {
   "case": "skimage_brain_s6|lucida_console|dark_overlay_on_anatomy",
@@ -2529,7 +2529,7 @@
   "psnr_text_footprint": 44.0977913207383,
   "ssim_text_bbox": 0.9964768994082972,
   "ghost_ratio": 0.6978184140760343,
-  "seconds": 0.12006069999188185
+  "seconds": 0.12315639993175864
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2546,7 +2546,7 @@
   "psnr_text_footprint": 41.14560686429125,
   "ssim_text_bbox": 0.8701907038491262,
   "ghost_ratio": 0.870228839954684,
-  "seconds": 1.3241130001842976,
+  "seconds": 1.365537199890241,
   "identical_to_v1": true
  },
  {
@@ -2565,7 +2565,7 @@
   "psnr_text_footprint": 41.14560686429125,
   "ssim_text_bbox": 0.8701907038491262,
   "ghost_ratio": 0.870228839954684,
-  "seconds": 1.8970225001685321
+  "seconds": 1.854031299939379
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2576,14 +2576,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.05263157894736842,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.9008471606405509,
+  "glyph_px_unmodified": 0.011020263064344117,
+  "box_px_retained": 0.9017156526641373,
   "non_text_px_altered": 1575,
-  "mae_text_footprint": 0.0008615967365967365,
-  "psnr_text_footprint": 51.79904228955799,
-  "ssim_text_bbox": 0.9990290684030255,
-  "ghost_ratio": 0.272720404483192,
-  "seconds": 4.630507699912414
+  "mae_text_footprint": 0.009042686480186479,
+  "psnr_text_footprint": 21.292096322152005,
+  "ssim_text_bbox": 0.9960635698459778,
+  "ghost_ratio": 0.2743562861505099,
+  "seconds": 16.47813819977455
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2594,14 +2594,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.06315789473684211,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.90093858085356,
+  "glyph_px_unmodified": 0.011020263064344117,
+  "box_px_retained": 0.9018070728771465,
   "non_text_px_altered": 1563,
-  "mae_text_footprint": 0.0008796620046620046,
-  "psnr_text_footprint": 51.686264918553135,
-  "ssim_text_bbox": 0.9990177377325066,
-  "ghost_ratio": 0.27593711747331956,
-  "seconds": 4.719121700152755
+  "mae_text_footprint": 0.009060751748251748,
+  "psnr_text_footprint": 21.291994656709026,
+  "ssim_text_bbox": 0.9960522391754588,
+  "ghost_ratio": 0.27758145964364844,
+  "seconds": 19.779596399748698
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2612,14 +2612,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.021052631578947368,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.9027365117094056,
+  "glyph_px_unmodified": 0.011020263064344117,
+  "box_px_retained": 0.903605003732992,
   "non_text_px_altered": 1327,
-  "mae_text_footprint": 0.0009063228438228437,
-  "psnr_text_footprint": 50.75464189276837,
-  "ssim_text_bbox": 0.9988720102451698,
-  "ghost_ratio": 0.30306243713393194,
-  "seconds": 4.556536900112405
+  "mae_text_footprint": 0.009087412587412585,
+  "psnr_text_footprint": 21.29104584666925,
+  "ssim_text_bbox": 0.995906511688122,
+  "ghost_ratio": 0.3048584554609918,
+  "seconds": 20.743806099751964
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2629,15 +2629,15 @@
   "method": "vit_mae",
   "mask": "detector",
   "fallbacks": 4,
-  "residual_chars": 0.021052631578947368,
+  "residual_chars": 0.042105263157894736,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.5459538937392391,
-  "non_text_px_altered": 48159,
+  "box_px_retained": 0.7887431244381466,
+  "non_text_px_altered": 16290,
   "mae_text_footprint": 0.004614510489510489,
   "psnr_text_footprint": 41.14560686429125,
-  "ssim_text_bbox": 0.8701907038491262,
-  "ghost_ratio": 0.870228839954684,
-  "seconds": 5.241456700023264
+  "ssim_text_bbox": 0.9192425676576218,
+  "ghost_ratio": 0.7919577015430157,
+  "seconds": 21.238125999923795
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2647,15 +2647,15 @@
   "method": "vit_mae_poisson",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.06315789473684211,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.8971522603647667,
-  "non_text_px_altered": 2060,
-  "mae_text_footprint": 0.0010898892773892775,
-  "psnr_text_footprint": 51.50164465568829,
-  "ssim_text_bbox": 0.9985621273012929,
-  "ghost_ratio": 0.5870293930841561,
-  "seconds": 5.248382900143042
+  "residual_chars": 0.08421052631578947,
+  "glyph_px_unmodified": 0.011020263064344117,
+  "box_px_retained": 0.8960018893510688,
+  "non_text_px_altered": 2325,
+  "mae_text_footprint": 0.0094256993006993,
+  "psnr_text_footprint": 21.291541876816765,
+  "ssim_text_bbox": 0.9953932288124479,
+  "ghost_ratio": 0.6858751440461723,
+  "seconds": 17.834388899616897
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2672,7 +2672,7 @@
   "psnr_text_footprint": 51.9878744547842,
   "ssim_text_bbox": 0.9991407721825232,
   "ghost_ratio": 0.27209964670329695,
-  "seconds": 0.021241300040856004
+  "seconds": 0.027371600037440658
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2689,7 +2689,7 @@
   "psnr_text_footprint": 51.95070114263713,
   "ssim_text_bbox": 0.9991452938382798,
   "ghost_ratio": 0.2745746747572498,
-  "seconds": 0.017687399871647358
+  "seconds": 0.018929600017145276
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2706,7 +2706,7 @@
   "psnr_text_footprint": 50.78991473494068,
   "ssim_text_bbox": 0.9989417378417775,
   "ghost_ratio": 0.30465777972168645,
-  "seconds": 0.06465519987978041
+  "seconds": 0.06969020003452897
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2723,7 +2723,7 @@
   "psnr_text_footprint": 38.6647225730401,
   "ssim_text_bbox": 0.9544656249048126,
   "ghost_ratio": 6.779231781912496,
-  "seconds": 0.6987676999997348
+  "seconds": 0.7262916998006403
  },
  {
   "case": "MR2_UNCI|lucida_console|corner_annotations",
@@ -2740,7 +2740,7 @@
   "psnr_text_footprint": 51.70730598146153,
   "ssim_text_bbox": 0.9987316740476249,
   "ghost_ratio": 0.5617938097863086,
-  "seconds": 0.7335965000092983
+  "seconds": 0.7307325999718159
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2757,7 +2757,7 @@
   "psnr_text_footprint": 6.393510835539552,
   "ssim_text_bbox": 0.4207891284089218,
   "ghost_ratio": 0.0,
-  "seconds": 0.9951579999178648,
+  "seconds": 0.9734052000567317,
   "identical_to_v1": true
  },
  {
@@ -2776,7 +2776,7 @@
   "psnr_text_footprint": 7.031662571841167,
   "ssim_text_bbox": 0.0006218091576446229,
   "ghost_ratio": 17.48269551689942,
-  "seconds": 1.7168677998706698
+  "seconds": 1.7587001002393663
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2788,13 +2788,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7250723308164562,
-  "non_text_px_altered": 1632,
-  "mae_text_footprint": 0.024904425819732394,
-  "psnr_text_footprint": 29.76813924900428,
-  "ssim_text_bbox": 0.859190183204942,
-  "ghost_ratio": 0.5366535223978518,
-  "seconds": 2.9246988997329026
+  "box_px_retained": 0.7161103662409145,
+  "non_text_px_altered": 1758,
+  "mae_text_footprint": 0.02491177767975298,
+  "psnr_text_footprint": 29.773469831088796,
+  "ssim_text_bbox": 0.8521973876317519,
+  "ghost_ratio": 0.542624837812652,
+  "seconds": 3.206296600168571
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2806,13 +2806,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7257779973184673,
-  "non_text_px_altered": 1621,
-  "mae_text_footprint": 0.025291133656815172,
-  "psnr_text_footprint": 29.653248468120562,
-  "ssim_text_bbox": 0.8603586440325621,
-  "ghost_ratio": 0.5439203017356538,
-  "seconds": 2.9249019999988377
+  "box_px_retained": 0.7169571660433279,
+  "non_text_px_altered": 1746,
+  "mae_text_footprint": 0.025211733568592853,
+  "psnr_text_footprint": 29.682778070770205,
+  "ssim_text_bbox": 0.8539603912102508,
+  "ghost_ratio": 0.5454532078057862,
+  "seconds": 3.2170914001762867
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2824,13 +2824,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7252134641168584,
-  "non_text_px_altered": 1629,
-  "mae_text_footprint": 0.027649610351418913,
-  "psnr_text_footprint": 28.712478057694582,
-  "ssim_text_bbox": 0.8542476162192291,
-  "ghost_ratio": 0.5604386769893226,
-  "seconds": 2.94663679972291
+  "box_px_retained": 0.7163220661915178,
+  "non_text_px_altered": 1755,
+  "mae_text_footprint": 0.027660638141449784,
+  "psnr_text_footprint": 28.693588785173635,
+  "ssim_text_bbox": 0.8457447715829725,
+  "ghost_ratio": 0.5614135422236518,
+  "seconds": 3.2442926003132015
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2842,13 +2842,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7235904311622328,
-  "non_text_px_altered": 1651,
-  "mae_text_footprint": 0.03152330539626526,
-  "psnr_text_footprint": 27.723453601645836,
-  "ssim_text_bbox": 0.825673960772645,
-  "ghost_ratio": 1.366249373004228,
-  "seconds": 3.2363906998652965
+  "box_px_retained": 0.7148401665372944,
+  "non_text_px_altered": 1778,
+  "mae_text_footprint": 0.03140420526393177,
+  "psnr_text_footprint": 27.76186338498931,
+  "ssim_text_bbox": 0.821397907629694,
+  "ghost_ratio": 1.3628082050261188,
+  "seconds": 3.5637986003421247
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2857,16 +2857,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 1,
+  "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.0020464328558323338,
-  "non_text_px_altered": 11875,
-  "mae_text_footprint": 0.4296390236729893,
-  "psnr_text_footprint": 7.031662571841167,
-  "ssim_text_bbox": 0.0006218091576446229,
-  "ghost_ratio": 17.48269551689942,
-  "seconds": 3.2730996997561306
+  "box_px_retained": 0.7155458330393056,
+  "non_text_px_altered": 1765,
+  "mae_text_footprint": 0.023376709307454783,
+  "psnr_text_footprint": 30.28231695792419,
+  "ssim_text_bbox": 0.8620972759798798,
+  "ghost_ratio": 0.6211569846056015,
+  "seconds": 3.5815672003664076
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2883,7 +2883,7 @@
   "psnr_text_footprint": 29.735766626879464,
   "ssim_text_bbox": 0.8765657309832641,
   "ghost_ratio": 0.5458647977655035,
-  "seconds": 0.014438000041991472
+  "seconds": 0.01486640004441142
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2900,7 +2900,7 @@
   "psnr_text_footprint": 29.536533453913076,
   "ssim_text_bbox": 0.8769520690697847,
   "ghost_ratio": 0.5522756684453326,
-  "seconds": 0.012412100099027157
+  "seconds": 0.012125900015234947
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2917,7 +2917,7 @@
   "psnr_text_footprint": 28.959266865467775,
   "ssim_text_bbox": 0.8749022000927101,
   "ghost_ratio": 0.5690798565137501,
-  "seconds": 0.03565980005078018
+  "seconds": 0.03687840001657605
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2934,7 +2934,7 @@
   "psnr_text_footprint": 27.50599024939213,
   "ssim_text_bbox": 0.8395885567319125,
   "ghost_ratio": 1.378302752534749,
-  "seconds": 0.3293945000041276
+  "seconds": 0.3312830999493599
  },
  {
   "case": "MR2_UNCI|lucida_console|overlay_on_anatomy",
@@ -2951,7 +2951,7 @@
   "psnr_text_footprint": 30.316541720489496,
   "ssim_text_bbox": 0.8861905923036619,
   "ghost_ratio": 0.6127013407131453,
-  "seconds": 0.3576794001273811
+  "seconds": 0.35044689988717437
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -2968,7 +2968,7 @@
   "psnr_text_footprint": 8.788708519857058,
   "ssim_text_bbox": 0.46126646197234306,
   "ghost_ratio": 0.0,
-  "seconds": 0.9781414999160916,
+  "seconds": 1.0154469998087734,
   "identical_to_v1": true
  },
  {
@@ -2987,7 +2987,7 @@
   "psnr_text_footprint": 7.031662571841167,
   "ssim_text_bbox": 0.0006218091576446229,
   "ghost_ratio": 8.51358319279537,
-  "seconds": 1.6501539000310004
+  "seconds": 1.6694765000138432
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -2997,15 +2997,15 @@
   "method": "telea",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.047619047619047616,
+  "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6748109365910413,
-  "non_text_px_altered": 2205,
-  "mae_text_footprint": 0.028440670489633876,
-  "psnr_text_footprint": 28.657285230613873,
-  "ssim_text_bbox": 0.8250889944231938,
-  "ghost_ratio": 0.5348382002034475,
-  "seconds": 2.846305000130087
+  "box_px_retained": 0.6464514252472368,
+  "non_text_px_altered": 2596,
+  "mae_text_footprint": 0.029658138509042788,
+  "psnr_text_footprint": 28.250465378393102,
+  "ssim_text_bbox": 0.7921414850321276,
+  "ghost_ratio": 0.5202210388298354,
+  "seconds": 3.3819546999875456
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3015,15 +3015,15 @@
   "method": "ns",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.0,
+  "residual_chars": 0.047619047619047616,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.675392670157068,
-  "non_text_px_altered": 2198,
-  "mae_text_footprint": 0.02906557859138362,
-  "psnr_text_footprint": 28.41446790452569,
-  "ssim_text_bbox": 0.8226220994176783,
-  "ghost_ratio": 0.5262388071794402,
-  "seconds": 2.8162360002752393
+  "box_px_retained": 0.6459424083769634,
+  "non_text_px_altered": 2603,
+  "mae_text_footprint": 0.030452874577268047,
+  "psnr_text_footprint": 27.990237086306404,
+  "ssim_text_bbox": 0.7911759304580102,
+  "ghost_ratio": 0.5181422749501307,
+  "seconds": 3.295975999906659
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3035,13 +3035,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6759016870273414,
-  "non_text_px_altered": 2192,
-  "mae_text_footprint": 0.03225040435230113,
-  "psnr_text_footprint": 27.484330958681646,
-  "ssim_text_bbox": 0.8161022901200267,
-  "ghost_ratio": 0.5568898435784854,
-  "seconds": 2.8692895001731813
+  "box_px_retained": 0.6473967422920303,
+  "non_text_px_altered": 2583,
+  "mae_text_footprint": 0.03337670930745478,
+  "psnr_text_footprint": 27.105205389687214,
+  "ssim_text_bbox": 0.7821238461026383,
+  "ghost_ratio": 0.5487018537610281,
+  "seconds": 3.382343600038439
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3050,16 +3050,16 @@
   "text_lines": 1,
   "method": "vit_mae",
   "mask": "detector",
-  "fallbacks": 1,
-  "residual_chars": 0.2857142857142857,
-  "glyph_px_unmodified": 0.6333907056798623,
-  "box_px_retained": 0.08224258289703316,
-  "non_text_px_altered": 11458,
-  "mae_text_footprint": 0.4296390236729893,
-  "psnr_text_footprint": 7.031662571841167,
-  "ssim_text_bbox": 0.0006218091576446229,
-  "ghost_ratio": 8.51358319279537,
-  "seconds": 3.1925195001531392
+  "fallbacks": 0,
+  "residual_chars": 0.0,
+  "glyph_px_unmodified": 0.0,
+  "box_px_retained": 0.6452879581151832,
+  "non_text_px_altered": 2612,
+  "mae_text_footprint": 0.031117482723128947,
+  "psnr_text_footprint": 27.862226596928856,
+  "ssim_text_bbox": 0.7780612146867198,
+  "ghost_ratio": 1.3431224375620192,
+  "seconds": 3.7129432999063283
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3068,16 +3068,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 0,
+  "fallbacks": 1,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6764834205933682,
-  "non_text_px_altered": 2185,
-  "mae_text_footprint": 0.026408616379944124,
-  "psnr_text_footprint": 29.264115394909318,
-  "ssim_text_bbox": 0.835635418083938,
-  "ghost_ratio": 0.5751554835142599,
-  "seconds": 3.197831599973142
+  "glyph_px_unmodified": 0.6333907056798623,
+  "box_px_retained": 0.25967132053519487,
+  "non_text_px_altered": 9018,
+  "mae_text_footprint": 0.4296390236729893,
+  "psnr_text_footprint": 7.031662571841167,
+  "ssim_text_bbox": 0.0008144411093932482,
+  "ghost_ratio": 8.20090703220098,
+  "seconds": 3.686003200011328
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3094,7 +3094,7 @@
   "psnr_text_footprint": 29.735766626879464,
   "ssim_text_bbox": 0.8765657309832641,
   "ghost_ratio": 0.5458365467183685,
-  "seconds": 0.01469009998254478
+  "seconds": 0.013634199975058436
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3111,7 +3111,7 @@
   "psnr_text_footprint": 29.536533453913076,
   "ssim_text_bbox": 0.8769520690697847,
   "ghost_ratio": 0.5506069207015994,
-  "seconds": 0.0114869000390172
+  "seconds": 0.01112110004760325
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3128,7 +3128,7 @@
   "psnr_text_footprint": 28.959266865467775,
   "ssim_text_bbox": 0.8749022000927101,
   "ghost_ratio": 0.5694071509583333,
-  "seconds": 0.039157799910753965
+  "seconds": 0.03966829995624721
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3145,7 +3145,7 @@
   "psnr_text_footprint": 27.50599024939213,
   "ssim_text_bbox": 0.8395885567319125,
   "ghost_ratio": 1.3786367249060882,
-  "seconds": 0.3630037000402808
+  "seconds": 0.34030439984053373
  },
  {
   "case": "MR2_UNCI|lucida_console|dark_overlay_on_anatomy",
@@ -3162,7 +3162,7 @@
   "psnr_text_footprint": 30.316541720489496,
   "ssim_text_bbox": 0.8861905923036619,
   "ghost_ratio": 0.6086552440509392,
-  "seconds": 0.3523681000806391
+  "seconds": 0.3528742000926286
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3179,7 +3179,7 @@
   "psnr_text_footprint": 41.00777420346858,
   "ssim_text_bbox": 0.8556193649704875,
   "ghost_ratio": 0.850614087483793,
-  "seconds": 1.3953800001181662,
+  "seconds": 1.3866518998984247,
   "identical_to_v1": true
  },
  {
@@ -3198,7 +3198,7 @@
   "psnr_text_footprint": 41.00777420346858,
   "ssim_text_bbox": 0.8556193649704875,
   "ghost_ratio": 0.850614087483793,
-  "seconds": 1.8016493001487106
+  "seconds": 1.8366861999966204
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3216,7 +3216,7 @@
   "psnr_text_footprint": 52.374328867386275,
   "ssim_text_bbox": 0.9989896283591153,
   "ghost_ratio": 0.2657612731192908,
-  "seconds": 4.683781000087038
+  "seconds": 17.059269200079143
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3234,7 +3234,7 @@
   "psnr_text_footprint": 52.29207014664379,
   "ssim_text_bbox": 0.9990148890092453,
   "ghost_ratio": 0.2687571546132732,
-  "seconds": 4.610529400175437
+  "seconds": 17.27414790005423
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3252,7 +3252,7 @@
   "psnr_text_footprint": 51.76947876406694,
   "ssim_text_bbox": 0.9989493549588826,
   "ghost_ratio": 0.3003238751591587,
-  "seconds": 4.728488800115883
+  "seconds": 17.973337300121784
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3264,13 +3264,13 @@
   "fallbacks": 4,
   "residual_chars": 0.05263157894736842,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.516019694304555,
-  "non_text_px_altered": 48035,
+  "box_px_retained": 0.7801097162317374,
+  "non_text_px_altered": 15155,
   "mae_text_footprint": 0.0048514972999509085,
   "psnr_text_footprint": 41.00777420346858,
-  "ssim_text_bbox": 0.8556193649704875,
-  "ghost_ratio": 0.850614087483793,
-  "seconds": 5.080219299998134
+  "ssim_text_bbox": 0.9162061572555246,
+  "ghost_ratio": 0.7479438340495436,
+  "seconds": 17.787637599976733
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3288,7 +3288,7 @@
   "psnr_text_footprint": 51.73505005364753,
   "ssim_text_bbox": 0.9987892484406069,
   "ghost_ratio": 0.5885080693099415,
-  "seconds": 5.248111000284553
+  "seconds": 17.55592339998111
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3305,7 +3305,7 @@
   "psnr_text_footprint": 52.54083750187364,
   "ssim_text_bbox": 0.999107972878875,
   "ghost_ratio": 0.26523003584311916,
-  "seconds": 0.021332800155505538
+  "seconds": 0.021799699869006872
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3322,7 +3322,7 @@
   "psnr_text_footprint": 52.44411726044197,
   "ssim_text_bbox": 0.9991138763098301,
   "ghost_ratio": 0.26238890246415003,
-  "seconds": 0.017806299962103367
+  "seconds": 0.01796750002540648
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3339,7 +3339,7 @@
   "psnr_text_footprint": 51.37562547558899,
   "ssim_text_bbox": 0.9989328113074398,
   "ghost_ratio": 0.2912209196457253,
-  "seconds": 0.07132410001941025
+  "seconds": 0.07283560000360012
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3356,7 +3356,7 @@
   "psnr_text_footprint": 30.194891984129967,
   "ssim_text_bbox": 0.8974726606509947,
   "ghost_ratio": 15.00468506468963,
-  "seconds": 0.47717510000802577
+  "seconds": 0.48400390008464456
  },
  {
   "case": "MR2_UNCI|arial|corner_annotations",
@@ -3373,7 +3373,7 @@
   "psnr_text_footprint": 51.914742305216365,
   "ssim_text_bbox": 0.9989199194629759,
   "ghost_ratio": 0.5598117520884384,
-  "seconds": 0.5112417000345886
+  "seconds": 0.5196924000047147
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3390,7 +3390,7 @@
   "psnr_text_footprint": 6.404444252005357,
   "ssim_text_bbox": 0.26376437176455797,
   "ghost_ratio": 0.0,
-  "seconds": 0.9852968000341207,
+  "seconds": 1.0123163000680506,
   "identical_to_v1": true
  },
  {
@@ -3409,7 +3409,7 @@
   "psnr_text_footprint": 6.9230285749859615,
   "ssim_text_bbox": 0.0007513646401339989,
   "ghost_ratio": 18.35127278297356,
-  "seconds": 1.6590307999867946
+  "seconds": 1.7017946001142263
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3421,13 +3421,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6652623211446741,
-  "non_text_px_altered": 1693,
-  "mae_text_footprint": 0.026829494307651573,
-  "psnr_text_footprint": 28.622579491201673,
-  "ssim_text_bbox": 0.8210057736710942,
-  "ghost_ratio": 0.5424640177052811,
-  "seconds": 2.838020399911329
+  "box_px_retained": 0.6595389507154213,
+  "non_text_px_altered": 1765,
+  "mae_text_footprint": 0.026722266348954193,
+  "psnr_text_footprint": 28.651212580350066,
+  "ssim_text_bbox": 0.8156946876069072,
+  "ghost_ratio": 0.5369938063960004,
+  "seconds": 3.1893392000347376
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3439,13 +3439,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6646263910969793,
-  "non_text_px_altered": 1701,
-  "mae_text_footprint": 0.02704130262112788,
-  "psnr_text_footprint": 28.379591360969076,
-  "ssim_text_bbox": 0.8230846564867522,
-  "ghost_ratio": 0.5551892616662357,
-  "seconds": 2.8456667996942997
+  "box_px_retained": 0.6585850556438791,
+  "non_text_px_altered": 1777,
+  "mae_text_footprint": 0.026812284882181625,
+  "psnr_text_footprint": 28.493597785771204,
+  "ssim_text_bbox": 0.8183084861684915,
+  "ghost_ratio": 0.5473950979205683,
+  "seconds": 3.1243431998882443
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3457,13 +3457,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6663751987281399,
-  "non_text_px_altered": 1680,
-  "mae_text_footprint": 0.02941289383108287,
-  "psnr_text_footprint": 28.392221871094016,
-  "ssim_text_bbox": 0.8151834072844896,
-  "ghost_ratio": 0.5630654808470142,
-  "seconds": 2.8753118000458926
+  "box_px_retained": 0.6604133545310016,
+  "non_text_px_altered": 1755,
+  "mae_text_footprint": 0.029256023298914486,
+  "psnr_text_footprint": 28.41922133262683,
+  "ssim_text_bbox": 0.811166522261464,
+  "ghost_ratio": 0.5561012598133104,
+  "seconds": 3.139210999943316
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3475,13 +3475,13 @@
   "fallbacks": 1,
   "residual_chars": 0.047619047619047616,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.0014308426073131955,
-  "non_text_px_altered": 10044,
+  "box_px_retained": 0.007313195548489666,
+  "non_text_px_altered": 9970,
   "mae_text_footprint": 0.4304408260524226,
   "psnr_text_footprint": 6.9230285749859615,
   "ssim_text_bbox": 0.0007513646401339989,
-  "ghost_ratio": 18.35127278297356,
-  "seconds": 3.237512799911201
+  "ghost_ratio": 18.549407279439446,
+  "seconds": 3.5234888000413775
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3493,13 +3493,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6658982511923688,
-  "non_text_px_altered": 1687,
-  "mae_text_footprint": 0.023126158326714323,
-  "psnr_text_footprint": 30.38213686958344,
-  "ssim_text_bbox": 0.847418514300754,
-  "ghost_ratio": 0.629058310432463,
-  "seconds": 3.185667200013995
+  "box_px_retained": 0.660731319554849,
+  "non_text_px_altered": 1752,
+  "mae_text_footprint": 0.023169843791368813,
+  "psnr_text_footprint": 30.385015237940575,
+  "ssim_text_bbox": 0.8436513258777959,
+  "ghost_ratio": 0.6097474620295099,
+  "seconds": 3.4492913000285625
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3516,7 +3516,7 @@
   "psnr_text_footprint": 29.04535438670134,
   "ssim_text_bbox": 0.8491114619261666,
   "ghost_ratio": 0.5336035078463728,
-  "seconds": 0.013461900176480412
+  "seconds": 0.013927199877798557
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3533,7 +3533,7 @@
   "psnr_text_footprint": 28.87526282808375,
   "ssim_text_bbox": 0.8514473821746932,
   "ghost_ratio": 0.5479952661632094,
-  "seconds": 0.011289200047031045
+  "seconds": 0.011142900213599205
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3550,7 +3550,7 @@
   "psnr_text_footprint": 29.087917463169532,
   "ssim_text_bbox": 0.8461370122510455,
   "ghost_ratio": 0.5529767305166035,
-  "seconds": 0.036840799963101745
+  "seconds": 0.03952530003152788
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3567,7 +3567,7 @@
   "psnr_text_footprint": 29.250356765548922,
   "ssim_text_bbox": 0.8237398272669121,
   "ghost_ratio": 1.3186667763673126,
-  "seconds": 0.333504700101912
+  "seconds": 0.3430997000541538
  },
  {
   "case": "MR2_UNCI|arial|overlay_on_anatomy",
@@ -3584,7 +3584,7 @@
   "psnr_text_footprint": 30.600990670195106,
   "ssim_text_bbox": 0.8658871342414284,
   "ghost_ratio": 0.6430403103460983,
-  "seconds": 0.35614360007457435
+  "seconds": 0.36021630000323057
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3601,7 +3601,7 @@
   "psnr_text_footprint": 8.654057166343197,
   "ssim_text_bbox": 0.32585846300414956,
   "ghost_ratio": 0.0,
-  "seconds": 1.008585900068283,
+  "seconds": 1.02300909999758,
   "identical_to_v1": true
  },
  {
@@ -3620,7 +3620,7 @@
   "psnr_text_footprint": 6.9230285749859615,
   "ssim_text_bbox": 0.0007513646401339989,
   "ghost_ratio": 7.971223887723008,
-  "seconds": 1.6658548000268638
+  "seconds": 1.7003927000332624
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3631,14 +3631,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.042042042042042045,
-  "box_px_retained": 0.5943952802359882,
-  "non_text_px_altered": 2552,
-  "mae_text_footprint": 0.027562218692083668,
-  "psnr_text_footprint": 28.48648123978368,
-  "ssim_text_bbox": 0.7619235828502342,
-  "ghost_ratio": 0.5100819066083784,
-  "seconds": 2.8459536000154912
+  "glyph_px_unmodified": 0.026026026026026026,
+  "box_px_retained": 0.5517043592264831,
+  "non_text_px_altered": 3031,
+  "mae_text_footprint": 0.02837437119406937,
+  "psnr_text_footprint": 28.216132223308932,
+  "ssim_text_bbox": 0.7321181903262917,
+  "ghost_ratio": 0.5330482267595503,
+  "seconds": 3.1031814999878407
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3649,14 +3649,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.042042042042042045,
-  "box_px_retained": 0.5951327433628318,
-  "non_text_px_altered": 2544,
-  "mae_text_footprint": 0.027703203600741327,
-  "psnr_text_footprint": 28.44345260292098,
-  "ssim_text_bbox": 0.7621318989900567,
-  "ghost_ratio": 0.5140762379835675,
-  "seconds": 2.8320651000831276
+  "glyph_px_unmodified": 0.026026026026026026,
+  "box_px_retained": 0.5524418223533267,
+  "non_text_px_altered": 3024,
+  "mae_text_footprint": 0.028642441090812817,
+  "psnr_text_footprint": 28.153321803685603,
+  "ssim_text_bbox": 0.7311633574520412,
+  "ghost_ratio": 0.5295325698803038,
+  "seconds": 3.1062042000703514
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3667,14 +3667,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.042042042042042045,
-  "box_px_retained": 0.5946411012782694,
-  "non_text_px_altered": 2549,
-  "mae_text_footprint": 0.029804739211014033,
-  "psnr_text_footprint": 27.996105151115728,
-  "ssim_text_bbox": 0.756294488009805,
-  "ghost_ratio": 0.5237471754939537,
-  "seconds": 2.888386700069532
+  "glyph_px_unmodified": 0.026526526526526525,
+  "box_px_retained": 0.5514585381842019,
+  "non_text_px_altered": 3035,
+  "mae_text_footprint": 0.03114310299179243,
+  "psnr_text_footprint": 27.625024109456756,
+  "ssim_text_bbox": 0.7260459741656685,
+  "ghost_ratio": 0.5460785017315185,
+  "seconds": 3.127450400032103
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3683,16 +3683,16 @@
   "text_lines": 1,
   "method": "vit_mae",
   "mask": "detector",
-  "fallbacks": 0,
-  "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.042042042042042045,
-  "box_px_retained": 0.5935758767617175,
-  "non_text_px_altered": 2563,
-  "mae_text_footprint": 0.028830420969023034,
-  "psnr_text_footprint": 28.02416877830131,
-  "ssim_text_bbox": 0.7477281865339794,
-  "ghost_ratio": 1.3062955693072689,
-  "seconds": 3.1742179999127984
+  "fallbacks": 1,
+  "residual_chars": 0.047619047619047616,
+  "glyph_px_unmodified": 0.6001001001001001,
+  "box_px_retained": 0.10004916420845625,
+  "non_text_px_altered": 9668,
+  "mae_text_footprint": 0.4304408260524226,
+  "psnr_text_footprint": 6.9230285749859615,
+  "ssim_text_bbox": 0.0007513646401339989,
+  "ghost_ratio": 7.971223887723008,
+  "seconds": 3.4887564999517053
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3703,14 +3703,14 @@
   "mask": "detector",
   "fallbacks": 0,
   "residual_chars": 0.0,
-  "glyph_px_unmodified": 0.042042042042042045,
-  "box_px_retained": 0.5943952802359882,
-  "non_text_px_altered": 2552,
-  "mae_text_footprint": 0.02592930897537728,
-  "psnr_text_footprint": 29.063168977125077,
-  "ssim_text_bbox": 0.7805123905449944,
-  "ghost_ratio": 0.5673859263379541,
-  "seconds": 3.20044990000315
+  "glyph_px_unmodified": 0.026026026026026026,
+  "box_px_retained": 0.5497377908882334,
+  "non_text_px_altered": 3056,
+  "mae_text_footprint": 0.02618215514958962,
+  "psnr_text_footprint": 29.06983111027119,
+  "ssim_text_bbox": 0.7568585779934963,
+  "ghost_ratio": 0.5889655896483347,
+  "seconds": 3.6089397000614554
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3727,7 +3727,7 @@
   "psnr_text_footprint": 29.04535438670134,
   "ssim_text_bbox": 0.8491114619261666,
   "ghost_ratio": 0.5340077125970192,
-  "seconds": 0.013700899900868535
+  "seconds": 0.017298599937930703
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3744,7 +3744,7 @@
   "psnr_text_footprint": 28.87526282808375,
   "ssim_text_bbox": 0.8514473821746932,
   "ghost_ratio": 0.5476056482495139,
-  "seconds": 0.011032499838620424
+  "seconds": 0.011325099971145391
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3761,7 +3761,7 @@
   "psnr_text_footprint": 29.087917463169532,
   "ssim_text_bbox": 0.8461370122510455,
   "ghost_ratio": 0.5577440184286022,
-  "seconds": 0.039310399908572435
+  "seconds": 0.03754499997012317
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3778,7 +3778,7 @@
   "psnr_text_footprint": 29.250356765548922,
   "ssim_text_bbox": 0.8237398272669121,
   "ghost_ratio": 1.324015029421998,
-  "seconds": 0.35399230010807514
+  "seconds": 0.34401439991779625
  },
  {
   "case": "MR2_UNCI|arial|dark_overlay_on_anatomy",
@@ -3795,7 +3795,7 @@
   "psnr_text_footprint": 30.600990670195106,
   "ssim_text_bbox": 0.8658871342414284,
   "ghost_ratio": 0.6437654572905672,
-  "seconds": 0.35206069983541965
+  "seconds": 0.360052099917084
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3812,7 +3812,7 @@
   "psnr_text_footprint": 41.169946340709586,
   "ssim_text_bbox": 0.8740903948478936,
   "ghost_ratio": 0.9028488941573011,
-  "seconds": 1.3203224001917988,
+  "seconds": 1.3327028998173773,
   "identical_to_v1": true
  },
  {
@@ -3831,7 +3831,7 @@
   "psnr_text_footprint": 41.169946340709586,
   "ssim_text_bbox": 0.8740903948478936,
   "ghost_ratio": 0.9028488941573011,
-  "seconds": 1.7911168998107314
+  "seconds": 1.8253113001119345
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3849,7 +3849,7 @@
   "psnr_text_footprint": 51.76955566966982,
   "ssim_text_bbox": 0.999040777556127,
   "ghost_ratio": 0.24820043878069267,
-  "seconds": 4.393021899741143
+  "seconds": 14.95620430004783
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3867,7 +3867,7 @@
   "psnr_text_footprint": 51.615225356788116,
   "ssim_text_bbox": 0.9990355915671346,
   "ghost_ratio": 0.251233362819783,
-  "seconds": 4.403640799922869
+  "seconds": 14.591854499885812
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3885,7 +3885,7 @@
   "psnr_text_footprint": 51.16860292403607,
   "ssim_text_bbox": 0.9989975246943937,
   "ghost_ratio": 0.29806051848238874,
-  "seconds": 4.476532199885696
+  "seconds": 14.70269179996103
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3897,13 +3897,13 @@
   "fallbacks": 4,
   "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.5509111912676521,
-  "non_text_px_altered": 46333,
+  "box_px_retained": 0.7960173200996455,
+  "non_text_px_altered": 15143,
   "mae_text_footprint": 0.00462394426977375,
   "psnr_text_footprint": 41.169946340709586,
-  "ssim_text_bbox": 0.8740903948478936,
-  "ghost_ratio": 0.9028488941573011,
-  "seconds": 5.068678800016642
+  "ssim_text_bbox": 0.9229518179861034,
+  "ghost_ratio": 0.8074071262631157,
+  "seconds": 15.060334000037983
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3921,7 +3921,7 @@
   "psnr_text_footprint": 51.44996096580921,
   "ssim_text_bbox": 0.9989784867466499,
   "ghost_ratio": 0.4761256825611161,
-  "seconds": 5.118502900004387
+  "seconds": 15.259643699973822
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3938,7 +3938,7 @@
   "psnr_text_footprint": 51.84601079334116,
   "ssim_text_bbox": 0.9991123779086559,
   "ghost_ratio": 0.26236211310239477,
-  "seconds": 0.020665999967604876
+  "seconds": 0.020338700152933598
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3955,7 +3955,7 @@
   "psnr_text_footprint": 51.72435360838417,
   "ssim_text_bbox": 0.9991214417772621,
   "ghost_ratio": 0.26264882278024393,
-  "seconds": 0.01666670013219118
+  "seconds": 0.017976799979805946
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3972,7 +3972,7 @@
   "psnr_text_footprint": 51.18293464032071,
   "ssim_text_bbox": 0.9990669564058329,
   "ghost_ratio": 0.3154582597623341,
-  "seconds": 0.06323789991438389
+  "seconds": 0.0640453000087291
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -3989,7 +3989,7 @@
   "psnr_text_footprint": 35.6643745203468,
   "ssim_text_bbox": 0.9456137813736435,
   "ghost_ratio": 9.179745113614219,
-  "seconds": 0.5985699000302702
+  "seconds": 0.6139366999268532
  },
  {
   "case": "MR2_UNCI|consolas|corner_annotations",
@@ -4006,7 +4006,7 @@
   "psnr_text_footprint": 51.55624172283984,
   "ssim_text_bbox": 0.9990608096861114,
   "ghost_ratio": 0.484559828676222,
-  "seconds": 0.6378020998090506
+  "seconds": 0.6466002000961453
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4023,7 +4023,7 @@
   "psnr_text_footprint": 6.8070253727659065,
   "ssim_text_bbox": 0.37466576292821224,
   "ghost_ratio": 0.0,
-  "seconds": 0.9418778999242932,
+  "seconds": 0.9664586998987943,
   "identical_to_v1": true
  },
  {
@@ -4042,7 +4042,7 @@
   "psnr_text_footprint": 6.881232399462618,
   "ssim_text_bbox": 0.0006228121558394212,
   "ghost_ratio": 17.950077574076975,
-  "seconds": 1.8090973999351263
+  "seconds": 1.8283214000985026
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4054,13 +4054,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7055555555555556,
-  "non_text_px_altered": 1361,
-  "mae_text_footprint": 0.027204552541315867,
-  "psnr_text_footprint": 28.516512692782904,
-  "ssim_text_bbox": 0.8523335938425901,
-  "ghost_ratio": 0.5569626002176575,
-  "seconds": 2.98311259993352
+  "box_px_retained": 0.7005050505050505,
+  "non_text_px_altered": 1421,
+  "mae_text_footprint": 0.027355784222014342,
+  "psnr_text_footprint": 28.407744315708186,
+  "ssim_text_bbox": 0.8478804949635491,
+  "ghost_ratio": 0.5655168078592677,
+  "seconds": 3.246539399959147
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4072,13 +4072,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7066498316498316,
-  "non_text_px_altered": 1348,
-  "mae_text_footprint": 0.027669161209853445,
-  "psnr_text_footprint": 28.414710850714155,
-  "ssim_text_bbox": 0.8497250219135503,
-  "ghost_ratio": 0.562490247012584,
-  "seconds": 2.983668999746442
+  "box_px_retained": 0.7018518518518518,
+  "non_text_px_altered": 1405,
+  "mae_text_footprint": 0.027859370127845336,
+  "psnr_text_footprint": 28.326172628550932,
+  "ssim_text_bbox": 0.8454381644707796,
+  "ghost_ratio": 0.5653234966741302,
+  "seconds": 3.249981400091201
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4090,13 +4090,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7063973063973064,
-  "non_text_px_altered": 1351,
-  "mae_text_footprint": 0.028755067040848147,
-  "psnr_text_footprint": 28.563622077894614,
-  "ssim_text_bbox": 0.8519527269016804,
-  "ghost_ratio": 0.592322895647134,
-  "seconds": 3.0229177998844534
+  "box_px_retained": 0.700925925925926,
+  "non_text_px_altered": 1416,
+  "mae_text_footprint": 0.029084814468350484,
+  "psnr_text_footprint": 28.50251692183069,
+  "ssim_text_bbox": 0.8474906225659582,
+  "ghost_ratio": 0.5867860741765792,
+  "seconds": 3.3739344000350684
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4105,16 +4105,16 @@
   "text_lines": 1,
   "method": "vit_mae",
   "mask": "detector",
-  "fallbacks": 0,
+  "fallbacks": 1,
   "residual_chars": 0.09523809523809523,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7034511784511784,
-  "non_text_px_altered": 1386,
-  "mae_text_footprint": 0.02978328656064858,
-  "psnr_text_footprint": 28.320526940633307,
-  "ssim_text_bbox": 0.8167894514648198,
-  "ghost_ratio": 1.2968432729377586,
-  "seconds": 3.3321108997333795
+  "box_px_retained": 0.09545454545454546,
+  "non_text_px_altered": 8608,
+  "mae_text_footprint": 0.439656220767072,
+  "psnr_text_footprint": 6.881232399462618,
+  "ssim_text_bbox": 0.0006228121558394212,
+  "ghost_ratio": 17.248840666181884,
+  "seconds": 3.58555780001916
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4126,13 +4126,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.7057239057239058,
-  "non_text_px_altered": 1360,
-  "mae_text_footprint": 0.024565014031805422,
-  "psnr_text_footprint": 29.95037080602347,
-  "ssim_text_bbox": 0.8657971582876163,
-  "ghost_ratio": 0.6317811770450019,
-  "seconds": 3.3371784000191838
+  "box_px_retained": 0.7008417508417508,
+  "non_text_px_altered": 1419,
+  "mae_text_footprint": 0.024634393514187714,
+  "psnr_text_footprint": 29.967468804998898,
+  "ssim_text_bbox": 0.8616706671631642,
+  "ghost_ratio": 0.6317500963666867,
+  "seconds": 3.713531699962914
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4149,7 +4149,7 @@
   "psnr_text_footprint": 28.60003335856989,
   "ssim_text_bbox": 0.8606808792359998,
   "ghost_ratio": 0.5615721508148451,
-  "seconds": 0.013533300021663308
+  "seconds": 0.01343970000743866
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4166,7 +4166,7 @@
   "psnr_text_footprint": 28.487000638552423,
   "ssim_text_bbox": 0.8576318434279808,
   "ghost_ratio": 0.5721320142194597,
-  "seconds": 0.01133119990117848
+  "seconds": 0.011382299941033125
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4183,7 +4183,7 @@
   "psnr_text_footprint": 28.534876361053833,
   "ssim_text_bbox": 0.8600974775704915,
   "ghost_ratio": 0.5833325766690816,
-  "seconds": 0.036614400101825595
+  "seconds": 0.03719669999554753
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4200,7 +4200,7 @@
   "psnr_text_footprint": 28.320526940633307,
   "ssim_text_bbox": 0.8232223496528592,
   "ghost_ratio": 1.2919823613295873,
-  "seconds": 0.3405304001644254
+  "seconds": 0.3442724000196904
  },
  {
   "case": "MR2_UNCI|consolas|overlay_on_anatomy",
@@ -4217,7 +4217,7 @@
   "psnr_text_footprint": 29.95782997685486,
   "ssim_text_bbox": 0.8730261321328857,
   "ghost_ratio": 0.6364228372108537,
-  "seconds": 0.35702589992433786
+  "seconds": 0.3628754001110792
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4234,7 +4234,7 @@
   "psnr_text_footprint": 8.774533397835647,
   "ssim_text_bbox": 0.4013877345717505,
   "ghost_ratio": 4.493310077534803,
-  "seconds": 0.9709063998889178,
+  "seconds": 0.9603552999906242,
   "identical_to_v1": true
  },
  {
@@ -4253,7 +4253,7 @@
   "psnr_text_footprint": 6.881232399462618,
   "ssim_text_bbox": 0.0006228121558394212,
   "ghost_ratio": 7.4000797173766335,
-  "seconds": 1.6253263999242336
+  "seconds": 1.7329176999628544
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4262,16 +4262,16 @@
   "text_lines": 1,
   "method": "telea",
   "mask": "detector",
-  "fallbacks": 2,
+  "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.49316542209846853,
-  "non_text_px_altered": 5873,
-  "mae_text_footprint": 0.029707670720299346,
-  "psnr_text_footprint": 27.87229632707082,
-  "ssim_text_bbox": 0.7976754306628239,
-  "ghost_ratio": 1.256974406636503,
-  "seconds": 2.808348899940029
+  "box_px_retained": 0.7158587520567017,
+  "non_text_px_altered": 2356,
+  "mae_text_footprint": 0.03144059869036483,
+  "psnr_text_footprint": 27.251207461097458,
+  "ssim_text_bbox": 0.7664292460622971,
+  "ghost_ratio": 0.5403833180876706,
+  "seconds": 3.508585999952629
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4280,16 +4280,16 @@
   "text_lines": 1,
   "method": "ns",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.19047619047619047,
+  "fallbacks": 0,
+  "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.49392481964308316,
-  "non_text_px_altered": 5861,
-  "mae_text_footprint": 0.030276738384783283,
-  "psnr_text_footprint": 27.731288691022193,
-  "ssim_text_bbox": 0.7984247455250252,
-  "ghost_ratio": 1.2335162056387368,
-  "seconds": 2.799061300000176
+  "box_px_retained": 0.7163017339577269,
+  "non_text_px_altered": 2348,
+  "mae_text_footprint": 0.03168459619582164,
+  "psnr_text_footprint": 27.133224715832334,
+  "ssim_text_bbox": 0.7678767840980968,
+  "ghost_ratio": 0.5304959180696963,
+  "seconds": 3.577090999810025
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4298,16 +4298,16 @@
   "text_lines": 1,
   "method": "biharmonic",
   "mask": "detector",
-  "fallbacks": 2,
+  "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.4934185546133401,
-  "non_text_px_altered": 5867,
-  "mae_text_footprint": 0.03271125662613034,
-  "psnr_text_footprint": 26.968255026438367,
-  "ssim_text_bbox": 0.794739095920444,
-  "ghost_ratio": 1.2794683395304358,
-  "seconds": 2.8371327000204474
+  "box_px_retained": 0.7155423364131123,
+  "non_text_px_altered": 2357,
+  "mae_text_footprint": 0.033015279077019025,
+  "psnr_text_footprint": 26.704311075980442,
+  "ssim_text_bbox": 0.765682514512454,
+  "ghost_ratio": 0.5816034655912574,
+  "seconds": 3.5178364999592304
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4316,16 +4316,16 @@
   "text_lines": 1,
   "method": "vit_mae",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.0,
+  "fallbacks": 0,
+  "residual_chars": 0.23809523809523808,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.4927857233261612,
-  "non_text_px_altered": 5879,
-  "mae_text_footprint": 0.02983005924540068,
-  "psnr_text_footprint": 28.211399548185966,
-  "ssim_text_bbox": 0.7853292241944249,
-  "ghost_ratio": 1.771527078236897,
-  "seconds": 3.168104600161314
+  "box_px_retained": 0.714593089482344,
+  "non_text_px_altered": 2374,
+  "mae_text_footprint": 0.032243529778609295,
+  "psnr_text_footprint": 27.42576130799399,
+  "ssim_text_bbox": 0.7592937033674557,
+  "ghost_ratio": 1.2949205252490217,
+  "seconds": 3.8361402999144047
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4334,16 +4334,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 2,
-  "residual_chars": 0.09523809523809523,
+  "fallbacks": 0,
+  "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.49373497025692953,
-  "non_text_px_altered": 5862,
-  "mae_text_footprint": 0.026741502962270035,
-  "psnr_text_footprint": 28.999021733578694,
-  "ssim_text_bbox": 0.8152230218866812,
-  "ghost_ratio": 1.282826202963287,
-  "seconds": 3.1743735000491142
+  "box_px_retained": 0.7159220351854195,
+  "non_text_px_altered": 2352,
+  "mae_text_footprint": 0.028271749298409733,
+  "psnr_text_footprint": 28.434390915828157,
+  "ssim_text_bbox": 0.7857927659923747,
+  "ghost_ratio": 0.5771992791365171,
+  "seconds": 3.844139800174162
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4360,7 +4360,7 @@
   "psnr_text_footprint": 28.60003335856989,
   "ssim_text_bbox": 0.8606808792359998,
   "ghost_ratio": 0.5630078549725813,
-  "seconds": 0.013174699852243066
+  "seconds": 0.013969099847599864
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4377,7 +4377,7 @@
   "psnr_text_footprint": 28.487000638552423,
   "ssim_text_bbox": 0.8576318434279808,
   "ghost_ratio": 0.5725040269351724,
-  "seconds": 0.01100219995714724
+  "seconds": 0.01211990020237863
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4394,7 +4394,7 @@
   "psnr_text_footprint": 28.534876361053833,
   "ssim_text_bbox": 0.8600974775704915,
   "ghost_ratio": 0.5837041384675925,
-  "seconds": 0.03731020004488528
+  "seconds": 0.036653999937698245
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4411,7 +4411,7 @@
   "psnr_text_footprint": 28.320526940633307,
   "ssim_text_bbox": 0.8232223496528592,
   "ghost_ratio": 1.2872104050185138,
-  "seconds": 0.35003949981182814
+  "seconds": 0.34167669992893934
  },
  {
   "case": "MR2_UNCI|consolas|dark_overlay_on_anatomy",
@@ -4428,7 +4428,7 @@
   "psnr_text_footprint": 29.95782997685486,
   "ssim_text_bbox": 0.8730261321328857,
   "ghost_ratio": 0.6372120283577856,
-  "seconds": 0.3585258999373764
+  "seconds": 0.35820870008319616
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4445,7 +4445,7 @@
   "psnr_text_footprint": 56.041741180527595,
   "ssim_text_bbox": 0.9910544934765951,
   "ghost_ratio": 0.33101761971851407,
-  "seconds": 1.361108000157401,
+  "seconds": 1.3826784999109805,
   "identical_to_v1": true
  },
  {
@@ -4464,7 +4464,7 @@
   "psnr_text_footprint": 56.041741180527595,
   "ssim_text_bbox": 0.9910544934765951,
   "ghost_ratio": 0.33101761971851407,
-  "seconds": 1.4883847997989506
+  "seconds": 1.4641184001229703
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4482,7 +4482,7 @@
   "psnr_text_footprint": 69.79937342109449,
   "ssim_text_bbox": 0.9999613777012398,
   "ghost_ratio": 0.0384294769124632,
-  "seconds": 2.9460594998672605
+  "seconds": 3.3524261000566185
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4500,7 +4500,7 @@
   "psnr_text_footprint": 69.42674879990506,
   "ssim_text_bbox": 0.9999549134042285,
   "ghost_ratio": 0.04341361306708677,
-  "seconds": 2.9311174999456853
+  "seconds": 3.392388100270182
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4518,7 +4518,7 @@
   "psnr_text_footprint": 67.86327679130581,
   "ssim_text_bbox": 0.9999208529260891,
   "ghost_ratio": 0.039497403146934694,
-  "seconds": 2.97173019987531
+  "seconds": 3.360160799929872
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4528,15 +4528,15 @@
   "method": "vit_mae",
   "mask": "detector",
   "fallbacks": 6,
-  "residual_chars": 0.021052631578947368,
+  "residual_chars": 0.031578947368421054,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6646580086580086,
-  "non_text_px_altered": 6556,
+  "box_px_retained": 0.8219913419913419,
+  "non_text_px_altered": 2013,
   "mae_text_footprint": 0.0006364582054840201,
   "psnr_text_footprint": 56.041741180527595,
-  "ssim_text_bbox": 0.9910544934765951,
-  "ghost_ratio": 0.33101761971851407,
-  "seconds": 3.2864892000798136
+  "ssim_text_bbox": 0.9931560755076596,
+  "ghost_ratio": 0.20536326934142007,
+  "seconds": 3.67839810019359
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4554,7 +4554,7 @@
   "psnr_text_footprint": 57.3441272490868,
   "ssim_text_bbox": 0.9987051230915286,
   "ghost_ratio": 0.5358216479359491,
-  "seconds": 3.3269265999551862
+  "seconds": 3.7077699000947177
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4571,7 +4571,7 @@
   "psnr_text_footprint": 70.17248183797777,
   "ssim_text_bbox": 0.9999705447407917,
   "ghost_ratio": 0.0378971157484836,
-  "seconds": 0.004694500006735325
+  "seconds": 0.00496500008739531
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4588,7 +4588,7 @@
   "psnr_text_footprint": 70.12688619797225,
   "ssim_text_bbox": 0.9999693579108301,
   "ghost_ratio": 0.03783606958219591,
-  "seconds": 0.003673100145533681
+  "seconds": 0.003763000015169382
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4605,7 +4605,7 @@
   "psnr_text_footprint": 69.93827402437886,
   "ssim_text_bbox": 0.9999650473458577,
   "ghost_ratio": 0.0334143011019966,
-  "seconds": 0.02028289996087551
+  "seconds": 0.019572400022298098
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4622,7 +4622,7 @@
   "psnr_text_footprint": 33.1387852876807,
   "ssim_text_bbox": 0.8193480302757441,
   "ghost_ratio": 19.60664328118385,
-  "seconds": 0.3395847000647336
+  "seconds": 0.3328777002170682
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|corner_annotations",
@@ -4639,7 +4639,7 @@
   "psnr_text_footprint": 57.92635182335392,
   "ssim_text_bbox": 0.9989778456178355,
   "ghost_ratio": 0.5136038776846009,
-  "seconds": 0.34317520004697144
+  "seconds": 0.33904289989732206
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4656,7 +4656,7 @@
   "psnr_text_footprint": 5.32571473052054,
   "ssim_text_bbox": 0.23232303422291126,
   "ghost_ratio": 0.0,
-  "seconds": 0.9588275998830795,
+  "seconds": 0.944680199958384,
   "identical_to_v1": true
  },
  {
@@ -4675,7 +4675,7 @@
   "psnr_text_footprint": 12.405701918607875,
   "ssim_text_bbox": 0.008736787263652953,
   "ghost_ratio": 13.037777650333371,
-  "seconds": 1.6009612998459488
+  "seconds": 1.4956085002049804
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4687,13 +4687,13 @@
   "fallbacks": 0,
   "residual_chars": 0.09523809523809523,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6197884256378344,
-  "non_text_px_altered": 610,
-  "mae_text_footprint": 0.04234979833429365,
-  "psnr_text_footprint": 24.485169646667035,
-  "ssim_text_bbox": 0.8604992040947492,
-  "ghost_ratio": 0.5763286272358534,
-  "seconds": 3.0314404000528157
+  "box_px_retained": 0.6107654013690106,
+  "non_text_px_altered": 639,
+  "mae_text_footprint": 0.043416327647117024,
+  "psnr_text_footprint": 24.150182128681973,
+  "ssim_text_bbox": 0.8474256225019082,
+  "ghost_ratio": 0.5812317902211831,
+  "seconds": 2.894446400227025
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4705,13 +4705,13 @@
   "fallbacks": 0,
   "residual_chars": 0.09523809523809523,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6197884256378344,
-  "non_text_px_altered": 611,
-  "mae_text_footprint": 0.041708134723167985,
-  "psnr_text_footprint": 24.798068731759713,
-  "ssim_text_bbox": 0.8678464960917652,
-  "ghost_ratio": 0.5557881526554658,
-  "seconds": 3.049844400025904
+  "box_px_retained": 0.611076540136901,
+  "non_text_px_altered": 639,
+  "mae_text_footprint": 0.042738288547832314,
+  "psnr_text_footprint": 24.44779911923853,
+  "ssim_text_bbox": 0.8563993758388423,
+  "ghost_ratio": 0.5606829078780527,
+  "seconds": 2.894895400153473
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4723,13 +4723,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6241443683883012,
-  "non_text_px_altered": 596,
-  "mae_text_footprint": 0.02108614297603874,
-  "psnr_text_footprint": 30.348211640329747,
-  "ssim_text_bbox": 0.947070982134843,
-  "ghost_ratio": 0.7406133049706534,
-  "seconds": 2.987315199803561
+  "box_px_retained": 0.6151213441194773,
+  "non_text_px_altered": 625,
+  "mae_text_footprint": 0.021631775298424506,
+  "psnr_text_footprint": 30.007095462725992,
+  "ssim_text_bbox": 0.9427825743505756,
+  "ghost_ratio": 0.7564010125215034,
+  "seconds": 2.9571563000790775
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4747,7 +4747,7 @@
   "psnr_text_footprint": 12.405701918607875,
   "ssim_text_bbox": 0.008736787263652953,
   "ghost_ratio": 13.037777650333371,
-  "seconds": 3.0595627001021057
+  "seconds": 2.9893595003522933
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4759,13 +4759,13 @@
   "fallbacks": 0,
   "residual_chars": 0.0,
   "glyph_px_unmodified": 0.0,
-  "box_px_retained": 0.6213441194772868,
-  "non_text_px_altered": 605,
-  "mae_text_footprint": 0.03841397051548432,
-  "psnr_text_footprint": 25.51736405323676,
-  "ssim_text_bbox": 0.8767902863721146,
-  "ghost_ratio": 0.7694385122187769,
-  "seconds": 3.112364700064063
+  "box_px_retained": 0.612321095208463,
+  "non_text_px_altered": 634,
+  "mae_text_footprint": 0.039030898794661824,
+  "psnr_text_footprint": 25.23953668046974,
+  "ssim_text_bbox": 0.8677713366910866,
+  "ghost_ratio": 0.7624063797720985,
+  "seconds": 3.046676400117576
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4782,7 +4782,7 @@
   "psnr_text_footprint": 25.135404337261306,
   "ssim_text_bbox": 0.8790377744385398,
   "ghost_ratio": 0.6505128378780145,
-  "seconds": 0.0019446001388132572
+  "seconds": 0.0022854001726955175
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4799,7 +4799,7 @@
   "psnr_text_footprint": 25.146659212677886,
   "ssim_text_bbox": 0.8844344437791208,
   "ghost_ratio": 0.6260139488974417,
-  "seconds": 0.0016254999209195375
+  "seconds": 0.0016455999575555325
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4816,7 +4816,7 @@
   "psnr_text_footprint": 31.27022859636302,
   "ssim_text_bbox": 0.96165331849413,
   "ghost_ratio": 0.7733001660314333,
-  "seconds": 0.009708500001579523
+  "seconds": 0.010530400089919567
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4833,7 +4833,7 @@
   "psnr_text_footprint": 17.34176925179026,
   "ssim_text_bbox": 0.5452156964334052,
   "ghost_ratio": 4.272361552455055,
-  "seconds": 0.11192740011028945
+  "seconds": 0.11308489996008575
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|overlay_on_anatomy",
@@ -4850,7 +4850,7 @@
   "psnr_text_footprint": 26.056670348704138,
   "ssim_text_bbox": 0.8972572849860512,
   "ghost_ratio": 0.810262282636106,
-  "seconds": 0.11785750021226704
+  "seconds": 0.119149100035429
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4867,7 +4867,7 @@
   "psnr_text_footprint": 15.583289339858538,
   "ssim_text_bbox": 0.5682232783178381,
   "ghost_ratio": 0.0,
-  "seconds": 1.0905810999684036,
+  "seconds": 1.1037439999636263,
   "identical_to_v1": true
  },
  {
@@ -4886,7 +4886,7 @@
   "psnr_text_footprint": 13.676079626836943,
   "ssim_text_bbox": 0.4712269506972374,
   "ghost_ratio": 7.37654409408093,
-  "seconds": 1.283410700270906
+  "seconds": 1.2887219002004713
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4904,7 +4904,7 @@
   "psnr_text_footprint": 13.676079626836943,
   "ssim_text_bbox": 0.4712269506972374,
   "ghost_ratio": 7.37654409408093,
-  "seconds": 2.37938420008868
+  "seconds": 2.4515638002194464
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4914,15 +4914,15 @@
   "method": "ns",
   "mask": "detector",
   "fallbacks": 0,
-  "residual_chars": 0.2857142857142857,
+  "residual_chars": 0.3333333333333333,
   "glyph_px_unmodified": 0.6988636363636364,
-  "box_px_retained": 0.44651162790697674,
-  "non_text_px_altered": 192,
-  "mae_text_footprint": 0.0928840815043738,
-  "psnr_text_footprint": 18.51503708763747,
-  "ssim_text_bbox": 0.6612259658159111,
-  "ghost_ratio": 0.7271375534483417,
-  "seconds": 2.3872664000373334
+  "box_px_retained": 0.35968992248062015,
+  "non_text_px_altered": 249,
+  "mae_text_footprint": 0.09205035531576834,
+  "psnr_text_footprint": 18.576349379632,
+  "ssim_text_bbox": 0.6582585764633647,
+  "ghost_ratio": 0.6282065200932552,
+  "seconds": 2.433101800037548
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4940,7 +4940,7 @@
   "psnr_text_footprint": 13.676079626836943,
   "ssim_text_bbox": 0.4712269506972374,
   "ghost_ratio": 7.37654409408093,
-  "seconds": 2.385485500097275
+  "seconds": 2.395576799986884
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4958,7 +4958,7 @@
   "psnr_text_footprint": 13.676079626836943,
   "ssim_text_bbox": 0.4712269506972374,
   "ghost_ratio": 7.37654409408093,
-  "seconds": 2.5824147001840174
+  "seconds": 2.535649500088766
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4967,16 +4967,16 @@
   "text_lines": 1,
   "method": "vit_mae_poisson",
   "mask": "detector",
-  "fallbacks": 1,
-  "residual_chars": 0.2857142857142857,
-  "glyph_px_unmodified": 0.7897727272727273,
-  "box_px_retained": 0.04961240310077519,
-  "non_text_px_altered": 480,
-  "mae_text_footprint": 0.16154936299245135,
-  "psnr_text_footprint": 13.676079626836943,
-  "ssim_text_bbox": 0.4712269506972374,
-  "ghost_ratio": 7.37654409408093,
-  "seconds": 2.6060458002611995
+  "fallbacks": 0,
+  "residual_chars": 0.3333333333333333,
+  "glyph_px_unmodified": 0.6988636363636364,
+  "box_px_retained": 0.35968992248062015,
+  "non_text_px_altered": 248,
+  "mae_text_footprint": 0.09337733312381051,
+  "psnr_text_footprint": 18.465648548288854,
+  "ssim_text_bbox": 0.6529574302654259,
+  "ghost_ratio": 0.8856064408053583,
+  "seconds": 2.633723500184715
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -4993,7 +4993,7 @@
   "psnr_text_footprint": 25.135404337261306,
   "ssim_text_bbox": 0.8790377744385398,
   "ghost_ratio": 0.6505128378780145,
-  "seconds": 0.0019997002091258764
+  "seconds": 0.0020463999826461077
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -5010,7 +5010,7 @@
   "psnr_text_footprint": 25.146659212677886,
   "ssim_text_bbox": 0.8844344437791208,
   "ghost_ratio": 0.6241994798969994,
-  "seconds": 0.0016708998009562492
+  "seconds": 0.0015036999247968197
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -5027,7 +5027,7 @@
   "psnr_text_footprint": 31.27022859636302,
   "ssim_text_bbox": 0.96165331849413,
   "ghost_ratio": 0.7646305695596365,
-  "seconds": 0.009544100146740675
+  "seconds": 0.009596600197255611
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -5044,7 +5044,7 @@
   "psnr_text_footprint": 17.34176925179026,
   "ssim_text_bbox": 0.5452156964334052,
   "ghost_ratio": 4.272361552455055,
-  "seconds": 0.11669349996373057
+  "seconds": 0.1140076001174748
  },
  {
   "case": "MR-SIEMENS-DICOM-WithOverlays|lucida_console|dark_overlay_on_anatomy",
@@ -5061,6 +5061,6 @@
   "psnr_text_footprint": 26.056670348704138,
   "ssim_text_bbox": 0.8972572849860512,
   "ghost_ratio": 0.8088320492491125,
-  "seconds": 0.12455879990011454
+  "seconds": 0.12158119981177151
  }
 ]
