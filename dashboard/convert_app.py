@@ -199,8 +199,7 @@ st.markdown(
         <h1>🩺 ProST-Annomyze <span style="font-weight:600;opacity:.85">v{__version__}</span></h1>
         <p>DICOM (files, series or ZIP), NIfTI (.nii / .nii.gz), PNG, JPEG, BMP or TIFF in →
         de-identified, conformance-checked DICOM out, with burned-in text removed <b>while keeping
-        the image</b>, and an optional geometry-correct .nii.gz. Running this tool does not by
-        itself constitute HIPAA or GDPR compliance.</p>
+        the image</b>, and an optional geometry-correct .nii.gz.</p>
     </div>
     """.replace("{__version__}", __version__),
     unsafe_allow_html=True,
@@ -268,6 +267,11 @@ with st.sidebar:
     rarn = st.checkbox("RARN intensity normalization", value=False,
                        help="Robust Anatomy-Referenced Normalization before writing .nii.gz (parameters are "
                             "logged). Off keeps stored values exactly.")
+
+st.caption(
+    "🛡️ Built to support HIPAA- and GDPR-aligned de-identification workflows. Compliance also depends on "
+    "your institution's policies and human review of flagged items — see the README's compliance section."
+)
 
 uploads = st.file_uploader(
     "📤 Upload files (select several, or a .zip, to convert a whole study)",
