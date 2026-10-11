@@ -18,12 +18,74 @@ established by volumetric augmentation libraries (Albumentations,
 Bio-Volumentations), so every step — deterministic or probabilistic — logs
 into the same audit trail.
 
+## ProST-Annomyze v2 (0.2.0)
+
+ProST-Annomyze is the no-code converter built on this library: DICOM (single
+files, whole series or a ZIP), NIfTI (`.nii` / `.nii.gz`) and PNG / JPEG / BMP
+/ TIFF go in; de-identified, conformance-checked DICOM comes out, plus an
+optional geometry-correct `.nii.gz` with a JSON sidecar.
+
+What changed from v1:
+
+* **Burned-in text is removed while keeping the image.** Only the glyph
+  pixels are replaced:
+  * segmentation: top-hat filtering + bounded region growing;
+  * restoration: Telea by default; Navier–Stokes, biharmonic or ViT-MAE +
+    Poisson are options;
+  * every other pixel is bit-identical to the input;
+  * text drawn on anatomy, which v1 missed (71% of characters still
+    readable), is now detected;
+  * every restored region is checked again by OCR and a silhouette test, and
+    falls back to a black box if text is still visible.
+
+  The evidence is in [`docs/v2_analysis.md`](docs/v2_analysis.md); the
+  benchmark is in [`benchmarks/`](benchmarks/).
+* **MR-aware headers:**
+  * T2W / DWI / ADC identity, TE / TR and the frame of reference are kept;
+  * diffusion b-values are copied from Siemens / GE / Philips private tags
+    into public tags before the private tags are removed;
+  * series descriptions are scrubbed of names, IDs and dates instead of
+    deleted;
+  * private and unknown tags are still removed by default.
+* **Study-level pseudonyms:** keyed UIDs (including FrameOfReferenceUID),
+  PatientID and date shifts, so one patient's series stay in one study with
+  intervals preserved.
+* **Geometry and values kept in both directions:**
+  * NIfTI ↔ DICOM uses the full orientation-aware affine;
+  * stored intensities are never min–max rescaled (integer ADC is
+    bit-identical);
+  * compressed DICOM is decoded and re-saved correctly;
+  * Type 2 attributes are present and every output passes a conformance
+    self-check.
+* **One audit trail:** every step emits `AuditEntry` records.
+
+Each briefing recommendation is mapped to code and tests in
+[`docs/v2_changes.md`](docs/v2_changes.md).
+
+```bash
+pip install prostate-deid[dashboard]      # + [vit] for the ViT-MAE option
+streamlit run dashboard/convert_app.py
+```
+
+```python
+from prostate_deid import StudyContext, deidentify_dicom, series_to_nifti
+ctx = StudyContext(secret=os.environ["PROSTATE_DEID_KEY"])   # same key -> same pseudonyms
+res = deidentify_dicom(pydicom.dcmread("t2w_001.dcm"), ctx, text_method="telea")
+res.datasets[0].save_as("out/" + res.filenames[0])
+for entry in res.audit:
+    print(entry)
+```
+
 ## Install
 
 ```bash
 pip install prostate-deid
-# OCR/NER burned-in-text detection is an optional extra:
+# Burned-in-text detection (Tesseract binary also required):
 pip install prostate-deid[ocr]
+# Optional ViT-MAE restoration (torch + transformers; downloads facebook/vit-mae-base once):
+pip install prostate-deid[vit]
+# Compressed DICOM (JPEG, JPEG-LS, JPEG 2000, RLE):
+pip install prostate-deid[codecs]
 # Streamlit dashboards:
 pip install prostate-deid[dashboard]
 ```
