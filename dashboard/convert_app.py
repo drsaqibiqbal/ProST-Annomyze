@@ -393,13 +393,21 @@ def _to_display(a):
     return (np.clip((a - lo) / (hi - lo), 0, 1) * 255).astype(np.uint8)
 
 
-def _overlay(display_u8, mask):
+def _overlay(display_u8, mask, fill=False):
+    """The de-identified image as-is, with only a thin red outline around changed pixels (or a fill)."""
+    from scipy import ndimage as ndi
+
     rgb = np.repeat(display_u8[..., None], 3, axis=2) if display_u8.ndim == 2 else display_u8.copy()
-    if mask is not None and mask.any():
-        rgb = rgb.astype(np.float32)
-        rgb[mask] = 0.45 * rgb[mask] + 0.55 * np.array([235, 60, 52], np.float32)
-        rgb = rgb.astype(np.uint8)
-    return rgb
+    if mask is None or not mask.any():
+        return rgb
+    red = np.array([235, 60, 52], np.float32)
+    rgb = rgb.astype(np.float32)
+    if fill:
+        rgb[mask] = 0.45 * rgb[mask] + 0.55 * red
+    else:
+        edge = ndi.binary_dilation(mask, iterations=1) & ~ndi.binary_erosion(mask, iterations=1)
+        rgb[edge] = red
+    return rgb.astype(np.uint8)
 
 
 if uploads:
@@ -505,9 +513,12 @@ if uploads:
         st.markdown('<span class="prost-pill prost-pill-deid">🔒 De-identified</span>', unsafe_allow_html=True)
         st.image(_to_display(out), width="stretch")
     with cols[2]:
-        st.markdown('<span class="prost-pill prost-pill-original">Changed pixels</span>', unsafe_allow_html=True)
-        st.image(_overlay(_to_display(out), mask if mask is not None and mask.shape == out.shape[:2] else None),
-                 width="stretch")
+        st.markdown('<span class="prost-pill prost-pill-original">Where pixels changed</span>', unsafe_allow_html=True)
+        fill = st.checkbox("Fill changed pixels", value=False,
+                           help="Off: the de-identified image with a thin red outline around every changed area. "
+                                "On: changed pixels tinted red.")
+        st.image(_overlay(_to_display(out), mask if mask is not None and mask.shape == out.shape[:2] else None,
+                          fill=fill), width="stretch")
         if mask is not None and mask.size:
             st.caption(f"{int(mask.sum())} pixel(s) altered ({mask.mean():.2%} of the image); "
                        "every other pixel is bit-identical to the input.")

@@ -85,7 +85,7 @@ class RegionResult:
     slice_index: int
     box: tuple[int, int, int, int]  # x0, y0, x1, y1
     ocr_conf: int
-    action: str  # "restored" | "blackout" | "fallback_blackout"
+    action: str  # "restored" | "blackout" | "fallback_blackout" | "skipped_not_text"
     reason: str
     polarity: str  # "bright" | "dark" | "n/a"
     mask_pixels: int
@@ -227,7 +227,10 @@ def segment_text_pixels(
 
     _, polarity, resp, contrast, seeds, sw = best
     grow_ok = resp >= _GROW_CONTRAST * contrast
-    steps = max(1, int(np.ceil(sw / 2)))
+    # Growth may reach ~half a stroke plus 2 px: enough to take in anti-aliasing and the JPEG ringing
+    # halo around glyphs (8x8-block codecs smear 2-4 px), which would otherwise survive as a faint
+    # letter outline. grow_ok (a thin-structure response) keeps growth off flat background and anatomy.
+    steps = max(2, int(np.ceil(sw / 2)) + 2)
     mask = seeds & grow_ok
     struct8 = np.ones((3, 3), dtype=bool)
     for _ in range(steps):  # bounded region growing (geodesic dilation inside grow_ok)
@@ -604,7 +607,10 @@ def detect_overlay_text_boxes(gray01: np.ndarray, existing=(), padding: int = 3)
             continue
         tried[pol] += 1
         n_chars, _ = read_crop_text(gray01, (x0, y0, x1, y1), pol)
-        if n_chars >= _CROP_MIN_CHARS:
+        # Second, independent condition: real burned-in text yields a plausible glyph mask. OCR alone
+        # "reads" a few characters in noisy tissue texture; requiring both keeps such boxes out
+        # (they would otherwise be blacked out over anatomy).
+        if n_chars >= _CROP_MIN_CHARS and segment_text_pixels(gray01, (x0, y0, x1, y1))[0] is not None:
             confirmed.append([x0, y0, x1, y1, pol, n_chars])
 
     # 2. Grow each confirmed line along its row: absorb every same-polarity candidate (confirmed or
@@ -712,7 +718,17 @@ def _boxes_still_text(
     found = detect_text_boxes(restored01, upscale_factors=upscale_factors, check_inverted=check_inverted, padding=0)
     flags = []
     for x0, y0, x1, y1 in boxes:
-        hit = any(min(x1, fx1) > max(x0, fx0) and min(y1, fy1) > max(y0, fy0) for fx0, fy0, fx1, fy1, _ in found)
+        area = max(1, (x1 - x0) * (y1 - y0))
+        hit = False
+        for fx0, fy0, fx1, fy1, _ in found:
+            f_area = max(1, (fx1 - fx0) * (fy1 - fy0))
+            inter = max(0, min(x1, fx1) - max(x0, fx0)) * max(0, min(y1, fy1) - max(y0, fy0))
+            # Only a detection that lies mostly inside this region and is not much larger than it counts:
+            # on noisy screenshots Tesseract's whole-slice layout pass can return slice-sized junk rows
+            # after the text is gone, which overlap every region without meaning anything is left.
+            if inter >= 0.5 * f_area and f_area <= 2 * area:
+                hit = True
+                break
         if not hit:
             hit = read_crop_text(restored01, (x0, y0, x1, y1), min_conf=_VERIFY_MIN_CONF)[0] >= _CROP_MIN_CHARS
         flags.append(hit)
@@ -828,6 +844,15 @@ def restore_burned_in_text(
                 regions.append(RegionResult(i, box, conf, "blackout", "method=blackout", "n/a", n_box, n_box))
                 continue
             m, info = segment_text_pixels(gray01, box)
+            if m is None and read_crop_text(gray01, box, min_conf=_VERIFY_MIN_CONF)[0] < _CROP_MIN_CHARS:
+                # Two independent checks say this detector box is not text: no plausible glyph strokes,
+                # and a native-resolution OCR read finds no legible characters (typical of v1's
+                # whole-slice pass "reading" noisy tissue). Blacking it out would destroy anatomy, so
+                # leave it untouched and flag it for human review instead.
+                regions.append(RegionResult(i, box, conf, "skipped_not_text",
+                                            info["reason"] + "; crop OCR found no legible text",
+                                            info["polarity"], 0, n_box))
+                continue
             if m is None:
                 black_mask[y0:y1, x0:x1] = True
                 regions.append(RegionResult(i, box, conf, "fallback_blackout", info["reason"],
@@ -883,14 +908,16 @@ def restore_burned_in_text(
     n_restored = sum(r.action == "restored" for r in regions)
     n_fallback = sum(r.action == "fallback_blackout" for r in regions)
     n_black = sum(r.action == "blackout" for r in regions)
+    n_skip = sum(r.action == "skipped_not_text" for r in regions)
     box_px = sum(r.box_pixels for r in regions)
     changed_px = int(inpaint_mask_all.sum())
     for r in regions:
-        flagged = r.action == "fallback_blackout" or r.ocr_conf < flag_confidence or r.action == "restored"
+        flagged = r.action in ("fallback_blackout", "skipped_not_text", "restored") or r.ocr_conf < flag_confidence
         audit.append(AuditEntry(
             step="burned_in_phi",
             action={"restored": "restored_region", "blackout": "redacted_region",
-                    "fallback_blackout": "redacted_region_fallback"}[r.action],
+                    "fallback_blackout": "redacted_region_fallback",
+                    "skipped_not_text": "skipped_region_not_text"}[r.action],
             detail=(f"slice={r.slice_index} bbox={r.box} method={method if r.action == 'restored' else 'blackout'} "
                     f"polarity={r.polarity} glyph_px={r.mask_pixels}/{r.box_pixels} ({r.reason})"),
             confidence=max(0.0, min(1.0, r.ocr_conf / 100.0)) if r.ocr_conf >= 0 else None,
@@ -902,7 +929,8 @@ def restore_burned_in_text(
     else:
         notes.append(
             f"burned-in text: {len(regions)} region(s) across {n_slices} slice(s) -- "
-            f"{n_restored} restored with {method}, {n_fallback} fell back to blackout, {n_black} blacked out"
+            f"{n_restored} restored with {method}, {n_fallback} fell back to blackout, {n_black} blacked out, "
+            f"{n_skip} left untouched as not text (review)"
         )
         if box_px:
             notes.append(

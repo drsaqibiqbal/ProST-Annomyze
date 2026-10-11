@@ -154,3 +154,25 @@ def test_vit_mae_poisson_restores_without_ghost():
     out = inpaint_mask(g, m, "vit_mae_poisson")
     assert ghost_ratio(out, m) < _GHOST_RATIO
     assert np.array_equal(out[~m], g[~m])
+
+
+@needs_ocr
+def test_jpeg_screenshot_text_restored_not_blacked_out():
+    # Scanner-screenshot layout: white corner text on black, JPEG-compressed. v2 must restore the glyphs
+    # (not fall back to whole-box blackout because of JPEG halos) and must not touch the anatomy.
+    import io
+
+    from PIL import Image
+    from _text_fixtures import burn, phantom
+
+    from prostate_deid.convert import _raster_to_array
+
+    clean = (phantom(256).astype(np.float32) / 2200 * 160).clip(0, 160).astype(np.uint8)
+    burned, alpha = burn(clean, [("DOE^JANE 67Y", (3, 3)), ("ID SYN-0012345", (3, 17))], 12, level=255)
+    buf = io.BytesIO()
+    Image.fromarray(burned).save(buf, "JPEG", quality=85)
+    arr, _ = _raster_to_array(buf.getvalue())
+    res = restore_burned_in_text(arr[None], method="telea")
+    assert res.regions and all(r.action == "restored" for r in res.regions if r.action != "skipped_not_text")
+    assert not (res.inpaint_mask[0] & (clean > 20)).any()  # anatomy untouched
+    assert tr.read_crop_text(_norm(res.pixels[0]), _box_of(alpha), min_conf=40)[0] < 3
