@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Dashboard: the compliance caveat moved from the hero banner to a short note below it, reworded
   ("built to support HIPAA- and GDPR-aligned workflows; compliance also depends on institutional
   policy and human review"). The substance is unchanged and matches the README.
+- Dashboard: the version moved from the hero banner to a small sidebar footer (still written into
+  every output's DeidentificationMethod and the NIfTI sidecar).
 
 ## [0.2.2] - 2026-10-11
 

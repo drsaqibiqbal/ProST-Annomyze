@@ -196,12 +196,12 @@ st.markdown(
     .prost-bad { background: rgba(208,59,59,0.15); color: var(--status-critical); }
     </style>
     <div class="prost-hero">
-        <h1>🩺 ProST-Annomyze <span style="font-weight:600;opacity:.85">v{__version__}</span></h1>
+        <h1>🩺 ProST-Annomyze</h1>
         <p>DICOM (files, series or ZIP), NIfTI (.nii / .nii.gz), PNG, JPEG, BMP or TIFF in →
         de-identified, conformance-checked DICOM out, with burned-in text removed <b>while keeping
         the image</b>, and an optional geometry-correct .nii.gz.</p>
     </div>
-    """.replace("{__version__}", __version__),
+    """,
     unsafe_allow_html=True,
 )
 
@@ -267,6 +267,8 @@ with st.sidebar:
     rarn = st.checkbox("RARN intensity normalization", value=False,
                        help="Robust Anatomy-Referenced Normalization before writing .nii.gz (parameters are "
                             "logged). Off keeps stored values exactly.")
+    st.divider()
+    st.caption(f"prostate-deid {__version__} · [changelog](https://github.com/drsaqibiqbal/ProST-Annomyze/blob/master/CHANGELOG.md)")
 
 st.caption(
     "🛡️ Built to support HIPAA- and GDPR-aligned de-identification workflows. Compliance also depends on "
