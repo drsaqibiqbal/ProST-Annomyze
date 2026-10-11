@@ -268,7 +268,7 @@ with st.sidebar:
                        help="Robust Anatomy-Referenced Normalization before writing .nii.gz (parameters are "
                             "logged). Off keeps stored values exactly.")
     st.divider()
-    st.caption(f"prostate-deid {__version__} · [changelog](https://github.com/drsaqibiqbal/ProST-Annomyze/blob/master/CHANGELOG.md)")
+    st.caption(f"prostate-deid {__version__} · [releases](https://github.com/drsaqibiqbal/ProST-Annomyze/releases)")
 
 st.caption(
     "🛡️ Built to support HIPAA- and GDPR-aligned de-identification workflows. Compliance also depends on "
