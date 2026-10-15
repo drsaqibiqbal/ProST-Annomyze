@@ -1,4 +1,4 @@
-# prostate-deid
+# prostate-Annomyze
 
 [![CI](https://github.com/drsaqibiqbal/annolib/actions/workflows/ci.yml/badge.svg)](https://github.com/drsaqibiqbal/annolib/actions/workflows/ci.yml)
 [![PyPI version](https://img.shields.io/pypi/v/prostate-deid.svg)](https://pypi.org/project/prostate-deid/)
