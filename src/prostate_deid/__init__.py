@@ -33,6 +33,7 @@ except ImportError:  # pragma: no cover - pydicom should always be present (core
 try:
     from .universal_io import (
         array_to_dicom,
+        detect_text_boxes,
         dicom_to_nifti_bytes,
         full_wipe_dicom,
         load_any,
@@ -41,7 +42,19 @@ try:
 except ImportError:  # pragma: no cover - pydicom should always be present (core dependency)
     pass
 
-__version__ = "0.1.0"
+# v2: image-preserving text removal and the MR-aware, geometry-preserving converter
+from .convert import (
+    StudyContext,
+    check_conformance,
+    deidentify_dicom,
+    nifti_to_dicom_series,
+    raster_to_dicom,
+    series_to_nifti,
+)
+from .nifti_io import save_nifti
+from .text_restore import RESTORE_METHODS, detect_text_boxes_v2, restore_burned_in_text
+
+from ._version import __version__
 
 __all__ = [
     "AuditEntry", "Sample", "Transform", "Compose",
@@ -53,5 +66,9 @@ __all__ = [
     "default_pipeline", "anonymize_dicom", "summarize_audit",
     "load_sample", "save_sample",
     "load_any", "array_to_dicom", "full_wipe_dicom", "dicom_to_nifti_bytes", "redact_burned_in_text",
+    "detect_text_boxes",
+    "restore_burned_in_text", "detect_text_boxes_v2", "RESTORE_METHODS",
+    "StudyContext", "deidentify_dicom", "nifti_to_dicom_series", "raster_to_dicom", "series_to_nifti",
+    "check_conformance", "save_nifti",
     "__version__",
 ]
