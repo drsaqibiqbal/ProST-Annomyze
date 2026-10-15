@@ -32,6 +32,16 @@ Every entry point here returns a small, flat list of plain-string audit
 notes (not :class:`~prostate_deid.core.AuditEntry`, since there is no
 per-tag "before" value worth logging when the policy is simply "delete
 everything non-technical").
+
+v2 note: this module is kept as the v1-compatible API, with the bugs found in
+the v1 code review fixed (NIfTI slices were transposed, palette / alpha PNGs
+mis-decoded, compressed DICOM crashed on save, Type 2 attributes were
+missing, volumes used the single-frame SC class, intensities were min-max
+rescaled, the NIfTI writer swapped in-plane spacing and dropped orientation).
+New code should use :mod:`prostate_deid.convert`, which adds MR-aware tag
+retention, study-level pseudonyms, series handling and the shared
+AuditEntry trail, and :mod:`prostate_deid.text_restore` for text removal
+that keeps the image.
 """
 
 from __future__ import annotations
@@ -132,21 +142,22 @@ def load_any(path_or_bytes: str | os.PathLike | bytes, filename: str | None = No
         else:
             img = nib.load(str(buf))
         data = np.asanyarray(img.dataobj).astype(np.float32)
-        # NIfTI convention (X, Y, Z[, ...]) -> slice-stack (Z, Y, X) for display/DICOM
+        # NIfTI data[i, j, k] (i = column, j = row) -> slice stack (Z, Y, X) = (k, j, i).
+        # v1 used np.moveaxis(data, 2, 0), which gives (k, i, j): every slice transposed.
         if data.ndim == 2:
-            data = data[np.newaxis, :, :]
+            data = data.T[np.newaxis, :, :]
         elif data.ndim >= 3:
-            data = np.moveaxis(data, 2, 0)
             if data.ndim > 3:
                 data = data.reshape(data.shape[0], data.shape[1], data.shape[2], -1)[..., 0]
+            data = np.transpose(data, (2, 1, 0))
         return {"pixels": data, "kind": "nifti", "source_dataset": None, "affine": img.affine}
 
     # Plain raster image (PNG/JPEG/BMP/TIFF/...)
-    from PIL import Image
+    from .convert import _raster_to_array
 
-    im = Image.open(buf)
-    im.load()
-    arr = np.asarray(im).astype(np.float32)
+    raw_bytes = buf.getvalue() if isinstance(buf, io.BytesIO) else Path(buf).read_bytes()
+    arr, _ = _raster_to_array(raw_bytes)  # palette -> colours, alpha composited, EXIF orientation applied
+    arr = arr.astype(np.float32)
     if arr.ndim == 2:
         pixels = arr[np.newaxis, :, :]
     else:
@@ -502,6 +513,64 @@ def _ocr_boxes(
     return boxes
 
 
+def detect_text_boxes(
+    frame: np.ndarray,
+    upscale_factors: tuple[int, ...] | None = None,
+    check_inverted: bool = True,
+    padding: int = 4,
+) -> list[tuple[int, int, int, int, int]]:
+    """Return padded, clipped ``(x0, y0, x1, y1, conf)`` text boxes for one 2D (or HxWxC) frame.
+
+    This is exactly the detection half of :func:`redact_burned_in_text`
+    (multi-scale, both polarities, text-vs-anatomy filter, row clustering),
+    split out so a caller can decide what to do with each region -- black
+    it out (v1 behaviour) or segment and restore it
+    (:mod:`prostate_deid.text_restore`). Boxes are in the frame's native
+    pixel coordinates. Raises ``RuntimeError`` if no OCR backend is
+    available, so a missing binary can never look like "no text found".
+    """
+    from PIL import Image, ImageOps
+
+    if not _ocr_available():
+        raise RuntimeError("OCR backend unavailable (pytesseract or tesseract binary not found)")
+
+    factors = tuple(upscale_factors) if upscale_factors else _UPSCALE_FACTORS
+    is_color = frame.ndim == 3 and frame.shape[-1] in (3, 4)
+    gray = frame[..., :3].mean(axis=-1) if is_color else frame
+
+    lo, hi = float(gray.min()), float(gray.max())
+    if hi <= lo:
+        return []
+    gray_u8 = ((gray - lo) / (hi - lo) * 255).astype(np.uint8)
+
+    # Detection runs on a copy normalized to _REFERENCE_WIDTH, so every tuned pixel-size
+    # constant (_MAX_WORD_HEIGHT, _ROW_EXTEND_TILE, ...) applies correctly regardless of the
+    # caller's actual resolution -- see _normalize_for_ocr. Within its skip band (native
+    # width already close to reference) this is a no-op and gray_u8 is used as-is; only a
+    # genuinely different resolution is actually resized.
+    norm_u8, scale_factor = _normalize_for_ocr(gray_u8)
+    pil_norm = Image.fromarray(norm_u8)
+    norm_boxes = _ocr_boxes(pil_norm, norm_u8, upscale_factors=factors)
+    if check_inverted:
+        norm_u8_inv = 255 - norm_u8
+        pil_norm_inv = ImageOps.invert(pil_norm)
+        norm_boxes += _ocr_boxes(pil_norm_inv, norm_u8_inv, upscale_factors=factors)
+    boxes = [_denormalize_box(b, scale_factor) for b in norm_boxes]
+
+    pad_native = max(int(round(padding / min(scale_factor, 1.0))), padding)
+
+    out = []
+    for x0, y0, x1, y1, conf in boxes:
+        y0p = max(0, y0 - pad_native)
+        y1p = min(gray.shape[0], y1 + pad_native)
+        x0p = max(0, x0 - pad_native)
+        x1p = min(gray.shape[1], x1 + pad_native)
+        if y1p <= y0p or x1p <= x0p:
+            continue
+        out.append((x0p, y0p, x1p, y1p, conf))
+    return out
+
+
 def redact_burned_in_text(
     pixels: np.ndarray,
     padding: int = 4,
@@ -553,8 +622,6 @@ def redact_burned_in_text(
             "pixel data was NOT inspected for burned-in text -- treat this file as unredacted."
         ]
 
-    from PIL import Image, ImageOps
-
     factors = tuple(upscale_factors) if upscale_factors else _UPSCALE_FACTORS
     out = pixels.copy()
     notes: list[str] = []
@@ -563,40 +630,11 @@ def redact_burned_in_text(
     low_conf_count = 0
 
     for i in range(n_slices):
-        frame = out[i]
-        is_color = frame.ndim == 3 and frame.shape[-1] in (3, 4)
-        gray = frame[..., :3].mean(axis=-1) if is_color else frame
-
-        lo, hi = float(gray.min()), float(gray.max())
-        if hi <= lo:
-            continue
-        gray_u8 = ((gray - lo) / (hi - lo) * 255).astype(np.uint8)
-
-        # Detection runs on a copy normalized to _REFERENCE_WIDTH, so every tuned pixel-size
-        # constant (_MAX_WORD_HEIGHT, _ROW_EXTEND_TILE, ...) applies correctly regardless of the
-        # caller's actual resolution -- see _normalize_for_ocr. Within its skip band (native
-        # width already close to reference) this is a no-op and gray_u8 is used as-is; only a
-        # genuinely different resolution is actually resized.
-        norm_u8, scale_factor = _normalize_for_ocr(gray_u8)
-        pil_norm = Image.fromarray(norm_u8)
-        norm_boxes = _ocr_boxes(pil_norm, norm_u8, upscale_factors=factors)
-        if check_inverted:
-            norm_u8_inv = 255 - norm_u8
-            pil_norm_inv = ImageOps.invert(pil_norm)
-            norm_boxes += _ocr_boxes(pil_norm_inv, norm_u8_inv, upscale_factors=factors)
-        boxes = [_denormalize_box(b, scale_factor) for b in norm_boxes]
-
-        pad_native = max(int(round(padding / min(scale_factor, 1.0))), padding)
+        boxes = detect_text_boxes(out[i], upscale_factors=factors, check_inverted=check_inverted, padding=padding)
 
         regions_this_slice = 0
         for x0, y0, x1, y1, conf in boxes:
-            y0p = max(0, y0 - pad_native)
-            y1p = min(gray.shape[0], y1 + pad_native)
-            x0p = max(0, x0 - pad_native)
-            x1p = min(gray.shape[1], x1 + pad_native)
-            if y1p <= y0p or x1p <= x0p:
-                continue
-            out[i, y0p:y1p, x0p:x1p] = 0
+            out[i, y0:y1, x0:x1] = 0
             regions_this_slice += 1
             if conf < flag_confidence:
                 low_conf_count += 1
@@ -682,20 +720,34 @@ def array_to_dicom(
     is_color = pixels.ndim == 4 and pixels.shape[-1] in (3, 4)
     n_slices = pixels.shape[0]
 
+    from .convert import _choose_integer_storage
+
+    slope, intercept = 1.0, 0.0
     if is_color:
         arr = pixels[..., :3]
         arr = np.clip(arr, 0, 255).astype(np.uint8) if arr.max() <= 255 else _rescale_to(arr, np.uint8)
     else:
-        arr = _rescale_to(pixels, np.uint16)
+        # v1 min-max rescaled to 0..65535, destroying quantitative values (ADC, HU). Stored values are
+        # now kept exactly when integral, else quantised with RescaleSlope/Intercept.
+        arr, slope, intercept, lossless, err = _choose_integer_storage(pixels)
+        if arr.dtype == np.int16:  # SC grayscale word pixels are unsigned: shift into uint16
+            arr, intercept = (arr.astype(np.int32) + 32768).astype(np.uint16), intercept - 32768 * slope
+        if not lossless:
+            notes.append(f"non-integer pixel values quantised to uint16 (max abs error {err:.3g})")
 
+    # Volumes use the multi-frame SC classes (v1 put NumberOfFrames on the single-frame SC class).
+    if n_slices > 1 and not is_color:
+        sop_class = "1.2.840.10008.5.1.4.1.1.7.3" if arr.dtype == np.uint16 else "1.2.840.10008.5.1.4.1.1.7.2"
+    else:
+        sop_class = pydicom.uid.SecondaryCaptureImageStorage
     sop_instance_uid = generate_uid()
     file_meta = FileMetaDataset()
-    file_meta.MediaStorageSOPClassUID = pydicom.uid.SecondaryCaptureImageStorage
+    file_meta.MediaStorageSOPClassUID = sop_class
     file_meta.MediaStorageSOPInstanceUID = sop_instance_uid
     file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
 
     ds = FileDataset(None, {}, file_meta=file_meta, preamble=b"\0" * 128)
-    ds.SOPClassUID = pydicom.uid.SecondaryCaptureImageStorage
+    ds.SOPClassUID = sop_class
     ds.SOPInstanceUID = sop_instance_uid
     ds.StudyInstanceUID = generate_uid()
     ds.SeriesInstanceUID = generate_uid()
@@ -705,13 +757,23 @@ def array_to_dicom(
     ds.ConversionType = "WSD"
 
     ds.Rows, ds.Columns = int(arr.shape[1]), int(arr.shape[2])
-    ds.NumberOfFrames = int(n_slices)
+    if n_slices > 1:
+        ds.NumberOfFrames = int(n_slices)
+        ds.FrameIncrementPointer = 0x00182005  # SliceLocationVector
+        ds.SliceLocationVector = [float(k) for k in range(n_slices)]
+    ds.PatientOrientation = ""
+    ds.ImageType = ["DERIVED", "SECONDARY"]
+    if (slope, intercept) != (1.0, 0.0):
+        ds.RescaleSlope, ds.RescaleIntercept, ds.RescaleType = f"{slope:.10g}", f"{intercept:.10g}", "US"
+    for kw in ("PatientName", "PatientID", "PatientBirthDate", "PatientSex", "StudyDate", "StudyTime",
+               "ReferringPhysicianName", "StudyID", "AccessionNumber", "Manufacturer"):
+        setattr(ds, kw, "")  # Type 2: present, empty (no identifying value exists to set)
     ds.SamplesPerPixel = 3 if is_color else 1
     ds.PhotometricInterpretation = "RGB" if is_color else "MONOCHROME2"
     if is_color:
         ds.PlanarConfiguration = 0
-    ds.BitsAllocated = 8 if is_color else 16
-    ds.BitsStored = 8 if is_color else 16
+    ds.BitsAllocated = 8 if (is_color or arr.dtype == np.uint8) else 16
+    ds.BitsStored = ds.BitsAllocated
     ds.HighBit = ds.BitsStored - 1
     ds.PixelRepresentation = 0
     ds.PixelData = arr.tobytes()
@@ -772,7 +834,12 @@ def full_wipe_dicom(
     from pydicom.dataset import FileDataset, FileMetaDataset
     from pydicom.uid import ExplicitVRLittleEndian, generate_uid
 
+    from .convert import ensure_uncompressed
+
     notes: list[str] = []
+    # v1 wrote redacted pixels back uncompressed while the transfer syntax still said JPEG, so a
+    # compressed input crashed on save. Decode first; the output is always Explicit VR Little Endian.
+    notes.extend(str(e) for e in ensure_uncompressed(ds))
     removed = 0
     for elem in list(ds):
         if elem.tag == 0x7FE00010:  # PixelData
@@ -813,8 +880,14 @@ def full_wipe_dicom(
         ds.file_meta = FileMetaDataset()
     ds.file_meta.MediaStorageSOPInstanceUID = new_sop
     ds.file_meta.MediaStorageSOPClassUID = getattr(ds, "SOPClassUID", pydicom.uid.SecondaryCaptureImageStorage)
-    if not getattr(ds.file_meta, "TransferSyntaxUID", None):
-        ds.file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds.file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    for kw in ("PatientName", "PatientID", "PatientBirthDate", "PatientSex", "StudyDate", "StudyTime",
+               "ReferringPhysicianName", "StudyID", "AccessionNumber", "Manufacturer"):
+        if kw not in ds:
+            setattr(ds, kw, "")  # Type 2 attributes must be present (empty) for a valid object
+    for kw, default in (("SeriesNumber", 1), ("InstanceNumber", 1)):
+        if kw not in ds:
+            setattr(ds, kw, default)
 
     ds.PatientIdentityRemoved = "YES"
     ds.DeidentificationMethod = "ProST-Annomyze: full wipe, technical tags only"
@@ -830,36 +903,10 @@ def full_wipe_dicom(
 def dicom_to_nifti_bytes(ds: Any) -> bytes:
     """Encode a (already de-identified) DICOM dataset's pixel data as gzip-compressed ``.nii.gz`` bytes.
 
-    Only pixel data and voxel spacing survive -- a NIfTI header has no
-    patient-identifying fields to carry over in the first place, so there
-    is nothing further to scrub on this hop.
+    v2: delegates to :func:`prostate_deid.convert.series_to_nifti`, which builds the full
+    orientation-aware affine (IOP/IPP, LPS -> RAS) and keeps stored values exactly. v1 built a
+    diagonal affine from spacing only and put the column spacing on the row axis.
     """
-    import gzip
+    from .convert import series_to_nifti
 
-    import nibabel as nib
-
-    pixels = np.asarray(ds.pixel_array)
-    if pixels.ndim == 2:
-        pixels = pixels[:, :, np.newaxis]
-    elif pixels.ndim == 3:
-        # (frames, H, W) -> NIfTI (X, Y, Z) = (W, H, frames)
-        pixels = np.moveaxis(pixels, 0, -1)
-
-    spacing = getattr(ds, "PixelSpacing", None)
-    thickness = getattr(ds, "SliceThickness", None)
-    affine = np.eye(4, dtype=np.float64)
-    if spacing:
-        affine[0, 0] = float(spacing[1])
-        affine[1, 1] = float(spacing[0])
-    if thickness:
-        affine[2, 2] = float(thickness)
-
-    img = nib.Nifti1Image(pixels.astype(np.float32), affine)
-    raw_buf = io.BytesIO()
-    file_map = img.make_file_map({"image": raw_buf, "header": raw_buf})
-    img.to_file_map(file_map)
-
-    gz_buf = io.BytesIO()
-    with gzip.GzipFile(fileobj=gz_buf, mode="wb", mtime=0) as gz:
-        gz.write(raw_buf.getvalue())
-    return gz_buf.getvalue()
+    return series_to_nifti([ds])[0]

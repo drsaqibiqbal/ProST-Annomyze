@@ -1,6 +1,7 @@
 {
-  "title": "prostate-deid: A Python Library for De-identification and Anatomical Masking of Prostate MRI",
-  "description": "prostate-deid composes DICOM tag scrubbing, patient ID/date pseudonymization, burned-in pixel PHI redaction, and prostate zonal/lesion masking into a single Compose-style pipeline that produces one shared, structured audit trail suitable for compliance documentation.",
+  "title": "ProST-Annomyze / prostate-deid: De-identification, Image-Preserving Text Removal and MR-Aware Conversion for Prostate MRI",
+  "version": "0.3.0",
+  "description": "ProST-Annomyze (prostate-deid 0.3.0) removes burned-in text while keeping the image (glyph segmentation + inpainting, with verification), converts DICOM / NIfTI / raster inputs with MR-aware tag retention, study-level pseudonyms and preserved geometry and intensities, and composes DICOM tag scrubbing, patient ID/date pseudonymization, burned-in pixel PHI redaction, and prostate zonal/lesion masking into a single Compose-style pipeline that produces one shared, structured audit trail suitable for compliance documentation.",
   "upload_type": "software",
   "license": "MIT",
   "creators": [
@@ -21,7 +22,7 @@
   "access_right": "open",
   "related_identifiers": [
     {
-      "identifier": "https://github.com/drsaqibiqbal/annolib",
+      "identifier": "https://github.com/drsaqibiqbal/ProST-Annomyze",
       "relation": "isSupplementTo",
       "scheme": "url"
     }
