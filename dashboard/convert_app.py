@@ -194,6 +194,34 @@ st.markdown(
     .prost-ok { background: rgba(12,163,12,0.15); color: var(--status-good); }
     .prost-warn { background: rgba(250,178,25,0.18); color: #9a6a00; }
     .prost-bad { background: rgba(208,59,59,0.15); color: var(--status-critical); }
+
+    /* Quantitative verification section */
+    .prost-qv {
+        display: flex; align-items: center; gap: 1rem;
+        margin: 2.2rem 0 1rem 0; padding: 1.1rem 1.4rem;
+        border-radius: 16px;
+        background: linear-gradient(120deg, var(--brand-violet) 0%, var(--brand-blue) 50%, var(--brand-aqua) 100%);
+        box-shadow: 0 8px 24px rgba(74, 58, 167, 0.25);
+    }
+    .prost-qv-icon {
+        flex: 0 0 auto; width: 3rem; height: 3rem; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+        background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    }
+    .prost-qv h2 { color: #ffffff !important; margin: 0 0 0.2rem 0; font-size: 1.45rem; font-weight: 800;
+                   letter-spacing: -0.01em; padding: 0; }
+    .prost-qv p { color: rgba(255,255,255,0.92) !important; margin: 0; font-size: 0.95rem; }
+    .prost-tag {
+        display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; margin: 0.9rem 0 0.3rem 0;
+        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+    }
+    .prost-tag-real { background: rgba(42,120,214,0.14); color: var(--brand-blue); }
+    .prost-tag-synth { background: rgba(144,133,233,0.18); color: var(--brand-violet); }
+    @media (max-width: 640px) {
+        .prost-qv { padding: 0.9rem 1rem; gap: 0.75rem; }
+        .prost-qv h2 { font-size: 1.15rem; }
+        .prost-qv-icon { width: 2.4rem; height: 2.4rem; font-size: 1.3rem; }
+    }
     </style>
     <div class="prost-hero">
         <h1>🩺 ProST-Annomyze</h1>
@@ -351,7 +379,8 @@ def _process(items, opts):
                     orig = None
                 res = deidentify_dicom(ds, ctx, keep_mr_tags=opts["mr_aware"], redact_pixels=opts["redact"],
                                        text_method=opts["method"], **restore_kw)
-                outs = [(res.datasets[0], orig, res.restore.inpaint_mask if res.restore else None)]
+                outs = [(res.datasets[0], orig, res.restore.inpaint_mask if res.restore else None,
+                         res.restore.regions if res.restore else [])]
             elif kind == "nifti":
                 img = load_nifti(data)
                 src_key = hashlib.sha256(data).hexdigest()
@@ -360,7 +389,9 @@ def _process(items, opts):
                                             text_method=opts["method"], **restore_kw)
                 vol = np.transpose(np.asanyarray(img.dataobj).reshape(img.shape[:3] + (-1,))[..., 0], (2, 1, 0))
                 m = res.restore.inpaint_mask if res.restore else None
-                outs = [(d, vol[k], m[k] if m is not None else None) for k, d in enumerate(res.datasets)]
+                regs = res.restore.regions if res.restore else []
+                outs = [(d, vol[k], m[k] if m is not None else None, [r for r in regs if r.slice_index == k])
+                        for k, d in enumerate(res.datasets)]
             else:
                 raster_i += 1
                 res = raster_to_dicom(data, ctx, modality="OT" if opts["modality"] == "MR" else opts["modality"],
@@ -370,9 +401,9 @@ def _process(items, opts):
 
                 orig = _raster_to_array(data)[0]
                 m = res.restore.inpaint_mask[0] if res.restore else None
-                outs = [(res.datasets[0], orig, m)]
-            for k, (d, orig, m) in enumerate(outs):
-                outputs.append({"kind": kind, "ds": d, "orig": orig, "mask": m,
+                outs = [(res.datasets[0], orig, m, res.restore.regions if res.restore else [])]
+            for k, (d, orig, m, regs) in enumerate(outs):
+                outputs.append({"kind": kind, "ds": d, "orig": orig, "mask": m, "regions": regs,
                                 "audit": res.audit if k == 0 else [], "upload": name})
         except Exception as exc:  # keep going; report per file
             errors.append(f"{name}: {exc}")
@@ -577,5 +608,133 @@ if uploads:
                                file_name=f"{stem}.json", mime="application/json")
         except ValueError as exc:
             st.error(f"Cannot write this series as NIfTI: {exc}")
+
+    # --- quantitative verification -----------------------------------------------------------
+    import csv
+
+    from prostate_deid.evaluation import region_metrics, summarize_regions, synthetic_self_test
+
+    st.markdown(
+        """
+        <div class="prost-qv">
+          <div class="prost-qv-icon">📏</div>
+          <div>
+            <h2>Quantitative verification</h2>
+            <p>Retention and OCR confidence of every text region on the real image, and a synthetic
+            self-test that measures restoration error against a known clean slice.</p>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 1. Measured on the real text (eq. 40)
+    st.markdown('<span class="prost-tag prost-tag-real">Measured on the real text · eq. 40</span>',
+                unsafe_allow_html=True)
+    st.latex(r"\mathrm{retained}(B) = 1 - \frac{|G_B|}{|B|}, \qquad "
+             r"c_{\mathrm{audit}}(B) = \min\!\Big(1,\ \max\!\big(0,\ "
+             r"\tfrac{n_{\mathrm{OCR}}(B)}{100}\big)\Big)")
+    scope = st.radio("Scope", ["This image", "All images"], horizontal=True, key="qv_scope",
+                     help="This image: the one selected in Before / after. "
+                          "All images: every file in this run.")
+    in_scope = [o] if scope == "This image" else outputs
+    qrows = [{"file": o2["upload"], **r} for o2 in in_scope for r in region_metrics(o2.get("regions", []))]
+    summ = summarize_regions(qrows)
+
+    def _pct(v):
+        return "–" if v != v else f"{v:.1%}"  # NaN-safe
+
+    q1, q2, q3, q4, q5 = st.columns(5)
+    q1.metric("Text regions", summ["regions"])
+    q2.metric("Restored / fallback", f"{summ['restored']} / {summ['fallback']}",
+              help="Restored: only glyph pixels replaced. Fallback: the line was re-synthesised as a whole "
+                   "rectangle because text was still detectable.")
+    q3.metric("Mean retained(B)", _pct(summ["retained_mean"]),
+              help="Average fraction of each changed box left bit-identical to the input.")
+    q4.metric("Min retained(B)", _pct(summ["retained_min"]))
+    c_mean = summ["c_audit_mean"]
+    q5.metric("Mean c_audit(B)", "–" if c_mean != c_mean else f"{c_mean:.2f}",
+              help="Normalised OCR confidence recorded in the audit trail. Regions found by the pixel-only "
+                   "stroke-line detector carry 0 (no OCR read) and are flagged for review.")
+    if qrows:
+        st.dataframe(
+            qrows, width="stretch", hide_index=True,
+            column_config={
+                "retained": st.column_config.ProgressColumn("retained(B)", min_value=0.0, max_value=1.0,
+                                                            format="%.2f"),
+                "c_audit": st.column_config.ProgressColumn("c_audit(B)", min_value=0.0, max_value=1.0,
+                                                           format="%.2f"),
+                "box_px": st.column_config.NumberColumn("|B| (px)"),
+                "changed_px": st.column_config.NumberColumn("|G_B| (px)"),
+            },
+        )
+    else:
+        st.info("No text regions in this scope (no burned-in text found, or pixel inspection is off).")
+
+    # 2. Synthetic self-test (eq. 41)
+    st.markdown('<span class="prost-tag prost-tag-synth">Synthetic self-test · eq. 41</span>',
+                unsafe_allow_html=True)
+    st.latex(r"\mathrm{MAE} = \frac{1}{|F|}\sum_{p\in F}\big|\hat I(p)-T(p)\big|, \quad "
+             r"\mathrm{MSE} = \frac{1}{|F|}\sum_{p\in F}\big(\hat I(p)-T(p)\big)^2, \quad "
+             r"\mathrm{PSNR} = 10\log_{10}\frac{1}{\mathrm{MSE}}")
+    st.caption(
+        "The pixels under the real text were overwritten, so no clean slice exists for it. The self-test "
+        "uses the de-identified image as the clean slice T, burns **fictitious** corner annotations into it "
+        "(known footprint F), removes them with the same method and settings, and compares the result Î "
+        "with T on intensities scaled to [0, 1]. It measures restoration quality on this image's anatomy, "
+        "not an error on the removed patient text."
+    )
+    st_key = f"qv_selftest:{sig}:{uid}:{idx}:{fidx}"
+    if st.button("🧪 Run synthetic self-test on this image", key="qv_run"):
+        with st.spinner("Burning fictitious text and removing it…"):
+            st.session_state[st_key] = synthetic_self_test(
+                out, method=text_method,
+                **{k: perf[k] for k in ("upscale_factors", "check_inverted", "detect_overlay")})
+    stres = st.session_state.get(st_key)
+    if stres is not None:
+        t1, t2, t3, t4, t5 = st.columns(5)
+        t1.metric("MAE", f"{stres.mae:.4f}")
+        t2.metric("MSE", f"{stres.mse:.5f}")
+        t3.metric("PSNR", "∞" if stres.psnr_db == float("inf") else f"{stres.psnr_db:.1f} dB")
+        t4.metric("Glyph pixels replaced", _pct(stres.glyph_px_changed))
+        t5.metric("Still readable", f"{stres.chars_readable_after} / {stres.chars_readable_before}",
+                  help="Characters OCR reads after removal / before removal (of "
+                       f"{stres.chars_total} fictitious characters).")
+        psnr_cls = "prost-ok" if stres.psnr_db >= 30 else "prost-warn" if stres.psnr_db >= 20 else "prost-bad"
+        read_cls = "prost-ok" if stres.chars_readable_after == 0 else (
+            "prost-warn" if stres.residual_fraction <= 0.1 else "prost-bad")
+        st.markdown(
+            f'<span class="prost-badge {psnr_cls}">PSNR {stres.psnr_db:.1f} dB</span>'
+            f'<span class="prost-badge {read_cls}">{stres.residual_fraction:.0%} of readable characters '
+            f'left</span>'
+            f'<span class="prost-badge prost-ok">{stres.outside_px_changed} px changed away from the '
+            f'text</span>'
+            f'<span class="prost-badge prost-ok">{stres.seconds:.1f} s</span>',
+            unsafe_allow_html=True,
+        )
+        v1, v2 = st.columns(2)
+        with v1:
+            st.markdown('<span class="prost-pill prost-pill-original">Synthetic input (fictitious text)'
+                        '</span>', unsafe_allow_html=True)
+            st.image(_to_display(stres.burned), width="stretch")
+        with v2:
+            st.markdown('<span class="prost-pill prost-pill-deid">After removal</span>',
+                        unsafe_allow_html=True)
+            st.image(_to_display(stres.restored), width="stretch")
+
+    # CSV of everything above
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["section", "file", "slice", "box", "action", "box_px", "changed_px", "retained",
+                     "c_audit"])
+    for r in qrows:
+        writer.writerow(["eq40", r["file"], r["slice"], r["box"], r["action"], r["box_px"], r["changed_px"],
+                         f"{r['retained']:.6f}", "" if r["c_audit"] != r["c_audit"] else f"{r['c_audit']:.4f}"])
+    writer.writerow([])
+    writer.writerow(["eq40_summary"] + [f"{k}={v}" for k, v in summ.items()])
+    if stres is not None:
+        writer.writerow(["eq41_selftest", o["upload"]] + [f"{k}={v}" for k, v in stres.as_dict().items()])
+    st.download_button("⬇️ Verification metrics (.csv)", data=buf.getvalue().encode("utf-8"),
+                       file_name=f"{pid}_verification.csv", mime="text/csv")
 else:
     st.info("👋 Upload DICOM files (or a .zip of a study), a NIfTI volume, or an image to get started.")

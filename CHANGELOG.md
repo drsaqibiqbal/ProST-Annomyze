@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Dashboard section "Quantitative verification": per-region `retained(B) = 1 - |G_B|/|B|` and
+  `c_audit(B) = min(1, max(0, n_OCR/100))` on the real text (eq. 40), and a synthetic self-test that
+  burns fictitious corner annotations into the de-identified image, removes them with the same
+  settings and reports MAE, MSE and PSNR over the text footprint plus residual readable characters
+  (eq. 41); CSV export.
+- `prostate_deid.evaluation`: `region_metrics`, `summarize_regions`, `footprint_errors`,
+  `synthetic_self_test`.
+
 ### Planned
 - Quantitative validation against MIDI-B / TCIA Pseudo-PHI-DICOM-Data
   (header de-identification) and PROSTATEx / PI-CAI (utility: b-values, ADC,
