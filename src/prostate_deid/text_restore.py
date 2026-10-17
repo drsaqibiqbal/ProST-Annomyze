@@ -186,8 +186,10 @@ def _keep_glyph_components(crop: np.ndarray, mask: np.ndarray, polarity: str) ->
     # extreme. Accept such a component when it sits on the same text line as an accepted glyph:
     # vertically overlapping it by half its height and within ~3 glyph heights horizontally,
     # chaining along the line. Tissue off the text rows never qualifies.
-    y0s = np.array([sl[0].start for sl in objs]); y1s = np.array([sl[0].stop for sl in objs])
-    x0s = np.array([sl[1].start for sl in objs]); x1s = np.array([sl[1].stop for sl in objs])
+    y0s = np.array([sl[0].start for sl in objs])
+    y1s = np.array([sl[0].stop for sl in objs])
+    x0s = np.array([sl[1].start for sl in objs])
+    x1s = np.array([sl[1].stop for sl in objs])
     cand = shape_ok & ~keep
     changed = True
     while changed and cand.any():
@@ -349,8 +351,8 @@ def _text_line_bands(gray01: np.ndarray, box: tuple[int, int, int, int]) -> list
         if cols.size == 0 or strokes[by0:by1].sum() < 8:
             continue
         pad = max(3, (by1 - by0) // 3)
-        bands.append((max(0, x0 + int(cols.min()) - pad), max(0, y0 + by0 - 1),
-                      min(w, x0 + int(cols.max()) + 1 + pad), min(h, y0 + by1 + 1)))
+        bands.append((max(0, x0 + int(np.min(cols)) - pad), max(0, y0 + by0 - 1),
+                      min(w, x0 + int(np.max(cols)) + 1 + pad), min(h, y0 + by1 + 1)))
     return bands
 
 
@@ -531,7 +533,7 @@ def _short_word_at_edge(th: np.ndarray, g: np.ndarray, polarity: str, pitch: flo
     # the pitch count when they sit on the word's baseline, and at least two members must be tall.
     glyphs = sorted((sl[1].start, sl[1].stop, sl[0].stop, sl[0].stop - sl[0].start) for sl in objs
                     if 0.2 * pitch <= sl[0].stop - sl[0].start <= 1.0 * pitch)
-    chain = []
+    chain: list[tuple[int, int, int, int]] = []
     for x0, x1, bottom, gh in glyphs:
         if not chain:
             if x0 > 2 * hgt:  # the word must start at the block edge
@@ -686,7 +688,7 @@ def _complete_line_grid(lines: list[StrokeLine], th: np.ndarray, polarity: str,
                                 break
                         elif abs(x - x_edge) > 2 * hgt:  # nothing near the block edge: not a line of this block
                             break
-                    if first is None:
+                    if first is None or last is None:
                         continue
                     lx0, lx1 = (first, last + 1) if align == "left" else (last, first + 1)
                     m = np.zeros(th.shape, dtype=bool)
@@ -734,10 +736,10 @@ def _complete_line_grid(lines: list[StrokeLine], th: np.ndarray, polarity: str,
                         bx0, bx1 = lx0 + word[0], lx0 + word[1]
                     else:
                         band = weak[y0:y1, lx0:lx1]
-                        cols = np.nonzero(band.any(axis=0))[0]
-                        if cols.size == 0:
+                        hit = np.nonzero(band.any(axis=0))[0]
+                        if hit.size == 0:
                             break
-                        bx0, bx1 = lx0 + int(cols.min()), lx0 + int(cols.max()) + 1
+                        bx0, bx1 = lx0 + int(np.min(hit)), lx0 + int(np.max(hit)) + 1
                         from .universal_io import _ocr_available
 
                         if (not _ocr_available()
@@ -877,6 +879,8 @@ def segment_text_pixels(
         full = np.zeros(gray01.shape, dtype=bool)
         full[cy0:cy1, cx0:cx1] = mask
         return full, {**info, "reason": "segmented"}
+    if failure is None:  # unreachable: every polarity either returns or records a failure
+        return None, {"polarity": "n/a", "stroke_px": 0.0, "reason": "no plausible glyph mask"}
     return failure
 
 
@@ -1313,7 +1317,7 @@ def detect_text_boxes_v2(
     if detect_overlay:
         is_color = frame.ndim == 3 and frame.shape[-1] in (3, 4)
         gray = frame[..., :3].mean(axis=-1) if is_color else frame
-        lo, hi = float(gray.min()), float(gray.max())
+        lo, hi = float(np.min(gray)), float(np.max(gray))
         if hi > lo:
             g01 = ((gray - lo) / (hi - lo)).astype(np.float32)
             boxes = boxes + detect_overlay_text_boxes(g01, existing=boxes)
@@ -1519,7 +1523,7 @@ def restore_burned_in_text(
     for i in range(n_slices):
         frame = out[i]
         gray = frame[..., :3].mean(axis=-1) if is_color else frame
-        lo, hi = float(gray.min()), float(gray.max())
+        lo, hi = float(np.min(gray)), float(np.max(gray))
         if hi <= lo:
             continue
         if boxes_per_slice is not None:

@@ -699,7 +699,7 @@ def raster_to_dicom(
 # DICOM series -> .nii.gz (full affine, exact values, sidecar)
 # ---------------------------------------------------------------------------
 
-def _frame_geometry(ds: Any) -> list[tuple[np.ndarray, np.ndarray, list[float], float | None]]:
+def _frame_geometry(ds: Any) -> list[tuple[np.ndarray | None, np.ndarray | None, list[float] | None, float | None]]:
     """Per-frame (ipp, iop, pixel_spacing, b_value) for classic single-frame or enhanced multi-frame."""
     n = int(getattr(ds, "NumberOfFrames", 1) or 1)
     shared = getattr(ds, "SharedFunctionalGroupsSequence", [None])[0] if "SharedFunctionalGroupsSequence" in ds else None
@@ -769,6 +769,7 @@ def series_to_nifti(
     has_geo = first[0] is not None and first[1] is not None
     if has_geo:
         iop0 = first[1]
+        assert iop0 is not None  # has_geo
         mixed = [f for f in frames if f[1] is None or np.max(np.abs(f[1] - iop0)) > 1e-3]
         if mixed:
             raise ValueError(f"{len(mixed)} frame(s) have a different ImageOrientationPatient (e.g. localizers); "
@@ -819,7 +820,9 @@ def series_to_nifti(
 
     if has_geo:
         ipp0 = frames[positions[0][0]][0]
-        slice_vec = (frames[positions[-1][0]][0] - ipp0) / (len(positions) - 1) if len(positions) > 1 else normal * step
+        ipp_last = frames[positions[-1][0]][0]
+        assert ipp0 is not None and ipp_last is not None  # has_geo: every frame has a position
+        slice_vec = (ipp_last - ipp0) / (len(positions) - 1) if len(positions) > 1 else normal * step
     else:
         ipp0, slice_vec = np.zeros(3), normal * step
     lps = np.eye(4)

@@ -36,6 +36,7 @@ from pathlib import PurePosixPath
 import numpy as np
 import streamlit as st
 
+from prostate_deid._version import __version__
 from prostate_deid.convert import (
     StudyContext,
     check_conformance,
@@ -45,7 +46,6 @@ from prostate_deid.convert import (
     raster_to_dicom,
     series_to_nifti,
 )
-from prostate_deid._version import __version__
 from prostate_deid.mr_tags import read_bvalue
 from prostate_deid.text_restore import changed_region_boxes
 from prostate_deid.universal_io import _ocr_available

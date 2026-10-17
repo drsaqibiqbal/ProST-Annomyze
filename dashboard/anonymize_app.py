@@ -15,7 +15,6 @@ means.
 
 from __future__ import annotations
 
-import io
 import tempfile
 import time
 from pathlib import Path

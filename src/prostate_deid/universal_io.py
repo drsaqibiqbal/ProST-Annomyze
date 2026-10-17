@@ -50,9 +50,12 @@ import io
 import os
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 __all__ = [
     "load_any",
@@ -426,7 +429,7 @@ def _extend_row_horizontally(
 
 
 def _ocr_words_at_scale(
-    pil_im: "Image.Image", gray_u8: np.ndarray, scale: int
+    pil_im: Image.Image, gray_u8: np.ndarray, scale: int
 ) -> list[tuple[int, int, int, int, int]]:
     """Run Tesseract once at one upscale factor; return surviving word boxes in ORIGINAL pixel space.
 
@@ -473,7 +476,7 @@ def _ocr_words_at_scale(
 
 
 def _ocr_boxes(
-    pil_im: "Image.Image",
+    pil_im: Image.Image,
     gray_u8: np.ndarray,
     upscale_factors: tuple[int, ...] = _UPSCALE_FACTORS,
 ) -> list[tuple[int, int, int, int, int]]:
@@ -538,7 +541,7 @@ def detect_text_boxes(
     is_color = frame.ndim == 3 and frame.shape[-1] in (3, 4)
     gray = frame[..., :3].mean(axis=-1) if is_color else frame
 
-    lo, hi = float(gray.min()), float(gray.max())
+    lo, hi = float(np.min(gray)), float(np.max(gray))
     if hi <= lo:
         return []
     gray_u8 = ((gray - lo) / (hi - lo) * 255).astype(np.uint8)
@@ -725,7 +728,7 @@ def array_to_dicom(
     slope, intercept = 1.0, 0.0
     if is_color:
         arr = pixels[..., :3]
-        arr = np.clip(arr, 0, 255).astype(np.uint8) if arr.max() <= 255 else _rescale_to(arr, np.uint8)
+        arr = np.clip(arr, 0, 255).astype(np.uint8) if arr.max() <= 255 else _rescale_to(arr, np.dtype(np.uint8))
     else:
         # v1 min-max rescaled to 0..65535, destroying quantitative values (ADC, HU). Stored values are
         # now kept exactly when integral, else quantised with RescaleSlope/Intercept.
@@ -831,7 +834,7 @@ def full_wipe_dicom(
     speed on CPU-constrained/mobile hardware.
     """
     import pydicom
-    from pydicom.dataset import FileDataset, FileMetaDataset
+    from pydicom.dataset import FileMetaDataset
     from pydicom.uid import ExplicitVRLittleEndian, generate_uid
 
     from .convert import ensure_uncompressed
