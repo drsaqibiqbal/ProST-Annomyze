@@ -27,6 +27,9 @@ jobs:
         run: ruff check .
 
       - name: Type check (mypy)
+        # One version: numpy's stubs differ between the numpy releases each Python gets, so the
+        # same code would type-check on one and not another. Tests still run on every version.
+        if: matrix.python-version == '3.13'
         run: mypy src/
 
       - name: Test
