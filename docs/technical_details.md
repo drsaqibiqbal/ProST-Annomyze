@@ -3,6 +3,8 @@ prostate-deid — TECHNICAL DETAILS FOR THE SoftwareX MANUSCRIPT
 Repository: https://github.com/drsaqibiqbal/annolib
 Package name (PyPI/import): prostate-deid / prostate_deid
 Version at time of writing: 0.1.0
+(For 0.2.x -- ProST-Annomyze v2 -- see docs/v2_analysis.md and docs/v2_changes.md; this file
+ is kept as the 0.1.0 record and is not updated for later versions.)
 Prepared: 2026-07-10
 ================================================================================
 

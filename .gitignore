@@ -24,3 +24,13 @@ mapping*.json
 # Docs build
 site/
 docs/_build/
+
+# AI tooling / local planning docs — must never be committed or made public
+CLAUDE.md
+.claude/
+ROADMAP.md
+
+# Manuscript drafts — local only. The paper is submitted through the journal's
+# system, not published from this repo, and in-progress drafts must not appear
+# in the public history.
+manuscript/

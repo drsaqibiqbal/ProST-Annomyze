@@ -1,35 +1,58 @@
 """
-ProST-Annomyze: upload a PNG/JPEG/BMP/TIFF, DICOM, or NIfTI (.nii/.nii.gz)
-file, fully de-identify it, and download it as a clean DICOM. Optionally
-convert that de-identified DICOM into .nii.gz as a second step.
+ProST-Annomyze v2: upload DICOM (single files, whole series or a ZIP), NIfTI
+(.nii / .nii.gz) or raster images (PNG / JPEG / BMP / TIFF); get back
+de-identified, conformance-checked DICOM, and optionally a geometry-correct
+.nii.gz with a JSON sidecar.
+
+What is new in v2 (see docs/v2_analysis.md and docs/v2_changes.md):
+  * burned-in text is removed while keeping the image: only the glyph pixels
+    are replaced (Telea / Navier-Stokes / biharmonic / ViT-MAE + Poisson),
+    every other pixel is bit-identical, and every restored region is
+    re-checked (OCR + silhouette test) and falls back to a black box if text
+    is still visible; text drawn on anatomy is now detected too;
+  * MR-aware header policy (series labels, TE/TR, b-values rescued from
+    vendor-private tags, frame of reference) and study-level pseudonyms so
+    T2W, DWI and ADC stay linked;
+  * geometry and intensities preserved in both directions; one shared audit
+    trail.
 
 Run:
-    pip install prostate-deid[dashboard]
+    pip install prostate-deid[dashboard]          # + [vit] for the ViT option
     streamlit run dashboard/convert_app.py
 
-This is a thin UI over prostate_deid.universal_io; it holds no
-de-identification logic of its own so the dashboard and the library can
-never silently disagree about what "de-identified" means.
+This is a thin UI over prostate_deid.convert / prostate_deid.text_restore; it
+holds no de-identification logic of its own.
 """
 
 from __future__ import annotations
 
+import hashlib
 import io
-from pathlib import Path
+import json
+import zipfile
+from collections import defaultdict
+from pathlib import PurePosixPath
 
 import numpy as np
 import streamlit as st
 
-from prostate_deid.universal_io import (
-    array_to_dicom,
-    dicom_to_nifti_bytes,
-    full_wipe_dicom,
-    load_any,
+from prostate_deid._version import __version__
+from prostate_deid.convert import (
+    StudyContext,
+    check_conformance,
+    deidentify_dicom,
+    load_nifti,
+    nifti_to_dicom_series,
+    raster_to_dicom,
+    series_to_nifti,
 )
+from prostate_deid.mr_tags import read_bvalue
+from prostate_deid.text_restore import changed_region_boxes
+from prostate_deid.universal_io import _ocr_available
 
-st.set_page_config(page_title="ProST-Annomyze", layout="wide", page_icon="🩺")
+st.set_page_config(page_title="ProST-Annomyze v2", layout="wide", page_icon="🩺")
 
-# --- Theme: validated categorical/status palette, light + dark aware ---------
+# --- Theme (same palette as v1) -------------------------------------------------------------
 st.markdown(
     """
     <style>
@@ -166,166 +189,552 @@ st.markdown(
             padding: 0.65rem 1rem;
         }
     }
+    .prost-badge { display:inline-block; padding:0.1rem 0.55rem; border-radius:999px; font-size:0.75rem;
+                   font-weight:700; margin-right:0.35rem; }
+    .prost-ok { background: rgba(12,163,12,0.15); color: var(--status-good); }
+    .prost-warn { background: rgba(250,178,25,0.18); color: #9a6a00; }
+    .prost-bad { background: rgba(208,59,59,0.15); color: var(--status-critical); }
+
+    /* Quantitative verification section */
+    .prost-qv {
+        display: flex; align-items: center; gap: 1rem;
+        margin: 2.2rem 0 1rem 0; padding: 1.1rem 1.4rem;
+        border-radius: 16px;
+        background: linear-gradient(120deg, var(--brand-violet) 0%, var(--brand-blue) 50%, var(--brand-aqua) 100%);
+        box-shadow: 0 8px 24px rgba(74, 58, 167, 0.25);
+    }
+    .prost-qv-icon {
+        flex: 0 0 auto; width: 3rem; height: 3rem; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+        background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
+    }
+    .prost-qv h2 { color: #ffffff !important; margin: 0 0 0.2rem 0; font-size: 1.45rem; font-weight: 800;
+                   letter-spacing: -0.01em; padding: 0; }
+    .prost-qv p { color: rgba(255,255,255,0.92) !important; margin: 0; font-size: 0.95rem; }
+    .prost-tag {
+        display: inline-block; padding: 0.2rem 0.75rem; border-radius: 999px; margin: 0.9rem 0 0.3rem 0;
+        font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+    }
+    .prost-tag-real { background: rgba(42,120,214,0.14); color: var(--brand-blue); }
+    .prost-tag-synth { background: rgba(144,133,233,0.18); color: var(--brand-violet); }
+    @media (max-width: 640px) {
+        .prost-qv { padding: 0.9rem 1rem; gap: 0.75rem; }
+        .prost-qv h2 { font-size: 1.15rem; }
+        .prost-qv-icon { width: 2.4rem; height: 2.4rem; font-size: 1.3rem; }
+    }
     </style>
     <div class="prost-hero">
         <h1>🩺 ProST-Annomyze</h1>
-        <p>Upload a PNG, DICOM, or NIfTI image → get back a fully de-identified DICOM,
-        with an optional second export to .nii.gz. Running this tool does not by itself
-        constitute HIPAA or GDPR compliance.</p>
+        <p>DICOM (files, series or ZIP), NIfTI (.nii / .nii.gz), PNG, JPEG, BMP or TIFF in →
+        de-identified, conformance-checked DICOM out, with burned-in text removed <b>while keeping
+        the image</b>, and an optional geometry-correct .nii.gz.</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-uploaded = st.file_uploader(
-    "📤 Upload an image",
-    type=["png", "jpg", "jpeg", "bmp", "tif", "tiff", "dcm", "nii", "gz"],
-    help="Accepts raster images (PNG/JPEG/BMP/TIFF), DICOM (.dcm), or NIfTI (.nii / .nii.gz).",
-)
+_TEXT_METHODS = {
+    "🩹 Restore image — Telea (recommended)": "telea",
+    "🩹 Restore image — Navier–Stokes": "ns",
+    "🩹 Restore image — biharmonic": "biharmonic",
+    "🧠 Restore image — ViT-MAE + Poisson (slow, needs [vit])": "vit_mae_poisson",
+    "⬛ Black box (v1 behaviour)": "blackout",
+}
 
 _PERFORMANCE_MODES = {
-    "🖥️ Thorough (desktop/server CPU)": {
-        "upscale_factors": None,  # library default: (3, 4, 5)
-        "check_inverted": True,
-        "help": "Runs Tesseract at 3 upscale factors x both polarities per slice "
-        "(the library default) — highest OCR recall, slowest.",
-    },
-    "⚖️ Balanced (laptop CPU)": {
-        "upscale_factors": (3, 4),
-        "check_inverted": True,
-        "help": "Drops one upscale factor (2 of 3) — noticeably faster with a small "
-        "recall cost, still checks both polarities.",
-    },
-    "📱 Lightweight (mobile / low-power CPU)": {
-        "upscale_factors": (3,),
-        "check_inverted": False,
-        "help": "Single upscale factor, no inverted-polarity pass — up to ~6x fewer "
-        "Tesseract calls per slice. Faster on phones and constrained CPUs, but "
-        "may miss more burned-in text; every run is still flagged for human review.",
-    },
+    "🖥️ Thorough (desktop/server CPU)": {"upscale_factors": None, "check_inverted": True, "detect_overlay": True,
+                                        "help": "v1's 3 upscale factors x both polarities, plus the overlay-text "
+                                                "detector for text drawn on anatomy. Highest recall."},
+    "⚖️ Balanced (laptop CPU)": {"upscale_factors": (3, 4), "check_inverted": True, "detect_overlay": True,
+                                "help": "Two upscale factors; overlay-text detector on."},
+    "📱 Lightweight (mobile / low-power CPU)": {"upscale_factors": (3,), "check_inverted": False,
+                                              "detect_overlay": False,
+                                              "help": "One upscale factor, no inverted pass, no overlay-text "
+                                                      "detector. Fastest, lowest recall; always review."},
 }
+
+_MAX_ZIP_MEMBERS = 5000
+_MAX_UNZIPPED_BYTES = 2 * 1024 ** 3
 
 with st.sidebar:
     st.header("⚙️ Options")
-    modality = st.selectbox(
-        "Modality tag for synthesized DICOM (PNG/NIfTI input only)",
-        ["OT", "MR", "CT", "US", "SC"],
-        help="Ignored for DICOM input, which keeps its own Modality tag.",
-    )
-    st.divider()
-    st.subheader("⚡ Performance mode")
-    perf_mode = st.radio(
-        "OCR thoroughness vs. speed",
-        list(_PERFORMANCE_MODES.keys()),
-        index=0,
-        help="Controls how many Tesseract passes run per slice during burned-in "
-        "text redaction — the dominant CPU cost for multi-slice volumes. Pick a "
-        "lighter mode on CPU-only or mobile hardware; it never disables redaction, "
-        "only how exhaustively it searches.",
-    )
-    perf_cfg = _PERFORMANCE_MODES[perf_mode]
-    st.caption(perf_cfg["help"])
-    st.divider()
-    st.markdown(
-        "**🔒 Policy**\n\n"
-        "- **PNG/NIfTI input:** a brand-new minimal DICOM is built around the pixel data. "
-        "No patient/institution field is ever set.\n"
-        "- **DICOM input:** every non-technical tag is removed (full wipe), not just a "
-        "named identifier list — private tags included. All UIDs are freshly randomized.\n"
-        "- **All inputs:** pixel data is OCR-scanned (Tesseract) and every detected text "
-        "region is blacked out, regardless of OCR confidence — covers scanner corner "
-        "annotations and other burned-in text that header scrubbing cannot reach."
-    )
+    st.subheader("🔤 Burned-in text")
+    text_label = st.radio("How to remove detected text", list(_TEXT_METHODS), index=0,
+                          help="Restore methods replace only the glyph pixels and keep the rest of the image "
+                               "bit-identical; regions that still look like text after restoration are blacked "
+                               "out automatically. Restored pixels are estimates, never measurements.")
+    text_method = _TEXT_METHODS[text_label]
+    perf_label = st.radio("Performance mode", list(_PERFORMANCE_MODES), index=0)
+    perf = _PERFORMANCE_MODES[perf_label]
+    st.caption(perf["help"])
+    redact_pixels = st.checkbox("Inspect pixels for burned-in text", value=True)
 
-if uploaded is not None:
-    file_bytes = uploaded.getvalue()
-    filename = uploaded.name
+    st.divider()
+    st.subheader("🏷️ Header policy")
+    mr_aware = st.radio(
+        "DICOM tags to keep",
+        ["MR-aware (recommended for prostate mpMRI)", "Strict: technical tags only (v1)"], index=0,
+        help="MR-aware keeps series labels (after name/ID/date scrubbing), TE/TR/flip angle/field strength, "
+             "diffusion b-values (rescued from Siemens/GE/Philips private tags) and the frame of reference, "
+             "so T2W/DWI/ADC stay usable and linked. Private and unknown tags are always removed.",
+    ).startswith("MR")
 
-    try:
-        loaded = load_any(io.BytesIO(file_bytes), filename=filename)
-    except Exception as exc:
-        st.error(f"Could not read {filename}: {exc}")
+    st.divider()
+    st.subheader("🔑 Pseudonymization")
+    key = st.text_input("Pseudonymization key (optional)", type="password",
+                        help="Same key → same pseudonyms across sessions (re-linkable by whoever holds the key). "
+                             "Leave empty for a random per-session key: consistent within this run only.")
+    subject = st.text_input("Subject label for NIfTI / image inputs (optional)", value="",
+                            help="Used as PatientID for inputs that carry none. Never enter a real identifier.")
+    shift_dates = st.checkbox("Shift dates (keep intervals)", value=True)
+    modality = st.selectbox("Modality for NIfTI / image inputs", ["MR", "OT", "CT", "US", "SC"], index=0,
+                            help="MR writes MR Image Storage with geometry; others write Secondary Capture.")
+
+    st.divider()
+    st.subheader("🧠 NIfTI export")
+    rarn = st.checkbox("RARN intensity normalization", value=False,
+                       help="Robust Anatomy-Referenced Normalization before writing .nii.gz (parameters are "
+                            "logged). Off keeps stored values exactly.")
+    st.divider()
+    st.caption(f"prostate-deid {__version__} · [releases](https://github.com/drsaqibiqbal/ProST-Annomyze/releases)")
+
+st.caption(
+    "🛡️ Built to support HIPAA- and GDPR-aligned de-identification workflows. Compliance also depends on "
+    "your institution's policies and human review of flagged items — see the README's compliance section."
+)
+
+uploads = st.file_uploader(
+    "📤 Upload files (select several, or a .zip, to convert a whole study)",
+    type=["dcm", "nii", "gz", "zip", "png", "jpg", "jpeg", "bmp", "tif", "tiff"],
+    accept_multiple_files=True,
+    help="All files from one upload share one pseudonymization context, so series of one patient stay in one "
+         "study. .gz files must be .nii.gz.",
+)
+
+
+# ---------------------------------------------------------------------------
+# Input expansion and classification
+# ---------------------------------------------------------------------------
+
+def _kind(name: str, data: bytes) -> str | None:
+    low = name.lower()
+    if low.endswith(".nii") or low.endswith(".nii.gz"):
+        return "nifti"
+    if low.endswith(".dcm") or (len(data) > 132 and data[128:132] == b"DICM"):
+        return "dicom"
+    if low.endswith((".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")):
+        return "raster"
+    return None
+
+
+def _expand(files) -> tuple[list[tuple[str, bytes, str]], list[str]]:
+    items, skipped = [], []
+    for f in files:
+        data = f.getvalue()
+        if f.name.lower().endswith(".zip"):
+            with zipfile.ZipFile(io.BytesIO(data)) as zf:
+                members = [m for m in zf.infolist() if not m.is_dir()]
+                if len(members) > _MAX_ZIP_MEMBERS or sum(m.file_size for m in members) > _MAX_UNZIPPED_BYTES:
+                    skipped.append(f"{f.name}: too many files or too large when unzipped")
+                    continue
+                for m in members:
+                    name = PurePosixPath(m.filename).name
+                    if name.startswith(".") or "__MACOSX" in m.filename:
+                        continue
+                    blob = zf.read(m)
+                    k = _kind(name, blob)
+                    (items.append((name, blob, k)) if k else skipped.append(name))
+            continue
+        if f.name.lower().endswith(".gz") and not f.name.lower().endswith(".nii.gz"):
+            skipped.append(f"{f.name}: only .nii.gz is accepted among .gz files")
+            continue
+        k = _kind(f.name, data)
+        (items.append((f.name, data, k)) if k else skipped.append(f.name))
+    return items, skipped
+
+
+# ---------------------------------------------------------------------------
+# Processing (cached in session state: OCR is the slow part)
+# ---------------------------------------------------------------------------
+
+def _process(items, opts):
+    import pydicom
+
+    ctx = StudyContext(secret=opts["key"] or None, subject_label=opts["subject"] or None,
+                       shift_dates=opts["shift_dates"])
+    restore_kw = dict(upscale_factors=opts["upscale_factors"], check_inverted=opts["check_inverted"],
+                      detect_overlay=opts["detect_overlay"])
+    outputs = []  # dicts: name, kind, ds (output), original (pixels), mask, audit
+    errors = []
+    raster_i = 0
+    bar = st.progress(0.0, text="De-identifying…")
+    for n, (name, data, kind) in enumerate(items):
+        bar.progress((n + 0.5) / len(items), text=f"{n + 1}/{len(items)}: {kind}")
+        try:
+            if kind == "dicom":
+                ds = pydicom.dcmread(io.BytesIO(data))
+                try:
+                    orig = np.asarray(ds.pixel_array).copy()
+                except Exception:
+                    orig = None
+                res = deidentify_dicom(ds, ctx, keep_mr_tags=opts["mr_aware"], redact_pixels=opts["redact"],
+                                       text_method=opts["method"], **restore_kw)
+                outs = [(res.datasets[0], orig, res.restore.inpaint_mask if res.restore else None,
+                         res.restore.regions if res.restore else [])]
+            elif kind == "nifti":
+                img = load_nifti(data)
+                src_key = hashlib.sha256(data).hexdigest()
+                res = nifti_to_dicom_series(img, ctx, modality=opts["modality"], source_key=src_key,
+                                            series_number=900 + n, redact_pixels=opts["redact"],
+                                            text_method=opts["method"], **restore_kw)
+                vol = np.transpose(np.asanyarray(img.dataobj).reshape(img.shape[:3] + (-1,))[..., 0], (2, 1, 0))
+                m = res.restore.inpaint_mask if res.restore else None
+                regs = res.restore.regions if res.restore else []
+                outs = [(d, vol[k], m[k] if m is not None else None, [r for r in regs if r.slice_index == k])
+                        for k, d in enumerate(res.datasets)]
+            else:
+                raster_i += 1
+                res = raster_to_dicom(data, ctx, modality="OT" if opts["modality"] == "MR" else opts["modality"],
+                                      source_key="raster-batch", instance_number=raster_i, series_number=800,
+                                      redact_pixels=opts["redact"], text_method=opts["method"], **restore_kw)
+                from prostate_deid.convert import _raster_to_array
+
+                orig = _raster_to_array(data)[0]
+                m = res.restore.inpaint_mask[0] if res.restore else None
+                outs = [(res.datasets[0], orig, m, res.restore.regions if res.restore else [])]
+            for k, (d, orig, m, regs) in enumerate(outs):
+                outputs.append({"kind": kind, "ds": d, "orig": orig, "mask": m, "regions": regs,
+                                "audit": res.audit if k == 0 else [], "upload": name})
+        except Exception as exc:  # keep going; report per file
+            errors.append(f"{name}: {exc}")
+    bar.empty()
+    return outputs, errors, ctx.session_key
+
+
+def _frame(arr, idx=None):
+    if arr is None:
+        return None
+    a = np.asarray(arr)
+    if a.ndim == 3 and a.shape[-1] not in (3, 4):
+        a = a[idx if idx is not None else a.shape[0] // 2]
+    elif a.ndim == 4:
+        a = a[idx if idx is not None else a.shape[0] // 2]
+    return a
+
+
+def _to_display(a):
+    a = np.asarray(a, dtype=np.float32)
+    if a.ndim == 3:
+        return np.clip(a, 0, 255).astype(np.uint8)
+    lo, hi = np.percentile(a, [0.5, 99.5]) if a.size else (0, 1)
+    if hi <= lo:
+        hi = lo + 1
+    return (np.clip((a - lo) / (hi - lo), 0, 1) * 255).astype(np.uint8)
+
+
+def _overlay(display_u8, mask):
+    """The de-identified image as-is, with a red rectangle around every changed area."""
+    rgb = np.repeat(display_u8[..., None], 3, axis=2) if display_u8.ndim == 2 else display_u8.copy()
+    if mask is None or not mask.any():
+        return rgb
+    h, w = mask.shape
+    t = max(1, round(min(h, w) / 256))
+    red = np.array([235, 60, 52], np.uint8)
+    for x0, y0, x1, y1 in changed_region_boxes(mask):
+        x1, y1 = min(w, x1), min(h, y1)
+        rgb[y0:min(h, y0 + t), x0:x1] = red
+        rgb[max(0, y1 - t):y1, x0:x1] = red
+        rgb[y0:y1, x0:min(w, x0 + t)] = red
+        rgb[y0:y1, max(0, x1 - t):x1] = red
+    return rgb
+
+
+if uploads:
+    items, skipped = _expand(uploads)
+    if skipped:
+        st.warning("Skipped (unsupported or not recognised): " + ", ".join(skipped[:20])
+                   + (" …" if len(skipped) > 20 else ""))
+    if not items:
         st.stop()
+    counts = defaultdict(int)
+    for _, _, k in items:
+        counts[k] += 1
+    st.success("✅ " + ", ".join(f"{v} {k}" for k, v in counts.items()) + " file(s) ready")
 
-    st.success(f"✅ Loaded {filename} — detected as **{loaded['kind']}**, shape {loaded['pixels'].shape}")
+    opts = dict(method=text_method, mr_aware=mr_aware, redact=redact_pixels, key=key, subject=subject,
+                shift_dates=shift_dates, modality=modality, **{k: perf[k] for k in
+                                                               ("upscale_factors", "check_inverted", "detect_overlay")})
+    sig = hashlib.sha256(b"".join(hashlib.sha256(d).digest() for _, d, _ in items)
+                         + json.dumps(opts, sort_keys=True, default=str).encode()).hexdigest()
 
-    notes: list[str] = []
-    if loaded["kind"] == "dicom":
-        deid_ds, notes = full_wipe_dicom(
-            loaded["source_dataset"],
-            ocr_upscale_factors=perf_cfg["upscale_factors"],
-            ocr_check_inverted=perf_cfg["check_inverted"],
+    if redact_pixels and not _ocr_available():
+        st.error("🚨 OCR (Tesseract) is unavailable — burned-in pixel text will NOT be inspected or removed. "
+                 "Do not treat the output as fully de-identified.")
+
+    if st.session_state.get("sig") != sig:
+        if st.button("🚀 Run de-identification", type="primary"):
+            outputs, errors, session_key = _process(items, opts)
+            st.session_state.update(sig=sig, outputs=outputs, errors=errors, session_key=session_key)
+        else:
+            st.info("Options or files changed — press **Run de-identification**.")
+            st.stop()
+
+    outputs = st.session_state["outputs"]
+    for e in st.session_state.get("errors", []):
+        st.error(e)
+    if not outputs:
+        st.stop()
+    if st.session_state.get("session_key"):
+        st.caption("🔑 No key given: pseudonyms come from a random per-session key and cannot be re-linked later.")
+
+    # --- group by series -------------------------------------------------------------------
+    series = defaultdict(list)
+    for o in outputs:
+        series[str(o["ds"].SeriesInstanceUID)].append(o)
+    for s in series.values():
+        s.sort(key=lambda o: int(getattr(o["ds"], "InstanceNumber", 0) or 0))
+
+    all_audit = [e for o in outputs for e in o["audit"]]
+    n_flag = sum(e.flagged_for_review for e in all_audit)
+    n_rest = sum(e.action == "restored_region" for e in all_audit)
+    n_fall = sum(e.action == "redacted_region_fallback" for e in all_audit)
+    n_black = sum(e.action == "redacted_region" for e in all_audit)
+    conf_fail = sum(bool(check_conformance(o["ds"])) for o in outputs)
+
+    c1, c2, c3, c4, c5 = st.columns(5)
+    c1.metric("Images", len(outputs))
+    c2.metric("Series", len(series))
+    c3.metric("Text regions restored", n_rest)
+    c4.metric("Blacked out", n_black + n_fall, help="v1 blackout method, or restoration fallbacks")
+    c5.metric("Flagged for review", n_flag)
+    if conf_fail:
+        st.warning(f"{conf_fail} output file(s) failed the conformance self-check — see the series table.")
+
+    rows = []
+    for uid, s in series.items():
+        d0 = s[0]["ds"]
+        bvals = sorted({b for b in (read_bvalue(o["ds"])[0] for o in s) if b is not None})
+        probs = {p for o in s for p in check_conformance(o["ds"])}
+        rows.append({"series": int(getattr(d0, "SeriesNumber", 0) or 0),
+                     "description": str(getattr(d0, "SeriesDescription", "")),
+                     "modality": str(getattr(d0, "Modality", "")), "images": len(s),
+                     "image type": "\\".join(str(x) for x in getattr(d0, "ImageType", [])),
+                     "b-values": ", ".join(f"{b:g}" for b in bvals),
+                     "conformance": "✔" if not probs else "✘ " + "; ".join(sorted(probs))[:120]})
+    st.markdown("### 📚 Series")
+    st.dataframe(rows, width="stretch", hide_index=True)
+
+    # --- viewer ----------------------------------------------------------------------------
+    st.markdown("### 🔍 Before / after")
+    labels = {uid: f"S{r['series']:03d} · {r['description'] or r['modality']} ({r['images']} img)"
+              for uid, r in zip(series, rows)}
+    uid = st.selectbox("Series", list(series), format_func=lambda u: labels[u])
+    s = series[uid]
+    first_changed = next((k for k, o in enumerate(s) if o["mask"] is not None and np.asarray(o["mask"]).any()), 0)
+    idx = st.slider("Image", 1, len(s), first_changed + 1) - 1 if len(s) > 1 else 0
+    o = s[idx]
+    out_px = np.asarray(o["ds"].pixel_array)
+    n_frames = int(getattr(o["ds"], "NumberOfFrames", 1) or 1)
+    fidx = None
+    if n_frames > 1:
+        fidx = st.slider("Frame", 1, n_frames, n_frames // 2 + 1) - 1
+    orig = _frame(o["orig"], fidx)
+    out = _frame(out_px, fidx)
+    mask = _frame(o["mask"], fidx) if o["mask"] is not None else None
+    if mask is not None and mask.ndim == 3 and mask.shape[0] == 1:
+        mask = mask[0]
+    cols = st.columns(3)
+    with cols[0]:
+        st.markdown('<span class="prost-pill prost-pill-original">Original</span>', unsafe_allow_html=True)
+        if orig is not None:
+            st.image(_to_display(orig), width="stretch")
+    with cols[1]:
+        st.markdown('<span class="prost-pill prost-pill-deid">🔒 De-identified</span>', unsafe_allow_html=True)
+        st.image(_to_display(out), width="stretch")
+    with cols[2]:
+        st.markdown('<span class="prost-pill prost-pill-original">Where pixels changed</span>', unsafe_allow_html=True)
+        st.image(_overlay(_to_display(out), mask if mask is not None and mask.shape == out.shape[:2] else None),
+                 width="stretch")
+        if mask is not None and mask.size:
+            st.caption(f"{int(mask.sum())} pixel(s) altered ({mask.mean():.2%} of the image) inside the red "
+                       "boxes; every other pixel is bit-identical to the input. Boxes, not outlines, so the "
+                       "removed text is never redrawn.")
+
+    with st.expander(f"🏷️ Tags kept in this file ({sum(1 for e in o['ds'] if e.tag != 0x7FE00010)})"):
+        st.dataframe([{"tag": e.keyword or str(e.tag), "value": str(e.value)[:80]} for e in o["ds"]
+                      if e.tag != 0x7FE00010 and e.VR != "SQ"], width="stretch", hide_index=True)
+
+    st.markdown("### 📝 Audit trail")
+    only_flag = st.checkbox("Show only items flagged for review", value=False)
+    st.dataframe([{"file": o2["upload"], "step": e.step, "action": e.action, "detail": e.detail,
+                   "confidence": e.confidence, "review": "⚑" if e.flagged_for_review else ""}
+                  for o2 in outputs for e in o2["audit"] if (e.flagged_for_review or not only_flag)],
+                 width="stretch", hide_index=True)
+
+    # --- downloads ---------------------------------------------------------------------------
+    st.markdown("### ⬇️ Downloads")
+    from prostate_deid.convert import output_filename
+
+    zbuf = io.BytesIO()
+    with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for suid, s2 in series.items():
+            d0 = s2[0]["ds"]
+            folder = f"{d0.PatientID}/S{int(getattr(d0, 'SeriesNumber', 0) or 0):03d}"
+            for o2 in s2:
+                b = io.BytesIO()
+                o2["ds"].save_as(b, enforce_file_format=True)
+                zf.writestr(f"{folder}/{output_filename(o2['ds'])}", b.getvalue())
+        zf.writestr("audit_trail.json", json.dumps(
+            [{"step": e.step, "action": e.action, "detail": e.detail, "confidence": e.confidence,
+              "flagged_for_review": e.flagged_for_review} for e in all_audit], indent=1))
+    pid = str(outputs[0]["ds"].PatientID)
+    st.download_button("⬇️ De-identified DICOM (.zip, all series + audit)", data=zbuf.getvalue(),
+                       file_name=f"{pid}_deid_dicom.zip", mime="application/zip")
+
+    st.markdown("#### 🔄 Series → .nii.gz")
+    if st.button("Convert selected series to .nii.gz"):
+        try:
+            norm = None
+            if rarn:
+                from prostate_deid.preprocess import IntensityNormalize
+
+                norm = IntensityNormalize(always_apply=True)
+            gz, sidecar, naudit = series_to_nifti([o2["ds"] for o2 in s], normalize=norm)
+            stem = f"{s[0]['ds'].PatientID}_S{int(getattr(s[0]['ds'], 'SeriesNumber', 0) or 0):03d}"
+            for e in naudit:
+                (st.warning if e.flagged_for_review else st.caption)(str(e))
+            st.download_button("⬇️ .nii.gz", data=gz, file_name=f"{stem}.nii.gz", mime="application/gzip")
+            st.download_button("⬇️ JSON sidecar", data=json.dumps(sidecar, indent=1, default=str),
+                               file_name=f"{stem}.json", mime="application/json")
+        except ValueError as exc:
+            st.error(f"Cannot write this series as NIfTI: {exc}")
+
+    # --- quantitative verification -----------------------------------------------------------
+    import csv
+
+    from prostate_deid.evaluation import region_metrics, summarize_regions, synthetic_self_test
+
+    st.markdown(
+        """
+        <div class="prost-qv">
+          <div class="prost-qv-icon">📏</div>
+          <div>
+            <h2>Quantitative verification</h2>
+            <p>Retention and OCR confidence of every text region on the real image, and a synthetic
+            self-test that measures restoration error against a known clean slice.</p>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # 1. Measured on the real text (eq. 40)
+    st.markdown('<span class="prost-tag prost-tag-real">Measured on the real text · eq. 40</span>',
+                unsafe_allow_html=True)
+    st.latex(r"\mathrm{retained}(B) = 1 - \frac{|G_B|}{|B|}, \qquad "
+             r"c_{\mathrm{audit}}(B) = \min\!\Big(1,\ \max\!\big(0,\ "
+             r"\tfrac{n_{\mathrm{OCR}}(B)}{100}\big)\Big)")
+    scope = st.radio("Scope", ["This image", "All images"], horizontal=True, key="qv_scope",
+                     help="This image: the one selected in Before / after. "
+                          "All images: every file in this run.")
+    in_scope = [o] if scope == "This image" else outputs
+    qrows = [{"file": o2["upload"], **r} for o2 in in_scope for r in region_metrics(o2.get("regions", []))]
+    summ = summarize_regions(qrows)
+
+    def _pct(v):
+        return "–" if v != v else f"{v:.1%}"  # NaN-safe
+
+    q1, q2, q3, q4, q5 = st.columns(5)
+    q1.metric("Text regions", summ["regions"])
+    q2.metric("Restored / fallback", f"{summ['restored']} / {summ['fallback']}",
+              help="Restored: only glyph pixels replaced. Fallback: the line was re-synthesised as a whole "
+                   "rectangle because text was still detectable.")
+    q3.metric("Mean retained(B)", _pct(summ["retained_mean"]),
+              help="Average fraction of each changed box left bit-identical to the input.")
+    q4.metric("Min retained(B)", _pct(summ["retained_min"]))
+    c_mean = summ["c_audit_mean"]
+    q5.metric("Mean c_audit(B)", "–" if c_mean != c_mean else f"{c_mean:.2f}",
+              help="Normalised OCR confidence recorded in the audit trail. Regions found by the pixel-only "
+                   "stroke-line detector carry 0 (no OCR read) and are flagged for review.")
+    if qrows:
+        st.dataframe(
+            qrows, width="stretch", hide_index=True,
+            column_config={
+                "retained": st.column_config.ProgressColumn("retained(B)", min_value=0.0, max_value=1.0,
+                                                            format="%.2f"),
+                "c_audit": st.column_config.ProgressColumn("c_audit(B)", min_value=0.0, max_value=1.0,
+                                                           format="%.2f"),
+                "box_px": st.column_config.NumberColumn("|B| (px)"),
+                "changed_px": st.column_config.NumberColumn("|G_B| (px)"),
+            },
         )
     else:
-        deid_ds, notes = array_to_dicom(
-            loaded["pixels"],
-            modality=modality,
-            ocr_upscale_factors=perf_cfg["upscale_factors"],
-            ocr_check_inverted=perf_cfg["check_inverted"],
-        )
+        st.info("No text regions in this scope (no burned-in text found, or pixel inspection is off).")
 
-    dcm_buf = io.BytesIO()
-    deid_ds.save_as(dcm_buf, enforce_file_format=True)
-    dcm_bytes = dcm_buf.getvalue()
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown('<div class="prost-card prost-card-original">', unsafe_allow_html=True)
-        st.markdown('<span class="prost-pill prost-pill-original">Original</span>', unsafe_allow_html=True)
-        pixels = loaded["pixels"]
-        mid = pixels.shape[0] // 2
-        frame = pixels[mid]
-        if frame.ndim == 3 and frame.shape[-1] in (3, 4):
-            st.image(np.clip(frame, 0, 255).astype(np.uint8), caption=f"slice {mid + 1}/{pixels.shape[0]}")
-        else:
-            st.image(frame, caption=f"slice {mid + 1}/{pixels.shape[0]}", clamp=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="prost-card prost-card-deid">', unsafe_allow_html=True)
-        st.markdown('<span class="prost-pill prost-pill-deid">🔒 De-identified DICOM</span>', unsafe_allow_html=True)
-        out_pixels = np.asarray(deid_ds.pixel_array)
-        out_frame = out_pixels if out_pixels.ndim == 2 else out_pixels[out_pixels.shape[0] // 2] if out_pixels.ndim == 3 and out_pixels.shape[-1] not in (3, 4) else out_pixels
-        st.image(out_frame, caption="header stripped + burned-in text redacted", clamp=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    ocr_failed = any("OCR backend unavailable" in n for n in notes)
-    if ocr_failed:
-        st.error(
-            "🚨 OCR is unavailable in this environment — burned-in pixel text (patient name, "
-            "DOB, institution, dates baked into the image) was NOT inspected or redacted. "
-            "Do not treat this output as fully de-identified until OCR is fixed."
-        )
-
-    st.markdown("### 📝 What changed")
-    for n in notes:
-        st.markdown(f"- {n}")
-
-    remaining = [
-        elem.keyword or f"({elem.tag.group:04X},{elem.tag.element:04X})"
-        for elem in deid_ds
-        if elem.tag != 0x7FE00010
-    ]
-    with st.expander(f"🏷️ Remaining tags in output ({len(remaining)})"):
-        st.dataframe({"tag": remaining}, use_container_width=True)
-
-    out_stem = Path(filename).stem.replace(".nii", "")
-    st.download_button(
-        "⬇️ Download de-identified .dcm",
-        data=dcm_bytes,
-        file_name=f"deid_{out_stem}.dcm",
-        mime="application/dicom",
+    # 2. Synthetic self-test (eq. 41)
+    st.markdown('<span class="prost-tag prost-tag-synth">Synthetic self-test · eq. 41</span>',
+                unsafe_allow_html=True)
+    st.latex(r"\mathrm{MAE} = \frac{1}{|F|}\sum_{p\in F}\big|\hat I(p)-T(p)\big|, \quad "
+             r"\mathrm{MSE} = \frac{1}{|F|}\sum_{p\in F}\big(\hat I(p)-T(p)\big)^2, \quad "
+             r"\mathrm{PSNR} = 10\log_{10}\frac{1}{\mathrm{MSE}}")
+    st.caption(
+        "The pixels under the real text were overwritten, so no clean slice exists for it. The self-test "
+        "uses the de-identified image as the clean slice T, burns **fictitious** corner annotations into it "
+        "(known footprint F), removes them with the same method and settings, and compares the result Î "
+        "with T on intensities scaled to [0, 1]. It measures restoration quality on this image's anatomy, "
+        "not an error on the removed patient text."
     )
-
-    st.divider()
-    st.markdown("### 🔄 Convert this DICOM to .nii.gz")
-    if st.button("Convert to .nii.gz"):
-        nii_bytes = dicom_to_nifti_bytes(deid_ds)
-        st.download_button(
-            "⬇️ Download .nii.gz",
-            data=nii_bytes,
-            file_name=f"deid_{out_stem}.nii.gz",
-            mime="application/gzip",
+    st_key = f"qv_selftest:{sig}:{uid}:{idx}:{fidx}"
+    if st.button("🧪 Run synthetic self-test on this image", key="qv_run"):
+        with st.spinner("Burning fictitious text and removing it…"):
+            st.session_state[st_key] = synthetic_self_test(
+                out, method=text_method,
+                **{k: perf[k] for k in ("upscale_factors", "check_inverted", "detect_overlay")})
+    stres = st.session_state.get(st_key)
+    if stres is not None:
+        t1, t2, t3, t4, t5 = st.columns(5)
+        t1.metric("MAE", f"{stres.mae:.4f}")
+        t2.metric("MSE", f"{stres.mse:.5f}")
+        t3.metric("PSNR", "∞" if stres.psnr_db == float("inf") else f"{stres.psnr_db:.1f} dB")
+        t4.metric("Glyph pixels replaced", _pct(stres.glyph_px_changed))
+        t5.metric("Still readable", f"{stres.chars_readable_after} / {stres.chars_readable_before}",
+                  help="Characters OCR reads after removal / before removal (of "
+                       f"{stres.chars_total} fictitious characters).")
+        psnr_cls = "prost-ok" if stres.psnr_db >= 30 else "prost-warn" if stres.psnr_db >= 20 else "prost-bad"
+        read_cls = "prost-ok" if stres.chars_readable_after == 0 else (
+            "prost-warn" if stres.residual_fraction <= 0.1 else "prost-bad")
+        st.markdown(
+            f'<span class="prost-badge {psnr_cls}">PSNR {stres.psnr_db:.1f} dB</span>'
+            f'<span class="prost-badge {read_cls}">{stres.residual_fraction:.0%} of readable characters '
+            f'left</span>'
+            f'<span class="prost-badge prost-ok">{stres.outside_px_changed} px changed away from the '
+            f'text</span>'
+            f'<span class="prost-badge prost-ok">{stres.seconds:.1f} s</span>',
+            unsafe_allow_html=True,
         )
+        v1, v2 = st.columns(2)
+        with v1:
+            st.markdown('<span class="prost-pill prost-pill-original">Synthetic input (fictitious text)'
+                        '</span>', unsafe_allow_html=True)
+            st.image(_to_display(stres.burned), width="stretch")
+        with v2:
+            st.markdown('<span class="prost-pill prost-pill-deid">After removal</span>',
+                        unsafe_allow_html=True)
+            st.image(_to_display(stres.restored), width="stretch")
+
+    # CSV of everything above
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["section", "file", "slice", "box", "action", "box_px", "changed_px", "retained",
+                     "c_audit"])
+    for r in qrows:
+        writer.writerow(["eq40", r["file"], r["slice"], r["box"], r["action"], r["box_px"], r["changed_px"],
+                         f"{r['retained']:.6f}", "" if r["c_audit"] != r["c_audit"] else f"{r['c_audit']:.4f}"])
+    writer.writerow([])
+    writer.writerow(["eq40_summary"] + [f"{k}={v}" for k, v in summ.items()])
+    if stres is not None:
+        writer.writerow(["eq41_selftest", o["upload"]] + [f"{k}={v}" for k, v in stres.as_dict().items()])
+    st.download_button("⬇️ Verification metrics (.csv)", data=buf.getvalue().encode("utf-8"),
+                       file_name=f"{pid}_verification.csv", mime="text/csv")
 else:
-    st.info("👋 Upload a PNG, DICOM (.dcm), or NIfTI (.nii / .nii.gz) file to get started.")
+    st.info("👋 Upload DICOM files (or a .zip of a study), a NIfTI volume, or an image to get started.")

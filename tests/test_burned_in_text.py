@@ -1,4 +1,4 @@
-"""OCR/NER is an optional extra. This suite verifies graceful degradation
+"""OCR is an optional extra. This suite verifies graceful degradation
 without requiring tesseract/spaCy to be installed in CI; if a real OCR
 backend IS present, the "require_ocr=True with no backend" test is skipped
 since the premise (no backend) no longer holds."""
@@ -47,11 +47,17 @@ def test_burned_in_annotation_header_flag_is_honoured(sample_with_overlay, monke
     assert len(header_flag_entries) == 1
 
 
-@pytest.mark.skipif(_try_import_ocr_stack() is None, reason="tesseract/spaCy not installed")
-def test_detection_raises_notimplemented_without_model_wiring(synthetic_sample):
-    # OCR stack IS available in this environment, but no spaCy model / bbox
-    # detector has been wired in -- see BurnedInTextRedact._detect_phi_regions
-    # docstring. This documents that gap rather than silently no-op'ing.
+@pytest.mark.skipif(_try_import_ocr_stack() is None, reason="tesseract not installed")
+def test_detection_redacts_real_burned_in_text(synthetic_sample):
+    # v2: detection is wired to text_restore; a corner annotation rendered into the pixels is found
+    # and removed, and the audit trail records it.
+    from _text_fixtures import burned_slice
+
+    clean, burned, alpha = burned_slice()
+    synthetic_sample.image = burned[None, None].astype("float32")
     t = BurnedInTextRedact(require_ocr=True, always_apply=True)
-    with pytest.raises(NotImplementedError):
-        t(synthetic_sample)
+    out = t(synthetic_sample)
+    assert out.image_dirty
+    assert any(e.step == "burned_in_phi" and "region" in e.action for e in out.audit)
+    glyph = alpha > 0.5
+    assert (out.image[0, 0][glyph] != burned[glyph]).mean() > 0.95
