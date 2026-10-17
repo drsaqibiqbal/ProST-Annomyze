@@ -81,3 +81,10 @@ ignore = ["E501"]
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+
+# Check this package's own code; treat Pillow and pydicom as untyped. Their stubs change between
+# releases (Pillow resampling constants, pydicom's UID / FileDataset signatures) and flag working
+# code. CI runs mypy on one Python version (newest numpy) for the same reason -- see ci.yml.
+[[tool.mypy.overrides]]
+module = ["PIL", "PIL.*", "pydicom", "pydicom.*"]
+follow_imports = "skip"
