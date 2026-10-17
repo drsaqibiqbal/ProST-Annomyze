@@ -245,7 +245,7 @@ def synthetic_self_test(
             after += min(n_true, read_crop_text(gr01, box, None, min_conf=40)[0])
 
     return SelfTestResult(
-        mae=errs["mae"], mse=errs["mse"], psnr_db=errs["psnr_db"], footprint_px=errs["footprint_px"],
+        mae=errs["mae"], mse=errs["mse"], psnr_db=errs["psnr_db"], footprint_px=int(errs["footprint_px"]),
         chars_total=total, chars_readable_before=before, chars_readable_after=after,
         glyph_px_changed=float(changed[glyph].mean()) if glyph.any() else float("nan"),
         outside_px_changed=outside, seconds=seconds, font_px=fs,

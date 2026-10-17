@@ -43,6 +43,7 @@ except ImportError:  # pragma: no cover - pydicom should always be present (core
     pass
 
 # v2: image-preserving text removal and the MR-aware, geometry-preserving converter
+from ._version import __version__
 from .convert import (
     StudyContext,
     check_conformance,
@@ -53,8 +54,6 @@ from .convert import (
 )
 from .nifti_io import save_nifti
 from .text_restore import RESTORE_METHODS, detect_text_boxes_v2, restore_burned_in_text
-
-from ._version import __version__
 
 __all__ = [
     "AuditEntry", "Sample", "Transform", "Compose",

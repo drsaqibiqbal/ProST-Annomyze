@@ -165,8 +165,8 @@ def test_jpeg_screenshot_text_restored_not_blacked_out():
     # (not fall back to whole-box blackout because of JPEG halos) and must not touch the anatomy.
     import io
 
-    from PIL import Image
     from _text_fixtures import burn, phantom
+    from PIL import Image
 
     from prostate_deid.convert import _raster_to_array
 
@@ -186,8 +186,8 @@ def test_jpeg_screenshot_text_restored_not_blacked_out():
 def test_bright_fat_rim_and_septa_are_not_treated_as_text(rim):
     # Thin bright tissue (subcutaneous fat rim, fat septa) passes a top-hat test like a letter stroke.
     # v2 must remove the burned-in text and leave every tissue pixel away from the text unchanged.
-    from scipy import ndimage as ndi
     from _text_fixtures import burn
+    from scipy import ndimage as ndi
 
     rng = np.random.default_rng(3)
     h, w = 300, 360
